@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags: []
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - PlayerIFrame
+  - Player
+  - HurtSource
+  - Enemy
+  - 
+  - Wall
+  - Collision
+  - Ceiling
+  - OneWayGround
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Background
+    uniqueID: 1184254197
+    locked: 0
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Camera
+    uniqueID: 4250912545
+    locked: 0
