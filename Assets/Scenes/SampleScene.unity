@@ -199,8 +199,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 99656200}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.0818, y: -0.09889999, z: 10}
-  m_LocalScale: {x: 4.687761, y: 4.2618656, z: 5.8262005}
+  m_LocalPosition: {x: -0.0818, y: -0.95, z: 10}
+  m_LocalScale: {x: 5.5418706, y: 5.0383773, z: 6.887734}
   m_Children: []
   m_Father: {fileID: 519420032}
   m_RootOrder: 0
@@ -690,6 +690,7 @@ GameObject:
   - component: {fileID: 849954659}
   - component: {fileID: 849954660}
   - component: {fileID: 849954661}
+  - component: {fileID: 849954662}
   m_Layer: 10
   m_Name: Enemy1
   m_TagString: Untagged
@@ -756,7 +757,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 849954655}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2.58, y: -0.27, z: 14.634886}
+  m_LocalPosition: {x: 4.54, y: -2.98, z: 14.634886}
   m_LocalScale: {x: 5, y: 5, z: 1}
   m_Children:
   - {fileID: 651401286}
@@ -824,10 +825,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   flatGroundChecker: {fileID: 849954661}
+  wallChecker: {fileID: 849954662}
   moveSpeed: 100
   noFriction: {fileID: 6200000, guid: 871b760142bf49947a337fccc571385c, type: 2}
   allFriction: {fileID: 6200000, guid: 776c18e70f9729a49bd0d5f9c98edb3d, type: 2}
-  initialTurnTime: 2
+  initialTurnTime: 1
+  speed: 1
 --- !u!114 &849954661
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -848,6 +851,23 @@ MonoBehaviour:
   groundedCheckRay: 0.4
   wallCheckRay: 0.1
   slopeNormalPerpendicular: {x: 0, y: 0}
+--- !u!114 &849954662
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 849954655}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 127093509b4fd3c48972269817c86364, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  whatIsGround:
+    serializedVersion: 2
+    m_Bits: 61495
+  boxCollider: {fileID: 849954659}
+  wallCheckRay: 0.1
 --- !u!1 &890739357
 GameObject:
   m_ObjectHideFlags: 0
@@ -4819,10 +4839,11 @@ GameObject:
   - component: {fileID: 2022993070}
   - component: {fileID: 2022993072}
   - component: {fileID: 2022993073}
-  - component: {fileID: 2022993075}
-  - component: {fileID: 2022993074}
   - component: {fileID: 2022993076}
   - component: {fileID: 2022993077}
+  - component: {fileID: 2022993075}
+  - component: {fileID: 2022993074}
+  - component: {fileID: 2022993078}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -4955,20 +4976,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c32907915b05cb947aa9f5b183c218d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  continousJumpForce: 0.8
+  continousJumpForce: 0.9
   initialJumpForce: 12
   doubleJumpForce: 3
   maxFallingSpeed: 175
   wallJumpForce: 50
-  airControl: 0.8
+  airControl: 0.5
   slideSpeed: 0.8
   crouchSpeed: 0.3
   glideSpeed: 0
   spatialDashCooldown: 99
   collisionLayer:
     serializedVersion: 2
-    m_Bits: 61495
+    m_Bits: 62007
   flatGroundChecker: {fileID: 2022993077}
+  wallChecker: {fileID: 2022993078}
   wallCheckMarker: {fileID: 0}
   noFriction: {fileID: 6200000, guid: 871b760142bf49947a337fccc571385c, type: 2}
   allFriction: {fileID: 6200000, guid: 776c18e70f9729a49bd0d5f9c98edb3d, type: 2}
@@ -5028,3 +5050,20 @@ MonoBehaviour:
   groundedCheckRay: 0.1
   wallCheckRay: 0.1
   slopeNormalPerpendicular: {x: 0, y: 0}
+--- !u!114 &2022993078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2022993069}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 127093509b4fd3c48972269817c86364, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  whatIsGround:
+    serializedVersion: 2
+    m_Bits: 61495
+  boxCollider: {fileID: 2022993073}
+  wallCheckRay: 0.1

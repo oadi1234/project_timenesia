@@ -8,6 +8,9 @@ public class WalkerAI : MonoBehaviour
     private FlatGroundChecker flatGroundChecker;
 
     [SerializeField]
+    private WallChecker wallChecker;
+
+    [SerializeField]
     private float moveSpeed = 100f;
 
     [SerializeField]
@@ -17,7 +20,10 @@ public class WalkerAI : MonoBehaviour
     private PhysicsMaterial2D allFriction;
 
     [SerializeField]
-    private float initialTurnTime = 2f;
+    private float initialTurnTime = 1f;
+
+    [SerializeField]
+    private int speed = 1;
 
 
     private Rigidbody2D rigidBody2D;
@@ -25,42 +31,50 @@ public class WalkerAI : MonoBehaviour
     private bool facingLeft = true;
     private bool isOnSlope;
     private bool isGrounded;
-    private int direction;
-    private int oldDirection;
+    private int oldSpeed;
     private float turnTime;
-    private bool encounteredNoGroundOrWall;
+    private bool encounteredNoGroundOrAWall;
 
     void Start()
     {
         rigidBody2D = GetComponent<Rigidbody2D>();
-        direction = 1;
         turnTime = initialTurnTime;
-        encounteredNoGroundOrWall = false;
-        oldDirection = direction;
+        encounteredNoGroundOrAWall = false;
+        oldSpeed = speed;
+        if(speed < 0)
+        {
+            Flip();
+        }
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+        wallChecker.CalculateRays(facingLeft);
         if (flatGroundChecker.CheckIfGrounded() && !flatGroundChecker.IsGroundAhead(facingLeft))
         {
-            Flip();
-            oldDirection = direction;
-            encounteredNoGroundOrWall = true;
-            turnTime = initialTurnTime;
+            isOnSlope = flatGroundChecker.IsOnSlope();
+            encounteredNoGroundOrAWall = wallChecker.IsAgainstStraightWall();
+            if (!isOnSlope || encounteredNoGroundOrAWall)
+            {
+                Flip();
+                oldSpeed = speed;
+                turnTime = initialTurnTime;
+            }
         }
-        else if (encounteredNoGroundOrWall && turnTime > 0)
+        else if (encounteredNoGroundOrAWall && turnTime > 0)
         {
-            direction = 0;
-            turnTime -= 0.1f;
+            speed = 0;
+            turnTime -= Time.fixedDeltaTime;
         }
         else
         {
-            direction = oldDirection * -1;
-            encounteredNoGroundOrWall = false;
+            turnTime = initialTurnTime;
+            speed = oldSpeed * -1;
+            encounteredNoGroundOrAWall = false;
         }
 
-        Move(direction * Time.fixedDeltaTime);
+        Move(speed * Time.fixedDeltaTime);
     }
 
     public void Move(float move)

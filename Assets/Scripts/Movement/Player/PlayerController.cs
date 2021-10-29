@@ -46,6 +46,9 @@ public class PlayerController: MonoBehaviour
     private FlatGroundChecker flatGroundChecker;
 
     [SerializeField]
+    private WallChecker wallChecker;
+
+    [SerializeField]
     private Transform wallCheckMarker;
 
     [SerializeField]
@@ -118,6 +121,7 @@ public class PlayerController: MonoBehaviour
     private void FixedUpdate()
     {
         IsGrounded();
+        wallChecker.CalculateRays(facingLeft);
 
         isOnSlope = flatGroundChecker.IsOnSlope();
         slopeDownAngle = flatGroundChecker.GetSlopeAngle();
