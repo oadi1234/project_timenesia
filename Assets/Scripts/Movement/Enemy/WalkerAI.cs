@@ -27,6 +27,7 @@ public class WalkerAI : MonoBehaviour
 
 
     private Rigidbody2D rigidBody2D;
+    private Animator animator;
     private Vector2 velocityVector;
     private bool facingLeft = true;
     private bool isOnSlope;
@@ -38,7 +39,8 @@ public class WalkerAI : MonoBehaviour
     void Start()
     {
         rigidBody2D = GetComponent<Rigidbody2D>();
-        turnTime = initialTurnTime;
+        animator = GetComponent<Animator>();
+        turnTime = -1;
         encounteredNoGroundOrAWall = false;
         oldSpeed = speed;
         if(speed < 0)
@@ -51,29 +53,30 @@ public class WalkerAI : MonoBehaviour
     void FixedUpdate()
     {
         wallChecker.CalculateRays(facingLeft);
-        if (flatGroundChecker.CheckIfGrounded() && !flatGroundChecker.IsGroundAhead(facingLeft))
+        flatGroundChecker.CalculateRays();
+        isOnSlope = flatGroundChecker.FrontSlopeAngle(facingLeft) != 0;
+        if (flatGroundChecker.IsGrounded() && !encounteredNoGroundOrAWall)
         {
-            isOnSlope = flatGroundChecker.IsOnSlope();
-            encounteredNoGroundOrAWall = wallChecker.IsAgainstStraightWall();
-            if (!isOnSlope || encounteredNoGroundOrAWall)
+            encounteredNoGroundOrAWall = wallChecker.IsAgainstUnwalkableSurface() || !flatGroundChecker.IsGroundAhead(facingLeft);
+            if (!isOnSlope && encounteredNoGroundOrAWall)
             {
                 Flip();
                 oldSpeed = speed;
                 turnTime = initialTurnTime;
             }
         }
-        else if (encounteredNoGroundOrAWall && turnTime > 0)
+        else if (turnTime > 0)
         {
             speed = 0;
             turnTime -= Time.fixedDeltaTime;
         }
         else
         {
-            turnTime = initialTurnTime;
+            turnTime = -1;
             speed = oldSpeed * -1;
             encounteredNoGroundOrAWall = false;
         }
-
+        animator.SetFloat("speed", Mathf.Abs(speed));
         Move(speed * Time.fixedDeltaTime);
     }
 

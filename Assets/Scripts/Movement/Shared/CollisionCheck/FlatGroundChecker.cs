@@ -28,16 +28,27 @@ public class FlatGroundChecker : MonoBehaviour
     private float slopeDownAngle;
 
 
-    public bool CheckIfGrounded()
+    public void CalculateRays()
     {
         boxBounds = boxCollider.bounds;
-        bottomLeftColliderCorner.Set(boxBounds.center.x - boxBounds.extents.x, boxBounds.center.y - boxBounds.extents.y);
-        bottomRightColliderCorner.Set(boxBounds.center.x + boxBounds.extents.x, boxBounds.center.y - boxBounds.extents.y);
+        bottomLeftColliderCorner.Set(boxBounds.min.x, boxBounds.min.y);
+        bottomRightColliderCorner.Set(boxBounds.max.x, boxBounds.min.y);
         hitBottomLeft = Physics2D.Raycast(bottomLeftColliderCorner, Vector2.down, groundedCheckRay, whatIsGround);
         hitBottomRight = Physics2D.Raycast(bottomRightColliderCorner, Vector2.down, groundedCheckRay, whatIsGround);
+        Debug.DrawRay(hitBottomLeft.point, hitBottomLeft.normal, Color.red);
+        Debug.DrawRay(hitBottomRight.point, hitBottomRight.normal, Color.red);
+    }
 
-        return IsGrounded();
-
+    public bool IsGrounded()
+    {
+        if (hitBottomRight || hitBottomLeft)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     public bool IsOnSlope()
@@ -45,6 +56,14 @@ public class FlatGroundChecker : MonoBehaviour
         VerticalSlopeCalculation();
 
         return slopeDownAngle != 0 || HorizontalSlopeCheck();
+    }
+
+    public float FrontSlopeAngle(bool isFacingLeft)
+    {
+        if(isFacingLeft)
+            return Vector2.Angle(hitBottomLeft.normal, Vector2.up);
+        else 
+            return Vector2.Angle(hitBottomRight.normal, Vector2.up);
     }
 
     public float GetSlopeAngle()
@@ -61,18 +80,6 @@ public class FlatGroundChecker : MonoBehaviour
         else
         {
             return hitBottomLeft;
-        }
-    }
-
-    private bool IsGrounded()
-    {
-        if (hitBottomRight || hitBottomLeft)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
         }
     }
 
@@ -103,8 +110,6 @@ public class FlatGroundChecker : MonoBehaviour
     {
         RaycastHit2D hitBottomLeft = Physics2D.Raycast(groundCheckMarker.position, groundCheckMarker.transform.right, wallCheckRay, whatIsGround);
         RaycastHit2D hitBottomRight = Physics2D.Raycast(groundCheckMarker.position, -groundCheckMarker.transform.right, wallCheckRay, whatIsGround);
-        Debug.DrawRay(hitBottomLeft.point, hitBottomLeft.normal, Color.red);
-        Debug.DrawRay(hitBottomRight.point, hitBottomRight.normal, Color.red);
 
         if (hitBottomRight)
         {

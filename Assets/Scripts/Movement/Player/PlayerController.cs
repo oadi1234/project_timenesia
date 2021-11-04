@@ -40,15 +40,6 @@ public class PlayerController: MonoBehaviour
     private int spatialDashCooldown = 99;
 
     [SerializeField]
-    private LayerMask collisionLayer;
-
-    [SerializeField]
-    private FlatGroundChecker flatGroundChecker;
-
-    [SerializeField]
-    private WallChecker wallChecker;
-
-    [SerializeField]
     private Transform wallCheckMarker;
 
     [SerializeField]
@@ -64,17 +55,6 @@ public class PlayerController: MonoBehaviour
     private float moveSpeed = 350f;
 
 
-    [Header("Events")]
-    [Space]
-    public UnityEvent onLandEvent;
-
-    //grabbed from tutorial. possibly unneeded.
-    [System.Serializable]
-    public class BoolEvent : UnityEvent<bool> { }
-
-    public BoolEvent onWallSlideEvent;
-
-
     private bool isGliding;
     private bool usedDoubleJump;
 
@@ -82,6 +62,7 @@ public class PlayerController: MonoBehaviour
     private bool hasGlidingCollected = false;
     private bool hasSpatialDash = false;
     private bool facingLeft = false;
+    private bool isGettingKnockedBack = false;
 
     private bool isGrounded;
     private bool isJumping;
@@ -89,48 +70,59 @@ public class PlayerController: MonoBehaviour
     private bool isOnSlope;
     private float slopeDownAngle;
     private float currentCoyoteTime;
+    private float currentKnockbackTime;
+    private float knockbackStrength;
 
     private const float groundedCheckRay = 0.1f;
     private const float ceilingCheckRadius = 0.1f;
     private const float wallCheckRay = 0.2f;
     private const float coyoteTime = 0.1f;
+    private const float knockbackTime = 0.5f;
 
+    private float hurtTime;
     private float currentMoveSpeed;
     private Rigidbody2D rigidBody2D;
     private Vector2 velocityVector;
+    private FlatGroundChecker flatGroundChecker;
+    private WallChecker wallChecker;
+    private Animator animator;
+    private PlayerMovement playerMovement;
+    private PlayerHealth playerHealth;
 
 
     private void Awake()
     {
         rigidBody2D = GetComponent<Rigidbody2D>();
+        wallChecker = GetComponent<WallChecker>();
+        flatGroundChecker = GetComponent<FlatGroundChecker>();
+        animator = GetComponent<Animator>();
+        playerMovement = GetComponent<PlayerMovement>();
+        playerHealth = GetComponent<PlayerHealth>();
         velocityVector = new Vector2();
-
-        if (onLandEvent == null)
-        {
-            onLandEvent = new UnityEvent();
-        }
-
-        if (onWallSlideEvent == null)
-        {
-            onWallSlideEvent = new BoolEvent();
-        }
         currentMoveSpeed = moveSpeed;
         currentCoyoteTime = coyoteTime;
+        currentKnockbackTime = knockbackTime;
+        hurtTime = 0f;
     }
 
     private void FixedUpdate()
     {
+        flatGroundChecker.CalculateRays();
         IsGrounded();
         wallChecker.CalculateRays(facingLeft);
 
         isOnSlope = flatGroundChecker.IsOnSlope();
         slopeDownAngle = flatGroundChecker.GetSlopeAngle();
 
+        animator.SetBool("isGrounded", isGrounded);
+        animator.SetFloat("Hurt", hurtTime);
+        animator.speed = 0.5f;
+        Knockback();
     }
 
     private void IsGrounded()
     {
-        if(flatGroundChecker.CheckIfGrounded())
+        if(flatGroundChecker.IsGrounded())
         {
             isGrounded = true;
             usedDoubleJump = false;
@@ -195,6 +187,8 @@ public class PlayerController: MonoBehaviour
             rigidBody2D.sharedMaterial = noFriction;
         }
 
+        animator.SetFloat("Speed", Mathf.Abs(move));
+
     }
 
     public void Jump(bool jump, bool keyHeld)
@@ -204,7 +198,7 @@ public class PlayerController: MonoBehaviour
             isJumping = true;
             isGrounded = false;
             rigidBody2D.velocity = new Vector2(rigidBody2D.velocity.x, 0);
-            rigidBody2D.AddForce(new Vector2(0f, initialJumpForce), ForceMode2D.Impulse);
+            rigidBody2D.AddForce(transform.up * initialJumpForce, ForceMode2D.Impulse);
         }
 
         if (isJumping && keyHeld && rigidBody2D.velocity.y > 0)
@@ -216,6 +210,7 @@ public class PlayerController: MonoBehaviour
         {
             rigidBody2D.velocity = new Vector2(rigidBody2D.velocity.x, 0);
         }
+        animator.SetFloat("VerticalSpeed", rigidBody2D.velocity.y);
     }
 
     public void Flip()
@@ -232,7 +227,35 @@ public class PlayerController: MonoBehaviour
         
         if(damageSource)
         {
-            GetComponent<PlayerHealth>().TakeDamage(damageSource.damageDealt, damageSource.iFramesGiven);
+            playerHealth.TakeDamage(damageSource.damageDealt, damageSource.iFramesGiven);
+            hurtTime = 0.5f;
+            currentKnockbackTime = knockbackTime;
+            knockbackStrength = damageSource.knockbackStrength;
+            playerMovement.SetInputEnabled(false);
+        }
+    }
+
+    private void Knockback()
+    {
+        if (hurtTime > 0)
+        {
+            hurtTime -= Time.fixedDeltaTime;
+        }
+        if (currentKnockbackTime > 0)
+        {
+            isGettingKnockedBack = true;
+            currentKnockbackTime -= Time.fixedDeltaTime;
+        }
+        else
+        {
+            isGettingKnockedBack = false;
+            playerMovement.SetInputEnabled(true);
+        }
+
+        if (isGettingKnockedBack)
+        {
+            velocityVector.Set(knockbackStrength * currentKnockbackTime, knockbackStrength * currentKnockbackTime);
+            rigidBody2D.AddForce(velocityVector, ForceMode2D.Impulse);
         }
     }
 }

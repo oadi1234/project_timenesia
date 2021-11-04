@@ -53,7 +53,11 @@ public class PlayerHealth : MonoBehaviour
         if (this.iFrame <= 0)
         {
             currentHealth -= damage;
-            if (currentHealth < 0) currentHealth = 0;
+            if (currentHealth <= 0)
+            {
+                currentHealth = 0;
+                Destroy(gameObject);
+            }
             healthBar.SetHealth(currentHealth);
             this.iFrame = iFrame;
         }

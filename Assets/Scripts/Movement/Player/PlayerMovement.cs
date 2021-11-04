@@ -7,40 +7,46 @@ public class PlayerMovement : MonoBehaviour
     public PlayerController playerController;
 
     float xInput = 0f;
+    bool isInputEnabled = true;
     bool jumpPressed = false;
     bool keyHeld = false;
-    float maximumPressTime = 0.25f;
-    float currentPressTime = 0f;
+    //float maximumPressTime = 0.25f;
+    //float currentPressTime = 0f;
 
     // Update is called once per frame
     void Update()
     {
-        xInput = Input.GetAxisRaw("Horizontal");
-        if (Input.GetButtonDown("Jump"))
-        {
-            jumpPressed = true;
-            if(currentPressTime < maximumPressTime)
+            xInput = Input.GetAxisRaw("Horizontal");
+            if (Input.GetButtonDown("Jump"))
             {
+                jumpPressed = true;
                 keyHeld = true;
             }
-            else
+            else if (Input.GetButtonUp("Jump"))
             {
                 keyHeld = false;
             }
-            currentPressTime += Time.deltaTime;
-        }
-        else if (Input.GetButtonUp("Jump"))
-        {
-            keyHeld = false;
-        }
+    }
 
+    public void SetInputEnabled(bool enable)
+    {
+        isInputEnabled = enable;
     }
 
     private void FixedUpdate()
     {
-        playerController.Move(xInput * Time.fixedDeltaTime);
-        playerController.Jump(jumpPressed, keyHeld);
+        if (isInputEnabled)
+        {
+            playerController.Move(xInput * Time.fixedDeltaTime);
+            playerController.Jump(jumpPressed, keyHeld);
 
-        jumpPressed = false;
+            jumpPressed = false;
+        }
+        else
+        {
+            xInput = 0;
+            keyHeld = false;
+            jumpPressed = false;
+        }
     }
 }

@@ -6,10 +6,10 @@ public class WallChecker : MonoBehaviour
     private LayerMask whatIsGround;
 
     [SerializeField]
-    private BoxCollider2D boxCollider;
+    private float wallCheckRay = 0.1f;
 
     [SerializeField]
-    private float wallCheckRay = 0.1f;
+    private float maxAngle = 50f;
 
     private Bounds boxBounds;
     private Vector2 frontTopColliderCorner;
@@ -17,39 +17,31 @@ public class WallChecker : MonoBehaviour
     private RaycastHit2D hitFrontTop;
     private RaycastHit2D hitFrontBottom;
     private float coordinateX;
+    private BoxCollider2D boxCollider;
 
     public void CalculateRays(bool isFacingLeft)
     {
+        boxCollider = GetComponent<BoxCollider2D>();
         boxBounds = boxCollider.bounds;
         Vector2 rayDirection;
         if (isFacingLeft)
         {
             coordinateX = boxBounds.center.x - boxBounds.extents.x;
-            rayDirection = Vector2.left;
+            rayDirection = -GetComponentInParent<Transform>().right;
         }
         else
         {
             coordinateX = boxBounds.center.x + boxBounds.extents.x;
-            rayDirection = Vector2.right;
+            rayDirection = GetComponentInParent<Transform>().right;
         }
-
         frontTopColliderCorner.Set(coordinateX, boxBounds.center.y + boxBounds.extents.y);
         frontBottomColliderCorner.Set(coordinateX, boxBounds.center.y - boxBounds.extents.y);
         hitFrontTop = Physics2D.Raycast(frontTopColliderCorner, rayDirection, wallCheckRay, whatIsGround);
         hitFrontBottom = Physics2D.Raycast(frontBottomColliderCorner, rayDirection, wallCheckRay, whatIsGround);
-        Debug.DrawRay(hitFrontBottom.point, hitFrontBottom.normal, Color.blue);
-        Debug.DrawRay(hitFrontTop.point, hitFrontTop.normal, Color.red);
     }
-    public bool IsAgainstStraightWall()
+    public bool IsAgainstUnwalkableSurface()
     {
-        if (hitFrontBottom && !hitFrontTop)
-        {
-            if (IsNextToSlope())
-            {
-                return false;
-            }
-        }
-        return hitFrontTop || hitFrontBottom;
+        return  !CanWalkUpTheSurface() && (hitFrontTop || hitFrontBottom);
     }
 
     public bool IsAgainstWallOrSlope()
@@ -57,9 +49,8 @@ public class WallChecker : MonoBehaviour
         return hitFrontTop || hitFrontBottom;
     }
 
-    private bool IsNextToSlope()
+    public bool CanWalkUpTheSurface()
     {
-        Debug.Log(Vector2.Angle(hitFrontBottom.normal, Vector2.up));
-        return Vector2.Angle(hitFrontBottom.normal, Vector2.up) != 0f;
+        return Vector2.Angle(hitFrontBottom.normal, Vector2.up) < maxAngle;
     }
 }
