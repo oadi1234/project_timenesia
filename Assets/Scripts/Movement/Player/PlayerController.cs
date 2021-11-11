@@ -116,7 +116,6 @@ public class PlayerController: MonoBehaviour
 
         animator.SetBool("isGrounded", isGrounded);
         animator.SetFloat("Hurt", hurtTime);
-        animator.speed = 0.5f;
         Knockback();
     }
 
