@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour
 {
-    public int maxHealth = 5;
+    public int maxHealth;
     public int currentHealth;
 
     public float iFrame = 0f;
@@ -12,8 +12,17 @@ public class PlayerHealth : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Initialize();
+    }
+    
+    private void Initialize()
+    { 
         currentHealth = maxHealth;
         healthBar.SetMaxHealth(maxHealth);
+    }
+    public void Restart()
+    {
+        Initialize();
     }
 
     // Update is called once per frame
@@ -56,7 +65,7 @@ public class PlayerHealth : MonoBehaviour
             if (currentHealth <= 0)
             {
                 currentHealth = 0;
-                Destroy(gameObject);
+                //Destroy(gameObject);
             }
             healthBar.SetHealth(currentHealth);
             this.iFrame = iFrame;
