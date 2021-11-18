@@ -102,7 +102,7 @@ public class HealthBar : MonoBehaviour
         {
             trans.anchoredPosition = new Vector3(positionX + (i * 20 * scale), positionY - (10 * scale), -10);
         }
-        trans.sizeDelta = new Vector2(28, 28);
+        trans.sizeDelta = new Vector2(42, 42);
 
         Image image = imageObject.AddComponent<Image>();
         image.sprite = fullBead.sprite;
