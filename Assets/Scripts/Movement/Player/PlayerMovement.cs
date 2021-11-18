@@ -33,6 +33,8 @@ public class PlayerMovement : MonoBehaviour
         isInputEnabled = enable;
     }
 
+    public bool IsInputEnabled => isInputEnabled;
+
     private void FixedUpdate()
     {
         if (isInputEnabled)

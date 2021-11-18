@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -119,6 +120,19 @@ public class PlayerController: MonoBehaviour
         Knockback();
     }
 
+    private void Initialize()
+    {
+        ResetPosition();
+    }
+    private void Restart()
+    {
+        playerMovement.SetInputEnabled(false);
+        playerHealth.Restart();
+        Initialize();
+        StartCoroutine(Waiter(5f));
+        playerMovement.SetInputEnabled(true);
+    }
+
     private void IsGrounded()
     {
         if(flatGroundChecker.IsGrounded())
@@ -227,13 +241,31 @@ public class PlayerController: MonoBehaviour
         if(damageSource)
         {
             playerHealth.TakeDamage(damageSource.damageDealt, damageSource.iFramesGiven);
-            hurtTime = 0.5f;
-            currentKnockbackTime = knockbackTime;
-            knockbackStrength = damageSource.knockbackStrength;
-            playerMovement.SetInputEnabled(false);
+            if (playerHealth.currentHealth > 0)
+            {
+                hurtTime = 0.5f;
+                currentKnockbackTime = knockbackTime;
+                knockbackStrength = damageSource.knockbackStrength;
+                playerMovement.SetInputEnabled(false);
+            }
+            else
+            {
+                Restart();
+            }
         }
     }
 
+    private IEnumerator Waiter(float seconds)
+    {
+        Debug.Log("I WAIT: " + playerMovement.IsInputEnabled);
+        yield return new WaitForSecondsRealtime(seconds);
+        Debug.Log("I HAVE WAITED: " + playerMovement.IsInputEnabled);
+    }
+    private void ResetPosition()
+    {
+        velocityVector = new Vector2();
+        gameObject.transform.position = new Vector3(19.5f, 1f, 0);
+    }
     private void Knockback()
     {
         if (hurtTime > 0)
