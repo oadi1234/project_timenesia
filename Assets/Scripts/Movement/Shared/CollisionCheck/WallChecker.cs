@@ -66,8 +66,6 @@ public class WallChecker : MonoBehaviour
         {
             Debug.DrawRay(new Vector2(leftPositionX, centerPositionY), Vector2.left * distance, Color.green);
             Debug.DrawRay(new Vector2(rightPositionX, centerPositionY), Vector2.right * distance, Color.red);
-            //Debug.Log("Angle: " + Vector2.Angle(rightHit.normal, Vector2.up));
-            // Debug.LogFormat("Rx {0}:{1}; Ty {2}:{3}; Lx {4}:{5}; Bx {6}:{7}", rightPositionX, transform.position.x, topPositionY, transform.position.y, leftPositionX, 0, bottomPositionY, 0);
 
             touchingWall = false;
             touchingWallLeft = false;
