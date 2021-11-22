@@ -276,9 +276,6 @@ public class PlayerController: MonoBehaviour
 
     public void Flip()
     {
-        facingLeft = !facingLeft;
-        Vector3 scale = transform.localScale;
-        scale.x *= -1;
         if (flipCooldown <= 0)
         {
             facingLeft = !facingLeft;
