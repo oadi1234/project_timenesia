@@ -79,6 +79,7 @@ public class PlayerController: MonoBehaviour
     private float currentCoyoteTime;
     private float currentKnockbackTime;
     private float knockbackStrength;
+    private float flipCooldown;
 
     private const float groundedCheckRay = 0.1f;
     private const float ceilingCheckRadius = 0.1f;
@@ -125,6 +126,10 @@ public class PlayerController: MonoBehaviour
         animator.SetBool("isGrounded", isGrounded);
         animator.SetFloat("Hurt", hurtTime);
         Knockback();
+        if(flipCooldown>0)
+        {
+            flipCooldown -= Time.fixedDeltaTime;
+        }
     }
 
     private void Initialize()
@@ -249,7 +254,10 @@ public class PlayerController: MonoBehaviour
     private void CheckFlipWhenWallJump()
     {
         if ((facingLeft && wallChecker.IsLeftTouching()) || (!facingLeft && wallChecker.IsRightTouching()))
+        {
             Flip();
+            flipCooldown = 0.2f;
+        }
     }
 
     public void Jump(bool jump, bool keyHeld)
@@ -301,10 +309,13 @@ public class PlayerController: MonoBehaviour
 
     public void Flip()
     {
-        facingLeft = !facingLeft;
-        Vector3 scale = transform.localScale;
-        scale.x *= -1;
-        transform.localScale = scale;
+        if (flipCooldown <= 0)
+        {
+            facingLeft = !facingLeft;
+            Vector3 scale = transform.localScale;
+            scale.x *= -1;
+            transform.localScale = scale;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collider)
