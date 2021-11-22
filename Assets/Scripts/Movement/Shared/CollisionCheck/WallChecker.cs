@@ -69,7 +69,7 @@ public class WallChecker : MonoBehaviour
 
             touchingWall = false;
             touchingWallLeft = false;
-            if (leftHit.collider != null)
+            if (leftHit.collider != null && isFacingLeft)
             {
                 if (leftHit.collider.tag == "Walls" && Mathf.Abs(Vector2.Angle(leftHit.normal, Vector2.up) - 90) < wallAngleThreshold )
                 {
@@ -77,7 +77,7 @@ public class WallChecker : MonoBehaviour
                     touchingWallLeft = true;
                 }
             }
-            if (rightHit.collider != null)
+            else if (rightHit.collider != null && !isFacingLeft)
             {
                 if (rightHit.collider.tag == "Walls" && Mathf.Abs(Vector2.Angle(rightHit.normal, Vector2.up) - 90) < wallAngleThreshold)
                 {
