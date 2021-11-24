@@ -108,8 +108,8 @@ public class FlatGroundChecker : MonoBehaviour
     }
     private bool HorizontalSlopeCheck()
     {
-        RaycastHit2D hitBottomLeft = Physics2D.Raycast(groundCheckMarker.position, groundCheckMarker.transform.right, wallCheckRay, whatIsGround);
-        RaycastHit2D hitBottomRight = Physics2D.Raycast(groundCheckMarker.position, -groundCheckMarker.transform.right, wallCheckRay, whatIsGround);
+        RaycastHit2D hitBottomLeft = Physics2D.Raycast(groundCheckMarker.position + new Vector3(0, 0.1f, 0), groundCheckMarker.transform.right, wallCheckRay, whatIsGround);
+        RaycastHit2D hitBottomRight = Physics2D.Raycast(groundCheckMarker.position + new Vector3(0, 0.1f, 0), -groundCheckMarker.transform.right, wallCheckRay, whatIsGround);
 
         if (hitBottomRight)
         {

@@ -39,8 +39,8 @@ public class PlayerMovement : MonoBehaviour
     {
         if (isInputEnabled)
         {
-            playerController.Move(xInput * Time.fixedDeltaTime);
             playerController.Jump(jumpPressed, keyHeld);
+            playerController.Move(xInput * Time.fixedDeltaTime);
 
             jumpPressed = false;
         }
