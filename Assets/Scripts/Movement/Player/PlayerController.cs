@@ -169,8 +169,8 @@ public class PlayerController: MonoBehaviour
     {
         if (!isGrounded)
         {
-            if (isWallSliding)
-                velocityVector.Set(move * currentMoveSpeed, -3f);
+            if (isWallSliding && rigidBody2D.velocity.y < 0)
+                velocityVector.Set(move * currentMoveSpeed, -6f);
             //    //else /*if (afterWallJumpForceFinished)*/
             else if (afterWallJumpForceFinished)
                 velocityVector.Set(move * currentMoveSpeed, rigidBody2D.velocity.y);
@@ -230,6 +230,7 @@ public class PlayerController: MonoBehaviour
     {
         if (jump && !isGrounded && _isWallTouching)
         {
+            flipCooldown = 0f;
             rigidBody2D.velocity = new Vector2(0, 0);
             isJumping = true;
             isWallSliding = false;
