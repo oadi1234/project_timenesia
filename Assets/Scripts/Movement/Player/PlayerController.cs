@@ -16,6 +16,9 @@ public class PlayerController: MonoBehaviour
     private float _doubleJumpForce = 3f;
 
     [SerializeField]
+    private float _wallJumpForce = 5f;
+
+    [SerializeField]
     private float maxFallingSpeed = 175f;
 
     [Range(0f, 200f)]
@@ -26,9 +29,9 @@ public class PlayerController: MonoBehaviour
     [SerializeField] 
     private float airControl = 0.5f;  //might make it 1 at default if it proves to be a poorly feeling design choice. Could leave it for fun for future.
 
-    [Range(0, 0.8f)]
+    [Range(-8f, 0f)]
     [SerializeField]
-    private float slideSpeed = 0.8f;
+    private float slideSpeed = -4.5f;
 
     [Range(0, 0.3f)]
     [SerializeField]
@@ -170,7 +173,7 @@ public class PlayerController: MonoBehaviour
         if (!isGrounded)
         {
             if (isWallSliding && rigidBody2D.velocity.y < 0)
-                velocityVector.Set(move * currentMoveSpeed, -6f);
+                velocityVector.Set(move * currentMoveSpeed, slideSpeed);
             //    //else /*if (afterWallJumpForceFinished)*/
             else if (afterWallJumpForceFinished)
                 velocityVector.Set(move * currentMoveSpeed, rigidBody2D.velocity.y);
@@ -235,7 +238,7 @@ public class PlayerController: MonoBehaviour
             isJumping = true;
             isWallSliding = false;
             jumpTime = 0f;
-            rigidBody2D.AddForce((transform.up + (wallChecker.IsLeftTouching() ? transform.right/1.2f : -transform.right/1.2f)) * _initialJumpForce, ForceMode2D.Impulse);
+            rigidBody2D.AddForce((transform.up + (wallChecker.IsLeftTouching() ? transform.right/1.2f : -transform.right/1.2f)) * _wallJumpForce, ForceMode2D.Impulse);
             CheckFlipWhenWallJump();
             afterWallJumpForceFinished = false; 
             currentMoveSpeed = moveSpeed;
