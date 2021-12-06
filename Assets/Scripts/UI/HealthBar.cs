@@ -50,9 +50,9 @@ public class HealthBar : MonoBehaviour
             {
                 renderedImages[i].sprite = fullBead.sprite;
             }
-            currentHealth = health;
+            currentHealth = maxHealth;
         }
-        else if (health < maxHealth)
+        else
         {
             for (int i = maxHealth -1; i >= health; i--)
             {
@@ -93,7 +93,7 @@ public class HealthBar : MonoBehaviour
         trans.transform.SetParent(canvas.transform);
         trans.localScale = Vector2.one * scale;
         float positionX = -(canvasWidth / 2) + 40f;
-        float positionY = (canvasHeight / 2) - 40f;
+        float positionY = (canvasHeight / 2) - 20f;
         if (i % 2 == 0)
         {
             trans.anchoredPosition = new Vector3(positionX + (i * 20 * scale), positionY, -10);
@@ -102,7 +102,7 @@ public class HealthBar : MonoBehaviour
         {
             trans.anchoredPosition = new Vector3(positionX + (i * 20 * scale), positionY - (10 * scale), -10);
         }
-        trans.sizeDelta = new Vector2(28, 28);
+        trans.sizeDelta = new Vector2(42, 42);
 
         Image image = imageObject.AddComponent<Image>();
         image.sprite = fullBead.sprite;
