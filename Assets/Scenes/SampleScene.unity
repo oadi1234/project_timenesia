@@ -7997,7 +7997,7 @@ MonoBehaviour:
   _maxFallingSpeed: 175
   _wallJumpForce: 50
   _airControl: 1
-  _slideSpeed: 0.8
+  _slideSpeed: -4.5
   _crouchSpeed: 0.3
   _glideSpeed: 5
   _spatialDashCooldown: 99
