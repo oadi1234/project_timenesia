@@ -34,9 +34,9 @@ public class PlayerController: MonoBehaviour
     [SerializeField]
     private float _crouchSpeed = 0.3f;
 
-    [Range(0, 1f)]
+    [Range(0, 10f)]
     [SerializeField]
-    private float _glideSpeed = 0f;
+    private float _glideSpeed = 5f;
 
     [SerializeField]
     private int _spatialDashCooldown = 99;
@@ -170,10 +170,11 @@ public class PlayerController: MonoBehaviour
         if (!_isGrounded)
         {
             if (_isWallSliding)
-                _velocityVector.Set(move * _currentMoveSpeed, -3f);
-            //    //else /*if (afterWallJumpForceFinished)*/
-            else if (_afterWallJumpForceFinished)
+                _velocityVector.Set(move * _currentMoveSpeed, -_glideSpeed);
+
+            else if (_afterWallJumpForceFinished)   //if jumped of the wall recently
                 _velocityVector.Set(move * _currentMoveSpeed, _rigidBody2D.velocity.y);
+
             else
                 _velocityVector.Set(_rigidBody2D.velocity.x, _rigidBody2D.velocity.y);
         }
@@ -189,7 +190,8 @@ public class PlayerController: MonoBehaviour
         }
 
         _rigidBody2D.velocity = _velocityVector;
-        if (/*afterWallJumpForceFinished*/true)
+
+        if (/*_afterWallJumpForceFinished*/true) //no idea why _afterWallJumpForceFinished was here, currently leaving this as it is, maybe will delete if later
         {
             float speed = Vector2.SqrMagnitude(_rigidBody2D.velocity);
             if (move > 0 && _facingLeft)
@@ -202,6 +204,7 @@ public class PlayerController: MonoBehaviour
                 Flip();
                 _currentMoveSpeed *= _airControl;
             }
+
             //TODO: change to speed in y axis, not speed of whole rigidBody
             if (speed > _maxFallingSpeed)
             {
@@ -222,55 +225,45 @@ public class PlayerController: MonoBehaviour
         }
 
         _animator.SetFloat("Speed", Mathf.Abs(move));
-
-        //Debug.Log("Velo: " + rigidBody2D.velocity);
-
     }
     public void Jump(bool jump, bool keyHeld)
     {
-        if (jump && !_isGrounded && _isWallTouching)
+        if (jump && !_isGrounded && _isWallTouching)    //of the wall jumping
         {
-            _rigidBody2D.velocity = new Vector2(0, 0);
-            _isJumping = true;
-            _isWallSliding = false;
-            _jumpTime = 0f;
+            SetVariablesWhenWallJumping();
             _rigidBody2D.AddForce((transform.up + (_wallChecker.IsLeftTouching() ? transform.right/1.2f : -transform.right/1.2f)) * _initialJumpForce, ForceMode2D.Impulse);
             CheckFlipWhenWallJump();
-            _afterWallJumpForceFinished = false; 
-            _currentMoveSpeed = _moveSpeed;
-
             StartCoroutine(ReverseAfterWallJumpAfterSeconds(0.15f));
         }
-
-        if (jump && _isGrounded)
+        else if (jump && _isGrounded)    //classic jumping from the ground
         {
             _isJumping = true;
             _isGrounded = false;
             _rigidBody2D.velocity = new Vector2(_rigidBody2D.velocity.x, 0);
+
             _rigidBody2D.AddForce(transform.up * _initialJumpForce, ForceMode2D.Impulse);
         }
+        else if (_isJumping && keyHeld && _rigidBody2D.velocity.y > 0)    //longer jumping when holding key; velo > 0 to ommit falling
+        {
+            _rigidBody2D.AddForce(new Vector2(0f, _continousJumpForce * (1 - _jumpTime * 4)), ForceMode2D.Impulse);
+            _jumpTime += Time.fixedDeltaTime;
+        }
+        else if (_isJumping && _afterWallJumpForceFinished && !keyHeld && _rigidBody2D.velocity.y > 0)
+        {
+            _rigidBody2D.velocity = new Vector2(_rigidBody2D.velocity.x, 0);
+        }
+        else if (_isJumping && _rigidBody2D.velocity.y <= 0) //falling
+        {
+            _jumpTime = -1;
+        }
 
+        //no idea what it is
         //if (ofWallJumpTimeLeft > 0f)
         //{
         //    rigidBody2D.AddForce(new Vector2(_continousJumpForce * (ofWallJumpTimeLeft * 4), 0), ForceMode2D.Impulse);
         //    ofWallJumpTimeLeft -= Time.fixedDeltaTime;
         //    Debug.Log("JumpTimeLeft: " + ofWallJumpTimeLeft);
         //}
-
-        if (_isJumping && keyHeld && _rigidBody2D.velocity.y > 0)
-        {
-            _rigidBody2D.AddForce(new Vector2(0f, _continousJumpForce * (1 - _jumpTime * 4)), ForceMode2D.Impulse);
-            _jumpTime += Time.fixedDeltaTime;
-            //Debug.Log("JumpTimeLeft: " + jumpTime);
-        }
-        if (_isJumping && _afterWallJumpForceFinished && !keyHeld && _rigidBody2D.velocity.y > 0)
-        {
-            _rigidBody2D.velocity = new Vector2(_rigidBody2D.velocity.x, 0);
-        }
-        if (_isJumping && _rigidBody2D.velocity.y <= 0)
-        {
-            _jumpTime = -1;
-        }
         _animator.SetFloat("VerticalSpeed", _rigidBody2D.velocity.y);
     }
     public void Flip()
@@ -288,23 +281,6 @@ public class PlayerController: MonoBehaviour
         _velocityVector = new Vector2();
         gameObject.transform.position = position;
     }
-    #endregion Movement
-
-    #region Waiters
-    private IEnumerator BlockInputForSeconds(float seconds)
-    {
-        _playerMovement.SetInputEnabled(false);
-        yield return new WaitForSecondsRealtime(seconds);
-        _playerMovement.SetInputEnabled(true);
-    }
-
-    private IEnumerator ReverseAfterWallJumpAfterSeconds(float seconds)
-    {
-        yield return new WaitForSecondsRealtime(seconds);
-        _afterWallJumpForceFinished = true;
-    }
-    #endregion Waiters
-
     private void Knockback()
     {
         if (_hurtTime > 0)
@@ -328,6 +304,23 @@ public class PlayerController: MonoBehaviour
             _rigidBody2D.AddForce(_velocityVector, ForceMode2D.Impulse);
         }
     }
+
+    #endregion Movement
+
+    #region Waiters
+    private IEnumerator BlockInputForSeconds(float seconds)
+    {
+        _playerMovement.SetInputEnabled(false);
+        yield return new WaitForSecondsRealtime(seconds);
+        _playerMovement.SetInputEnabled(true);
+    }
+
+    private IEnumerator ReverseAfterWallJumpAfterSeconds(float seconds)
+    {
+        yield return new WaitForSecondsRealtime(seconds);
+        _afterWallJumpForceFinished = true;
+    }
+    #endregion Waiters
 
     #region Checkers
     private void IsOnSlope()
@@ -412,8 +405,14 @@ public class PlayerController: MonoBehaviour
         //currentMoveSpeed = 0;
         _currentCoyoteTime = _coyoteTime;
     }
-
-
-
+    private void SetVariablesWhenWallJumping()
+    {
+        _rigidBody2D.velocity = new Vector2(0, 0);
+        _isJumping = true;
+        _isWallSliding = false;
+        _jumpTime = 0f;
+        _afterWallJumpForceFinished = false;
+        _currentMoveSpeed = _moveSpeed;
+    }
     #endregion SETTING-VARIABLES
 }

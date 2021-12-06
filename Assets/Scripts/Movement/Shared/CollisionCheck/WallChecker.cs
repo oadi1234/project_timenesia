@@ -3,43 +3,63 @@ using UnityEngine;
 public class WallChecker : MonoBehaviour
 {
     [SerializeField]
-    private LayerMask whatIsGround;
+    private LayerMask _whatIsGround;
 
     [SerializeField]
-    private float wallCheckRay = 0.1f;
+    private float _wallCheckRay = 0.1f;
 
     [SerializeField]
-    private float maxAngle = 50f;
+    private float _maxAngle = 50f;
 
     [SerializeField]
-    private float wallAngleThreshold = 5f;
+    private float _wallAngleThreshold = 5f;
 
+    private RaycastHit2D _hitFrontTop;
+    private RaycastHit2D _hitFrontBottom;
+    private BoxCollider2D _boxCollider;
     private Bounds boxBounds;
     private Vector2 frontTopColliderCorner;
     private Vector2 frontBottomColliderCorner;
-    private RaycastHit2D hitFrontTop;
-    private RaycastHit2D hitFrontBottom;
     private float coordinateX;
-    private BoxCollider2D boxCollider;
 
+    private RaycastHit2D _leftHit;
+    private RaycastHit2D _rightHit;
     private RaycastHit2D landingHit;
-    private RaycastHit2D leftHit;
-    private RaycastHit2D rightHit;
     private RaycastHit2D topHit;
 
-    float rightPositionX;
-    float topPositionY;
-    float bottomPositionY;
-    float leftPositionX;
-    float centerPositionX;
-    float centerPositionY;
-    bool touchingWall;
-    bool touchingWallLeft;
+    private float _rightPositionX;
+    private float _leftPositionX;
+    private float _centerPositionY;
+    private float centerPositionX;
+    private float topPositionY;
+    private float bottomPositionY;
+
+    private bool _touchingWall;
+    private bool _touchingWallLeft;
+
+    public void Initialize()
+    {
+        _touchingWall = false;
+        _touchingWallLeft = false;
+
+        float correction = 0.01f;
+
+        _boxCollider = GetComponent<BoxCollider2D>();
+
+        _rightPositionX = _boxCollider.bounds.max.x + correction;
+        topPositionY = _boxCollider.bounds.max.y + correction;
+        bottomPositionY = _boxCollider.bounds.min.y - correction;
+        _leftPositionX = _boxCollider.bounds.min.x - correction;
+
+        centerPositionX = _boxCollider.bounds.center.x;
+        _centerPositionY = _boxCollider.bounds.center.y;
+    }
 
     public void CalculateRays(bool isFacingLeft, bool isPlayer = false)
     {
-        //    boxCollider = GetComponent<BoxCollider2D>();
-        //    boxBounds = boxCollider.bounds;
+        #region OldCalculations
+        //    _boxCollider = GetComponent<BoxCollider2D>();
+        //    boxBounds = _boxCollider.bounds;
         //    Vector2 rayDirection;
         //    if (isFacingLeft)
         //    {
@@ -53,94 +73,80 @@ public class WallChecker : MonoBehaviour
         //    }
         //    frontTopColliderCorner.Set(coordinateX, boxBounds.center.y + boxBounds.extents.y);
         //    frontBottomColliderCorner.Set(coordinateX, boxBounds.center.y - boxBounds.extents.y);
-        //    hitFrontTop = Physics2D.Raycast(frontTopColliderCorner, rayDirection, wallCheckRay, whatIsGround);
-        //    hitFrontBottom = Physics2D.Raycast(frontBottomColliderCorner, rayDirection, wallCheckRay, whatIsGround);
+        //    _hitFrontTop = Physics2D.Raycast(frontTopColliderCorner, rayDirection, _wallCheckRay, _whatIsGround);
+        //    _hitFrontBottom = Physics2D.Raycast(frontBottomColliderCorner, rayDirection, _wallCheckRay, _whatIsGround);
         //}
+        #endregion OldCalculations
 
         Initialize();
         float distance = 0.3f;
 
         //landingHit = Physics2D.Raycast(new Vector2(this.transform.position.x, bottomPositionY + transform.position.y), new Vector2(transform.position.x, 0.2f));
+        //topHit = Physics2D.Raycast(new Vector2(this.transform.position.x, topPositionY + transform.position.y), new Vector2(transform.position.x, 0.2f), 0.2f);
 
         if (isPlayer)
         {
             if (isFacingLeft)
             {
-                leftHit = Physics2D.Raycast(new Vector2(leftPositionX, centerPositionY), Vector2.left, distance);
+                _leftHit = Physics2D.Raycast(new Vector2(_leftPositionX, _centerPositionY), Vector2.left, distance);
 
-                if (leftHit.collider != null)
+                if (_leftHit.collider != null)
                 {
-                    if (leftHit.collider.tag == "Walls" && Mathf.Abs(Vector2.Angle(leftHit.normal, Vector2.up) - 90) < wallAngleThreshold)
+                    if (_leftHit.collider.tag == "Walls" && Mathf.Abs(Vector2.Angle(_leftHit.normal, Vector2.up) - 90) < _wallAngleThreshold)
                     {
-                        touchingWall = true;
-                        touchingWallLeft = true;
+                        _touchingWall = true;
+                        _touchingWallLeft = true;
                     }
                 }
             }
             else
             {
-                rightHit = Physics2D.Raycast(new Vector2(rightPositionX, centerPositionY), Vector2.right, distance);
+                _rightHit = Physics2D.Raycast(new Vector2(_rightPositionX, _centerPositionY), Vector2.right, distance);
 
-                if (rightHit.collider != null/* && !isFacingLeft*/)
+                if (_rightHit.collider != null/* && !isFacingLeft*/)
                 {
-                    if (rightHit.collider.tag == "Walls" && Mathf.Abs(Vector2.Angle(rightHit.normal, Vector2.up) - 90) < wallAngleThreshold)
+                    if (_rightHit.collider.tag == "Walls" && Mathf.Abs(Vector2.Angle(_rightHit.normal, Vector2.up) - 90) < _wallAngleThreshold)
                     {
-                        touchingWall = true;
+                        _touchingWall = true;
                     }
                 }
             }
         }
-        //topHit = Physics2D.Raycast(new Vector2(this.transform.position.x, topPositionY + transform.position.y), new Vector2(transform.position.x, 0.2f), 0.2f);
-
+        
         if (isPlayer)
         {
-            Debug.DrawRay(new Vector2(leftPositionX, centerPositionY), Vector2.left * distance, Color.green);
-            Debug.DrawRay(new Vector2(rightPositionX, centerPositionY), Vector2.right * distance, Color.red);
+            Debug.DrawRay(new Vector2(_leftPositionX, _centerPositionY), Vector2.left * distance, Color.green);
+            Debug.DrawRay(new Vector2(_rightPositionX, _centerPositionY), Vector2.right * distance, Color.red);
         }
     }
 
+    #region Checkers
     public bool IsTouchingWall()
     {
-        return touchingWall;
+        return _touchingWall;
     }
     public bool IsLeftTouching()
     {
-        return touchingWallLeft;
+        return _touchingWallLeft;
     }
     public bool IsRightTouching()
     {
-        return !touchingWallLeft;
+        return !_touchingWallLeft;
     }
 
-    public void Initialize()
-    {
-        touchingWall = false;
-        touchingWallLeft = false;
-
-        float correction = 0.01f;
-
-        boxCollider = GetComponent<BoxCollider2D>();
-
-        rightPositionX = boxCollider.bounds.max.x + correction;
-        topPositionY = boxCollider.bounds.max.y + correction;
-        bottomPositionY = boxCollider.bounds.min.y - correction;
-        leftPositionX = boxCollider.bounds.min.x - correction;
-
-        centerPositionX = boxCollider.bounds.center.x;
-        centerPositionY = boxCollider.bounds.center.y;
-    }
     public bool IsAgainstUnwalkableSurface()
     {
-        return  !CanWalkUpTheSurface() && (hitFrontTop || hitFrontBottom);
+        return  !CanWalkUpTheSurface() && (_hitFrontTop || _hitFrontBottom);
     }
 
     public bool IsAgainstWallOrSlope()
     {
-        return hitFrontTop || hitFrontBottom;
+        return _hitFrontTop || _hitFrontBottom;
     }
 
     public bool CanWalkUpTheSurface()
     {
-        return Vector2.Angle(hitFrontBottom.normal, Vector2.up) < maxAngle;
+        return Vector2.Angle(_hitFrontBottom.normal, Vector2.up) < _maxAngle;
     }
+    #endregion Checkers
 }

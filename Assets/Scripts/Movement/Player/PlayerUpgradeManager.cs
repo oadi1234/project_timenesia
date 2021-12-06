@@ -24,5 +24,9 @@ public class PlayerUpgradeManager : MonoBehaviour
 
     //environmental protection
 
-    //
+    //[T]short teleport?
+
+    //[T] some crushing (walls)
+
+    //[T] digging? (diggy diggy hole)
 }
