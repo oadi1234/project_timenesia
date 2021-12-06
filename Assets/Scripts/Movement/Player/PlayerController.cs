@@ -26,9 +26,9 @@ public class PlayerController: MonoBehaviour
     [SerializeField] 
     private float _airControl = 1f;  //might make it 1 at default if it proves to be a poorly feeling design choice. Could leave it for fun for future.
 
-    [Range(0, 0.8f)]
+    [Range(-8f, 0f)]
     [SerializeField]
-    private float _slideSpeed = 0.8f;
+    private float _slideSpeed = -4.5f;
 
     [Range(0, 0.3f)]
     [SerializeField]
@@ -170,7 +170,7 @@ public class PlayerController: MonoBehaviour
         if (!_isGrounded)
         {
             if (_isWallSliding)
-                _velocityVector.Set(move * _currentMoveSpeed, -_glideSpeed);
+                _velocityVector.Set(move * _currentMoveSpeed, _slideSpeed);
 
             else if (_afterWallJumpForceFinished)   //if jumped of the wall recently
                 _velocityVector.Set(move * _currentMoveSpeed, _rigidBody2D.velocity.y);
