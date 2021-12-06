@@ -56,35 +56,46 @@ public class WallChecker : MonoBehaviour
         //    hitFrontTop = Physics2D.Raycast(frontTopColliderCorner, rayDirection, wallCheckRay, whatIsGround);
         //    hitFrontBottom = Physics2D.Raycast(frontBottomColliderCorner, rayDirection, wallCheckRay, whatIsGround);
         //}
+
         Initialize();
-        float distance = 0.3f; 
+        float distance = 0.3f;
+
         //landingHit = Physics2D.Raycast(new Vector2(this.transform.position.x, bottomPositionY + transform.position.y), new Vector2(transform.position.x, 0.2f));
-        leftHit = Physics2D.Raycast(new Vector2(leftPositionX, centerPositionY), Vector2.left, distance);
-        rightHit = Physics2D.Raycast(new Vector2(rightPositionX, centerPositionY), Vector2.right, distance);
+
+        if (isPlayer)
+        {
+            if (isFacingLeft)
+            {
+                leftHit = Physics2D.Raycast(new Vector2(leftPositionX, centerPositionY), Vector2.left, distance);
+
+                if (leftHit.collider != null)
+                {
+                    if (leftHit.collider.tag == "Walls" && Mathf.Abs(Vector2.Angle(leftHit.normal, Vector2.up) - 90) < wallAngleThreshold)
+                    {
+                        touchingWall = true;
+                        touchingWallLeft = true;
+                    }
+                }
+            }
+            else
+            {
+                rightHit = Physics2D.Raycast(new Vector2(rightPositionX, centerPositionY), Vector2.right, distance);
+
+                if (rightHit.collider != null/* && !isFacingLeft*/)
+                {
+                    if (rightHit.collider.tag == "Walls" && Mathf.Abs(Vector2.Angle(rightHit.normal, Vector2.up) - 90) < wallAngleThreshold)
+                    {
+                        touchingWall = true;
+                    }
+                }
+            }
+        }
         //topHit = Physics2D.Raycast(new Vector2(this.transform.position.x, topPositionY + transform.position.y), new Vector2(transform.position.x, 0.2f), 0.2f);
+
         if (isPlayer)
         {
             Debug.DrawRay(new Vector2(leftPositionX, centerPositionY), Vector2.left * distance, Color.green);
             Debug.DrawRay(new Vector2(rightPositionX, centerPositionY), Vector2.right * distance, Color.red);
-
-            touchingWall = false;
-            touchingWallLeft = false;
-            if (leftHit.collider != null/* && isFacingLeft*/)
-            {
-                if (leftHit.collider.tag == "Walls" && Mathf.Abs(Vector2.Angle(leftHit.normal, Vector2.up) - 90) < wallAngleThreshold )
-                {
-                    touchingWall = true;
-                    touchingWallLeft = true;
-                }
-            }
-            else if (rightHit.collider != null/* && !isFacingLeft*/)
-            {
-                if (rightHit.collider.tag == "Walls" && Mathf.Abs(Vector2.Angle(rightHit.normal, Vector2.up) - 90) < wallAngleThreshold)
-                {
-                    touchingWall = true; 
-                }
-            }
-            //Debug.Log(touchingWall);
         }
     }
 
@@ -103,12 +114,18 @@ public class WallChecker : MonoBehaviour
 
     public void Initialize()
     {
+        touchingWall = false;
+        touchingWallLeft = false;
+
         float correction = 0.01f;
+
         boxCollider = GetComponent<BoxCollider2D>();
+
         rightPositionX = boxCollider.bounds.max.x + correction;
         topPositionY = boxCollider.bounds.max.y + correction;
         bottomPositionY = boxCollider.bounds.min.y - correction;
         leftPositionX = boxCollider.bounds.min.x - correction;
+
         centerPositionX = boxCollider.bounds.center.x;
         centerPositionY = boxCollider.bounds.center.y;
     }

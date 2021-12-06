@@ -6,49 +6,48 @@ public class PlayerMovement : MonoBehaviour
 {
     public PlayerController playerController;
 
-    float xInput = 0f;
-    bool isInputEnabled = true;
-    bool jumpPressed = false;
-    bool keyHeld = false;
+    float _xInput = 0f;
+    bool _isInputEnabled = true;
+    bool _jumpPressed = false;
+    bool _keyHeld = false;
     //float maximumPressTime = 0.25f;
     //float currentPressTime = 0f;
+    public bool IsInputEnabled => _isInputEnabled;
 
     // Update is called once per frame
     void Update()
     {
-            xInput = Input.GetAxisRaw("Horizontal");
+            _xInput = Input.GetAxisRaw("Horizontal");
             if (Input.GetButtonDown("Jump"))
             {
-                jumpPressed = true;
-                keyHeld = true;
+                _jumpPressed = true;
+                _keyHeld = true;
             }
             else if (Input.GetButtonUp("Jump"))
             {
-                keyHeld = false;
+                _keyHeld = false;
             }
+    }
+
+    private void FixedUpdate()
+    {
+        if (_isInputEnabled)
+        {
+            playerController.Jump(_jumpPressed, _keyHeld);
+            playerController.Move(_xInput * Time.fixedDeltaTime);
+
+            _jumpPressed = false;
+        }
+        else
+        {
+            _xInput = 0;
+            _keyHeld = false;
+            _jumpPressed = false;
+        }
     }
 
     public void SetInputEnabled(bool enable)
     {
-        isInputEnabled = enable;
-    }
-
-    public bool IsInputEnabled => isInputEnabled;
-
-    private void FixedUpdate()
-    {
-        if (isInputEnabled)
-        {
-            playerController.Jump(jumpPressed, keyHeld);
-            playerController.Move(xInput * Time.fixedDeltaTime);
-
-            jumpPressed = false;
-        }
-        else
-        {
-            xInput = 0;
-            keyHeld = false;
-            jumpPressed = false;
-        }
+        _isInputEnabled = enable;
     }
 }
