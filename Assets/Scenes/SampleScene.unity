@@ -1355,12 +1355,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 127093509b4fd3c48972269817c86364, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  whatIsGround:
+  _whatIsGround:
     serializedVersion: 2
-    m_Bits: 61495
-  wallCheckRay: 0.1
-  maxAngle: 45
-  wallAngleThreshold: 5
+    m_Bits: 0
+  _wallCheckRay: 0.1
+  _maxAngle: 50
+  _wallAngleThreshold: 5
 --- !u!114 &954943649
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1855,12 +1855,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 127093509b4fd3c48972269817c86364, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  whatIsGround:
+  _whatIsGround:
     serializedVersion: 2
-    m_Bits: 61495
-  wallCheckRay: 0.1
-  maxAngle: 45
-  wallAngleThreshold: 5
+    m_Bits: 0
+  _wallCheckRay: 0.1
+  _maxAngle: 50
+  _wallAngleThreshold: 5
 --- !u!114 &1309512378
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7994,17 +7994,17 @@ MonoBehaviour:
   _continousJumpForce: 0.9
   _initialJumpForce: 12
   _doubleJumpForce: 3
-  maxFallingSpeed: 350
-  wallJumpForce: 50
-  airControl: 1
-  slideSpeed: 0.8
-  crouchSpeed: 0.3
-  glideSpeed: 0
-  spatialDashCooldown: 99
-  wallCheckMarker: {fileID: 0}
-  noFriction: {fileID: 6200000, guid: 871b760142bf49947a337fccc571385c, type: 2}
-  allFriction: {fileID: 6200000, guid: 776c18e70f9729a49bd0d5f9c98edb3d, type: 2}
-  moveSpeed: 350
+  _maxFallingSpeed: 175
+  _wallJumpForce: 50
+  _airControl: 1
+  _slideSpeed: 0.8
+  _crouchSpeed: 0.3
+  _glideSpeed: 5
+  _spatialDashCooldown: 99
+  _wallCheckMarker: {fileID: 0}
+  _noFriction: {fileID: 6200000, guid: 871b760142bf49947a337fccc571385c, type: 2}
+  _allFriction: {fileID: 6200000, guid: 776c18e70f9729a49bd0d5f9c98edb3d, type: 2}
+  _moveSpeed: 350
 --- !u!114 &2022993075
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8066,12 +8066,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 127093509b4fd3c48972269817c86364, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  whatIsGround:
+  _whatIsGround:
     serializedVersion: 2
-    m_Bits: 61495
-  wallCheckRay: 0.1
-  maxAngle: 45
-  wallAngleThreshold: 5
+    m_Bits: 0
+  _wallCheckRay: 0.1
+  _maxAngle: 50
+  _wallAngleThreshold: 5
 --- !u!95 &2022993079
 Animator:
   serializedVersion: 3
