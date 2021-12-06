@@ -373,7 +373,7 @@ public class PlayerController: MonoBehaviour
 
     private bool CanWallSlide()
     {
-        return _isWallTouching && _afterWallJumpForceFinished && (_jumpTime <= 0f || _jumpTime > _minJumpTimeBeforeWallSlidingEnabled);
+        return _isWallTouching && _afterWallJumpForceFinished && _rigidBody2D.velocity.y <= 0 && (_jumpTime <= 0f || _jumpTime > _minJumpTimeBeforeWallSlidingEnabled);
     }
 
     private void CheckFlipWhenWallJump()
