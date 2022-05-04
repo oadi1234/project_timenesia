@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -148,6 +149,15 @@ public class EffortBar : MonoBehaviour
 
     }
 
+    internal void CleanManaSources()
+    {
+        for (int i = 0; i < currentMana; i++)
+        {
+            if(currentSpell[i] != EffortElement.Raw)
+                SetElement(EffortElement.Raw, i);
+        }
+    }
+
     private void SetCurrentElementToFalse(Animator animator, int index)
     {
         EffortElement element = currentSpell[index];
@@ -206,6 +216,11 @@ public class EffortBar : MonoBehaviour
         trans.anchoredPosition = new Vector3(positionX/2 - 30 + (i * 26 * scale), positionY, -10);
         trans.sizeDelta = new Vector2(28, 28);
         renderedMana.Add(imageObject);
+    }
+
+    public EffortElement GetEffortElementAt(int index)
+    {
+        return currentSpell[index];
     }
 
 }
