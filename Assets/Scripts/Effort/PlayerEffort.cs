@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +12,8 @@ public class PlayerEffort : MonoBehaviour
     public float regenInterval = 0.5f;
     public int effortPerInterval = 1;
     public EffortBar effortBar;
+    public EffortElement[] castCombination;
+    private int currentCastCombinationIndex;
 
     private float currentTime = 0f;
 
@@ -19,22 +22,109 @@ public class PlayerEffort : MonoBehaviour
         effortBar.Initialize();
         effortBar.SetMaxMana(maxEffort, false);
         effortBar.SetSpellCapacity(spellCapacity);
+        castCombination = new EffortElement[maxEffort];
+        for (int i = 0; i < castCombination.Length; i++)
+        {
+            castCombination[i] = EffortElement.Empty;
+        }
+        currentCastCombinationIndex = 0;
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.H))
+        bool isFocusing = CheckFocusBegin();
+        if (isFocusing)
         {
-            UseEffort(1);
+            FocusCasting();
         }
-        if (Input.GetKeyDown(KeyCode.J))
+        if (Input.GetKeyUp(KeyCode.LeftShift))
         {
-            UseEffort(2);
+            CastSpell();
         }
-        if (Input.GetKeyDown(KeyCode.M))
+
+        else
         {
-            UseEffort(3);
+            if (Input.GetKeyDown(KeyCode.H))
+            {
+                UseEffort(1);
+            }
+            if (Input.GetKeyDown(KeyCode.J))
+            {
+                UseEffort(2);
+            }
+            if (Input.GetKeyDown(KeyCode.M))
+            {
+                UseEffort(3);
+            }
         }
+    }
+
+    private void CastSpell()
+    {
+        int manaCost = CalculateManaCost();
+        UseEffort(manaCost);
+        CleanSourceCombinations();
+        //TODO: clearColors
+    }
+
+    private void CleanSourceCombinations()
+    {
+        for(int i = 0; i < currentCastCombinationIndex; i++)
+        {
+            castCombination[i] = EffortElement.Empty;
+        }
+        currentCastCombinationIndex = 0;
+    }
+
+    private int CalculateManaCost()
+    {
+        //int cost = 0;
+        //foreach(var source in castCombination)
+        //{
+        //    if (source != EffortElement.Empty)
+        //        cost++;
+        //    else
+        //        break;
+        //}
+        //return cost;
+        return currentCastCombinationIndex;
+    }
+
+    private void FocusCasting()
+    {
+        if (currentCastCombinationIndex < maxEffort && effortBar.GetEffortElementAt(currentCastCombinationIndex) == EffortElement.Raw)
+        {
+            if (Input.GetKeyDown(KeyCode.O))
+            {
+                AddNewSourceWhileFocusing(EffortElement.Water);
+            }
+            if (Input.GetKeyDown(KeyCode.P))
+            {
+                AddNewSourceWhileFocusing(EffortElement.Fire);
+            }
+        }
+    }
+
+    private void AddNewSourceWhileFocusing(EffortElement source)
+    {
+        if (currentCastCombinationIndex < castCombination.Length)
+        {
+            castCombination[currentCastCombinationIndex] = source;
+            effortBar.SetElement(source, currentCastCombinationIndex);
+            currentCastCombinationIndex++;
+        }
+    //    int index = 0;
+    //    EffortElement currentSource = castCombination[index];
+    //    while(currentSource != EffortElement.Empty)
+    //    {
+    //        index++;
+    //        currentSource = castCombination[index];
+    //    }
+    }
+
+    private bool CheckFocusBegin()
+    {
+        return Input.GetKey(KeyCode.LeftShift);
     }
 
     // Update is called once per frame
@@ -54,11 +144,12 @@ public class PlayerEffort : MonoBehaviour
     
     public void UseEffort(int cost)
     {
-        if (currentEffort - cost < 0)
+        if (cost >= currentEffort)
             currentEffort = 0;
         else
             currentEffort -= cost;
         effortBar.SetCurrentMana(currentEffort);
+        effortBar.CleanManaSources();
     }
 
     //Freeze mana will sometimes keep rightmost mana points coloured - they cannot be used and
