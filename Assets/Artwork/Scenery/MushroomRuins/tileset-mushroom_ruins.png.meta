@@ -96,6 +96,7 @@ TextureImporter:
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
+  ignoreMasterTextureLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -819,6 +820,31 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
+    nameFileIdTable:
+      tileset-mushroom_ruins_2: -8421477212022976497
+      tileset-mushroom_ruins_13: -1471015102954477276
+      tileset-mushroom_ruins_7: -3167288623290043688
+      tileset-mushroom_ruins_14: 4814987592741604608
+      tileset-mushroom_ruins_4: -28552823756884776
+      tileset-mushroom_ruins_6: 1947027641520693214
+      tileset-mushroom_ruins_12: 1047511043386636849
+      tileset-mushroom_ruins_18: -1574050727312808213
+      tileset-mushroom_ruins_17: -2414106939454387447
+      tileset-mushroom_ruins_20: 3341678890535985824
+      tileset-mushroom_ruins_1: 4441521568392446692
+      tileset-mushroom_ruins_15: 474854170343443371
+      tileset-mushroom_ruins_16: -887801021943726790
+      tileset-mushroom_ruins_8: 3069185452673187710
+      tileset-mushroom_ruins_21: 2824508698099447319
+      tileset-mushroom_ruins_19: 3205390339519847164
+      tileset-mushroom_ruins_5: -5092331608841324579
+      tileset-mushroom_ruins_9: -7789021698148525991
+      tileset-mushroom_ruins_22: -6010715627398849408
+      tileset-mushroom_ruins_23: -5209835140470309936
+      tileset-mushroom_ruins_3: 778693977885150425
+      tileset-mushroom_ruins_10: 8031236689065182610
+      tileset-mushroom_ruins_11: -6379277833500934283
+      tileset-mushroom_ruins_0: 387885601062915557
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
