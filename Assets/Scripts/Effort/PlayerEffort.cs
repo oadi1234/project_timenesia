@@ -1,3 +1,4 @@
+using Assets.Scripts.Movement.Model;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,6 +14,9 @@ public class PlayerEffort : MonoBehaviour
     public int effortPerInterval = 1;
     public EffortBar effortBar;
     public EffortElement[] castCombination;
+    private List<Spell> preparedSpells;
+    private int lastPreparedSpellManaCost = -1;
+
     private int currentCastCombinationIndex;
 
     private float currentTime = 0f;
@@ -28,6 +32,7 @@ public class PlayerEffort : MonoBehaviour
             castCombination[i] = EffortElement.Empty;
         }
         currentCastCombinationIndex = 0;
+        preparedSpells = new List<Spell> { new Spell("Fireball", new List<EffortElement> { EffortElement.Fire, EffortElement.Fire }) };
     }
 
     void Update()
@@ -46,17 +51,33 @@ public class PlayerEffort : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.H))
             {
-                UseEffort(1);
+                CastSpell(0);
             }
             if (Input.GetKeyDown(KeyCode.J))
             {
                 UseEffort(2);
             }
-            if (Input.GetKeyDown(KeyCode.M))
+            if (Input.GetKeyDown(KeyCode.K))
             {
                 UseEffort(3);
             }
+
+            if (Input.GetKeyUp(KeyCode.H))
+            {
+                UseEffort(lastPreparedSpellManaCost);
+            }
         }
+    }
+
+    private void CastSpell(int indexOfSpell)
+    {
+        var spell = preparedSpells[indexOfSpell];
+        for (int i = 0; i < spell.EffortElements.Length; i++)
+        {
+            effortBar.SetElement(spell.EffortElements[i], i);
+        }
+        //TODO - there will be animation cast time, so this should go somewhere here, as it would let us see effort used
+        lastPreparedSpellManaCost = spell.CostMana;
     }
 
     private void CastSpell()
@@ -96,7 +117,7 @@ public class PlayerEffort : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.O))
             {
-                AddNewSourceWhileFocusing(EffortElement.Water);
+                AddNewSourceWhileFocusing(EffortElement.Cold);
             }
             if (Input.GetKeyDown(KeyCode.P))
             {

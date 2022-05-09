@@ -177,14 +177,14 @@ public class EffortBar : MonoBehaviour
             case EffortElement.Fire:
                 animator.SetBool("fire", boolean);
                 break;
-            case EffortElement.Water:
-                animator.SetBool("water", boolean);
+            case EffortElement.Cold:
+                animator.SetBool("cold", boolean);
                 break;
             case EffortElement.Force:
                 animator.SetBool("force", boolean);
                 break;
-            case EffortElement.Air:
-                animator.SetBool("air", boolean);
+            case EffortElement.Life:
+                animator.SetBool("life", boolean);
                 break;
         }
     }
