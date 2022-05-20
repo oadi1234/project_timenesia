@@ -1,3 +1,5 @@
+using Assets.Scripts.Enemies.Attacks;
+using System;
 using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour
@@ -13,8 +15,14 @@ public class PlayerHealth : MonoBehaviour
     void Start()
     {
         Initialize();
+        Attack_AoE.OnAttack += Attack_AoE_OnAttackHit;
     }
-    
+
+    private void Attack_AoE_OnAttackHit(IBaseAttack obj)
+    {
+        TakeDamage(1);
+    }
+
     private void Initialize()
     { 
         currentHealth = maxHealth;
