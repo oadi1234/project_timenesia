@@ -1,4 +1,4 @@
-using Assets.Scripts.Movement.Model;
+using Assets.Scripts.Model;
 using System;
 using System.Collections;
 using System.Collections.Generic;

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Assets.Scripts.Movement.Model
+namespace Assets.Scripts.Model
 {
     internal class Spell
     {
