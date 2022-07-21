@@ -3,7 +3,10 @@ public enum EffortElement
     Empty,
     Raw,
     Fire,
-    Water,
+    Cold,
     Force,
-    Air
+    Life,
+    Muscle,
+    Curse,
+    Time
 }

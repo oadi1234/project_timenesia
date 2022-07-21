@@ -99,6 +99,7 @@ TextureImporter:
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
+  ignoreMasterTextureLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -712,6 +713,32 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
+    nameFileIdTable:
+      walls-tileset-sliced_21: 21300042
+      walls-tileset-sliced_10: 21300020
+      walls-tileset-sliced_17: 21300034
+      walls-tileset-sliced_7: 21300014
+      walls-tileset-sliced_0: 21300000
+      walls-tileset-sliced_9: 21300018
+      walls-tileset-sliced_6: 21300012
+      walls-tileset-sliced_20: 21300040
+      walls-tileset-sliced_1: 21300002
+      walls-tileset-sliced_16: 21300032
+      walls-tileset-sliced_11: 21300022
+      walls-tileset-sliced_4: 21300008
+      walls-tileset-sliced_15: 21300030
+      walls-tileset-sliced_14: 21300028
+      walls-tileset-sliced_3: 21300006
+      walls-tileset-sliced_22: 21300044
+      walls-tileset-sliced_5: 21300010
+      walls-tileset-sliced_8: 21300016
+      walls-tileset-sliced_12: 21300024
+      walls-tileset-sliced_2: 21300004
+      walls-tileset-sliced_24: 21300048
+      walls-tileset-sliced_23: 21300046
+      walls-tileset-sliced_18: 21300036
+      walls-tileset-sliced_13: 21300026
+      walls-tileset-sliced_19: 21300038
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
