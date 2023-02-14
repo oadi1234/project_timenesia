@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.Enemies.Attacks
 {
-    internal interface IBaseAttack
+    public interface IBaseAttack
     {
         public static event Action<IBaseAttack> OnAttack;
         public string AttackName { get; }
