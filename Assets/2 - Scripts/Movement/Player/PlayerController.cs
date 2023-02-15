@@ -143,7 +143,7 @@ public class PlayerController: MonoBehaviour
                 _hurtTime = 0.5f;
                 _currentKnockbackTime = _knockbackTime;
                 _knockbackStrength = damageSource.knockbackStrength;
-                _playerMovement.SetInputEnabled(false);
+                _playerMovement.SetInputEnabled(!damageSource.blocksMovement);
             }
             else
             {

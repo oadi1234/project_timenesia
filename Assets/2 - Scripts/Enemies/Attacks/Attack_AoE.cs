@@ -4,19 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Assets.Scripts.Enemies.Attacks
 {
-    internal class Attack_AoE : MonoBehaviour, IBaseAttack
+    public class Attack_AoE : MonoBehaviour, IBaseAttack
     {
         public static event Action<IBaseAttack> OnAttack;
 
-        [SerializeField] private string _attackName;
-        public string AttackName => _attackName;
+        [SerializeField] private string attackName;
+        public string AttackName => attackName;
 
-        public void OnTriggerEnter2D(Collider2D collision)
+        public virtual void OnTriggerEnter2D(Collider2D collision)
         {
-            if (OnAttack != null && collision.tag == "Player")
+            if (OnAttack != null && collision.CompareTag("Player"))
                 OnAttack(this);
         }
     }
