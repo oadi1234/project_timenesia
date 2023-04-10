@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+using _2___Scripts.Player;
 
-namespace Assets.Scripts.Enemies.Attacks
+namespace _2___Scripts.Enemies.Attacks
 {
     public interface IBaseAttack
     {
         public static event Action<IBaseAttack> OnAttack;
         public string AttackName { get; }
+        public Hurt Params { get; }
     }
 }

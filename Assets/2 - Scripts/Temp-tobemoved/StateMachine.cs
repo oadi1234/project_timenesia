@@ -20,7 +20,7 @@ public class StateMachine
 
         _currentState?.OnLogic();
 
-        Debug.Log(_currentState?.GetType());
+        // Debug.Log(_currentState?.GetType());
     }
 
     public void SetState(IState state)

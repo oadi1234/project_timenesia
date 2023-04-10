@@ -25,7 +25,7 @@ namespace Assets.Scripts.Enemies.States
 
         public void OnLogic()
         {
-            Debug.Log("Patrol grzyba: onLogic");
+            // Debug.Log("Patrol grzyba: onLogic");
             Jump();
         }
 

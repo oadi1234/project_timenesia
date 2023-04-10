@@ -108,6 +108,7 @@ public class WallChecker : MonoBehaviour
                     if (_rightHit.collider.tag == "Walls" && Mathf.Abs(Vector2.Angle(_rightHit.normal, Vector2.up) - 90) < _wallAngleThreshold)
                     {
                         _touchingWall = true;
+                        _touchingWallLeft = false;
                     }
                 }
             }

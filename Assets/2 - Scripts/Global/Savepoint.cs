@@ -1,4 +1,5 @@
 using System;
+using _2___Scripts.Player;
 using UnityEngine;
 
 public class Savepoint : MonoBehaviour

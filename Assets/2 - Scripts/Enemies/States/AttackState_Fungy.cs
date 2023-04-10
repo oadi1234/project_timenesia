@@ -27,7 +27,7 @@ namespace Assets.Scripts.Enemies.States
 
         public void OnLogic()
         {
-            Debug.Log("Atak grzyba: onLogic");
+            // Debug.Log("Atak grzyba: onLogic");
             if (_fungy.PlayerPosition.position.x - _fungy.RigidBody.position.x < 0)
             {
                 _fungy.RigidBody.velocity = new Vector2(-movingSpeed, 0);

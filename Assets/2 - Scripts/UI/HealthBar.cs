@@ -1,117 +1,118 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HealthBar : MonoBehaviour
+namespace _2___Scripts.UI
 {
-    [SerializeField]
-    private Image fullBead;
-
-    [SerializeField]
-    private Image emptyBead;
-
-    [SerializeField]
-    private int maxHealth = 0;
-
-    [SerializeField]
-    private int currentHealth = 0;
-
-    [SerializeField]
-    private GameObject canvas;
-
-    [SerializeField]
-    private float scale = 2f;
-
-    [SerializeField]
-    private Transform healthBar;
-
-    private int oldMaxHealth;
-    private float canvasWidth;
-    private float canvasHeight;
-
-    private List<Image> renderedImages;
-
-    private void Awake()
+    public class HealthBar : MonoBehaviour
     {
-        renderedImages = new List<Image>();
-        canvasWidth = canvas.GetComponent<RectTransform>().rect.width;
-        canvasHeight = canvas.GetComponent<RectTransform>().rect.height;
+        [SerializeField]
+        private Image fullBead;
 
-        oldMaxHealth = maxHealth;
-    }
+        [SerializeField]
+        private Image emptyBead;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-    }
+        [SerializeField]
+        private int maxHealth = 0;
 
-    public void SetHealth(int health)
-    {
-        if(health >= maxHealth)
+        [SerializeField]
+        private int currentHealth = 0;
+
+        [SerializeField]
+        private GameObject canvas;
+
+        [SerializeField]
+        private float scale = 2f;
+
+        [SerializeField]
+        private Transform healthBar;
+
+        private int oldMaxHealth;
+        private float canvasWidth;
+        private float canvasHeight;
+
+        private List<Image> renderedImages;
+
+        private void Awake()
         {
-            for (int i = currentHealth; i < maxHealth; i++)
-            {
-                renderedImages[i].sprite = fullBead.sprite;
-            }
-            currentHealth = maxHealth;
+            renderedImages = new List<Image>();
+            canvasWidth = canvas.GetComponent<RectTransform>().rect.width;
+            canvasHeight = canvas.GetComponent<RectTransform>().rect.height;
+
+            oldMaxHealth = maxHealth;
         }
-        else
+
+        // Start is called before the first frame update
+        void Start()
         {
-            for (int i = maxHealth -1; i >= health; i--)
-            {
-                renderedImages[i].sprite = emptyBead.sprite;
-            }
-            currentHealth = health;
         }
-    }
 
-    public void SetMaxHealth(int health)
-    {
-        maxHealth = health;
-
-        if(oldMaxHealth < maxHealth)
+        public void SetHealth(int health)
         {
-            for(int i = oldMaxHealth; i<maxHealth; i++)
+            if(health >= maxHealth)
             {
-                GenerateAndAddNewImage(i);
+                for (int i = currentHealth; i < maxHealth; i++)
+                {
+                    renderedImages[i].sprite = fullBead.sprite;
+                }
+                currentHealth = maxHealth;
+            }
+            else
+            {
+                for (int i = maxHealth -1; i >= health; i--)
+                {
+                    renderedImages[i].sprite = emptyBead.sprite;
+                }
+                currentHealth = health;
             }
         }
-        //this really shouldn't occur naturally too often, or at all. For cheating it might be good to have though.
-        else if (oldMaxHealth > maxHealth)
+
+        public void SetMaxHealth(int health)
         {
-            for (int i = oldMaxHealth-1; i >= maxHealth; i--)
+            maxHealth = health;
+
+            if(oldMaxHealth < maxHealth)
             {
-                Destroy(renderedImages[i].gameObject);
-                renderedImages.RemoveAt(i);
+                for(int i = oldMaxHealth; i<maxHealth; i++)
+                {
+                    GenerateAndAddNewImage(i);
+                }
             }
+            //this really shouldn't occur naturally too often, or at all. For cheating it might be good to have though.
+            else if (oldMaxHealth > maxHealth)
+            {
+                for (int i = oldMaxHealth-1; i >= maxHealth; i--)
+                {
+                    Destroy(renderedImages[i].gameObject);
+                    renderedImages.RemoveAt(i);
+                }
+            }
+            oldMaxHealth = maxHealth;
+            SetHealth(health);
         }
-        oldMaxHealth = maxHealth;
-        SetHealth(health);
-    }
 
-    private void GenerateAndAddNewImage(int i)
-    {
-        GameObject imageObject = new GameObject("HealthBead" + i);
-        RectTransform trans = imageObject.AddComponent<RectTransform>();
-        trans.transform.SetParent(canvas.transform);
-        trans.localScale = Vector2.one * scale;
-        float positionX = -(canvasWidth / 2) + 40f;
-        float positionY = (canvasHeight / 2) - 20f;
-        if (i % 2 == 0)
+        private void GenerateAndAddNewImage(int i)
         {
-            trans.anchoredPosition = new Vector3(positionX + (i * 20 * scale), positionY, -10);
-        }
-        else
-        {
-            trans.anchoredPosition = new Vector3(positionX + (i * 20 * scale), positionY - (10 * scale), -10);
-        }
-        trans.sizeDelta = new Vector2(42, 42);
+            GameObject imageObject = new GameObject("HealthBead" + i);
+            RectTransform trans = imageObject.AddComponent<RectTransform>();
+            trans.transform.SetParent(canvas.transform);
+            trans.localScale = Vector2.one * scale;
+            float positionX = -(canvasWidth / 2) + 200f;
+            float positionY = (canvasHeight / 2) - 100f;
+            if (i % 2 == 0)
+            {
+                trans.anchoredPosition = new Vector3(positionX + (i * 20 * scale), positionY, -10);
+            }
+            else
+            {
+                trans.anchoredPosition = new Vector3(positionX + (i * 20 * scale), positionY - (10 * scale), -10);
+            }
+            trans.sizeDelta = new Vector2(42, 42);
 
-        Image image = imageObject.AddComponent<Image>();
-        image.sprite = fullBead.sprite;
-        imageObject.transform.SetParent(healthBar);
-        renderedImages.Add(image);
+            Image image = imageObject.AddComponent<Image>();
+            image.sprite = fullBead.sprite;
+            imageObject.transform.SetParent(healthBar);
+            renderedImages.Add(image);
+        }
     }
 }

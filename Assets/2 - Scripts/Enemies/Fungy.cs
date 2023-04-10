@@ -2,6 +2,7 @@
 using Assets.Scripts.Enemies.States;
 using System;
 using System.Collections;
+using _2___Scripts.Enemies.Attacks;
 using UnityEngine;
 
 namespace Assets.Scripts.Enemies
@@ -78,7 +79,7 @@ namespace Assets.Scripts.Enemies
         }
         private void Update()
         {
-            Debug.Log(_playerSeen);
+            // Debug.Log(_playerSeen);
             _movingStateMachine.OnLogic();
             _attackingStateMachine.OnLogic();
             PrepareFire();
@@ -94,7 +95,7 @@ namespace Assets.Scripts.Enemies
             if (collision.tag == "Player")
                 _playerSeen = true;
 
-            Debug.Log(collision.name);
+            // Debug.Log(collision.name);
         }
         private void OnTriggerExit2D(Collider2D collision)
         {

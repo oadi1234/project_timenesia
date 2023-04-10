@@ -26,6 +26,7 @@ public class SaveDataSchema
    public int MaxConcentrationSlots { get; set; }
    
    public string SavePoint { get; set; }
+   public int Coins { get; set; }
 
    // public SaveDataSchema(int t, int t2)
    // {

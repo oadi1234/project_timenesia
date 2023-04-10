@@ -1,57 +1,87 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
+using _2___Scripts.Global.Events;
+using TMPro;
 using UnityEngine;
 
-public class GameDataManager : MonoBehaviour
+namespace _2___Scripts.Global
 {
-    public static GameDataManager Instance = null;
-
-    public int CurrentHealth { get; private set; }
-    public int MaxHealth { get; private set; }
-    public int CurrentConcentrationSlots { get; private set; }
-    public int MaxConcentrationSlots { get; private set; }
-    public int CurrentMana { get; private set; }
-    public int MaxMana { get; private set; }
-    public string LastSavePoint  { get; private set; }
-	
-    private void Awake()
+    public class GameDataManager : MonoBehaviour
     {
-        if (Instance == null)
+        private GameDataManager()
         {
-            Instance = this;
         }
-        else if (Instance != this)
-        {
-            Destroy(gameObject);
-        }
-        DontDestroyOnLoad (gameObject);
-    }
 
-    public void LoadFromSave2(SaveDataSchema save)
-    {
-        MaxHealth = save.MaxHealth;
-        CurrentHealth = save.CurrentHealth;
-    }
+        public static GameDataManager Instance { get; } = new();
+        public static event Action<IBaseEvent> OnCollected;
     
-    public void LoadFromSave(SaveDataSchema save)
-    {
-        MaxHealth = CurrentHealth = save.MaxHealth;
-        CurrentMana = MaxMana = save.MaxMana;
-        CurrentConcentrationSlots = MaxConcentrationSlots = save.MaxConcentrationSlots;
-        LastSavePoint = save.SavePoint;
-    }
+        private TextMeshProUGUI CoinText;
 
-    public bool TakeDamage(int amount)
-    {
-        if (amount >= CurrentHealth)
+        public int CurrentHealth { get; private set; }
+        public int MaxHealth { get; private set; }
+        public int CurrentConcentrationSlots { get; private set; }
+        public int MaxConcentrationSlots { get; private set; }
+        public int CurrentMana { get; private set; }
+        public int MaxMana { get; private set; }
+        public int Coins { get; private set; }
+        public string LastSavePoint  { get; private set; }
+	
+        private void Awake()
         {
-            CurrentHealth = 0;
-            return false;
-        }
-        // CurrentHealth = Math.Min(0, CurrentHealth - amount);
+            // if (Instance == null)
+            // {
+            //     Instance = this;
+            // }
+            /*else*/ if (Instance != this)
+            {
+                Destroy(gameObject);
+            }
 
-        CurrentHealth -= amount;
-        return true;
+            CoinText = GameObject.Find("CoinCounter").GetComponent<TextMeshProUGUI>();
+            DontDestroyOnLoad (gameObject);
+            OnPlayerEnteredEvent.OnPlayerEntered += OnPlayer_Entered;
+        }
+    
+        private void OnPlayer_Entered(IOnPlayerEnteredEvent obj)
+        {
+            switch (obj.EventName)
+            {
+                case "CoinCollected":
+                    GainCoins(obj.NumericData);
+                    obj.Remove();
+                    // Debug.Log("COINY: " + Coins);
+                    CoinText.text = Coins.ToString();
+                    break;
+            }
+        }
+
+        public void LoadFromSave2(SaveDataSchema save)
+        {
+            MaxHealth = save.MaxHealth;
+            CurrentHealth = save.CurrentHealth;
+        }
+    
+        public void LoadFromSave(SaveDataSchema save)
+        {
+            MaxHealth = CurrentHealth = save.MaxHealth;
+            CurrentMana = MaxMana = save.MaxMana;
+            CurrentConcentrationSlots = MaxConcentrationSlots = save.MaxConcentrationSlots;
+            LastSavePoint = save.SavePoint;
+            Coins = save.Coins;
+        }
+
+        public bool TakeDamage(int amount)
+        {
+            if (amount >= CurrentHealth)
+            {
+                CurrentHealth = 0;
+                return false;
+            }
+            // CurrentHealth = Math.Min(0, CurrentHealth - amount);
+
+            CurrentHealth -= amount;
+            return true;
+        }
+
+        public void GainCoins(int coins = 1) => Coins += coins;
     }
 }

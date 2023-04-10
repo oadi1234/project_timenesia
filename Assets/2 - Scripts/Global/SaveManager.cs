@@ -58,6 +58,11 @@ public class SaveManager : MonoBehaviour
 
         return data;
     }
+    
+    public SaveDataSchema Load(SaveDataSchema data)
+    {
+        return data;
+    }
 
     private bool Save(SaveDataSchema data, string filename = "save_00")
     {

@@ -1,10 +1,14 @@
 using System;
 using System.Collections;
+using _2___Scripts.Global;
+using _2___Scripts.Player;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class PlayerController: MonoBehaviour
 {
+    public Spellbook _spellbook;
+    #region variables
     //jump force applied while key is being held
     [SerializeField] 
     private float _continousJumpForce = 0.9f;
@@ -97,14 +101,17 @@ public class PlayerController: MonoBehaviour
     private Animator _animator;
     private PlayerMovement _playerMovement;
     private PlayerHealth _playerHealth;
+    private static readonly int AttackBoltTrigger = Animator.StringToHash("AttackBoltTrigger");
+    private static readonly int AttackSelfAoETrigger = Animator.StringToHash("AttackSelfAoETrigger");
 
+    #endregion
 
     private void Awake()
     {
         _rigidBody2D = GetComponent<Rigidbody2D>();
         _wallChecker = GetComponent<WallChecker>();
         _flatGroundChecker = GetComponent<FlatGroundChecker>();
-        _animator = GetComponent<Animator>();
+        _animator = GetComponentInChildren<Animator>();
         _playerMovement = GetComponent<PlayerMovement>();
         _playerHealth = GetComponent<PlayerHealth>();
         _velocityVector = new Vector2();
@@ -113,6 +120,8 @@ public class PlayerController: MonoBehaviour
         _currentKnockbackTime = _knockbackTime;
         _hurtTime = 0f;
         _startingPosition = _rigidBody2D.position;
+        GameDataManager.Instance.LoadFromSave(new SaveDataSchema{Coins = 10, CurrentHealth = 2, MaxHealth = 4, 
+            MaxMana = 8, MaxConcentrationSlots = 2, SavePoint = "lol"});
     }
 
     private void FixedUpdate()
@@ -122,36 +131,18 @@ public class PlayerController: MonoBehaviour
         IsOnSlope();
 
         _animator.SetBool("isGrounded", _isGrounded);
-        _animator.SetFloat("Hurt", _hurtTime);
+        Debug.Log(_isGrounded);
+        // _animator.SetFloat("Hurt", _hurtTime);
 
         Knockback();
         if(_flipCooldown>0)
         {
             _flipCooldown -= Time.fixedDeltaTime;
         }
+        
+        // Debug.Log($"IsGrounded: {_isGrounded}, IsWallTouching: {_isWallTouching}" +
+        //           $"isJumping: {_isJumping}, isGliding: {_isGliding}, isOnSlope {_isOnSlope}");
     }
-
-    private void OnTriggerEnter2D(Collider2D collider)
-    {
-        Hurt damageSource = collider.gameObject.GetComponent<Hurt>();
-
-        if (damageSource)
-        {
-            _playerHealth.TakeDamage(damageSource.damageDealt, damageSource.iFramesGiven);
-            if (_playerHealth.currentHealth > 0)
-            {
-                _hurtTime = 0.5f;
-                _currentKnockbackTime = _knockbackTime;
-                _knockbackStrength = damageSource.knockbackStrength;
-                _playerMovement.SetInputEnabled(!damageSource.blocksMovement);
-            }
-            else
-            {
-                Restart();
-            }
-        }
-    }
-
     private void Initialize()
     {
         ResetPosition(_startingPosition);
@@ -163,6 +154,27 @@ public class PlayerController: MonoBehaviour
         StartCoroutine(BlockInputForSeconds(2f));
         Initialize();
     }
+
+    // private void OnTriggerEnter2D(Collider2D collider)
+    // {
+    //     Hurt damageSource = collider.gameObject.GetComponent<Hurt>();
+    //
+    //     if (damageSource)
+    //     {
+    //         _playerHealth.TakeDamage(damageSource.damageDealt, damageSource.iFramesGiven);
+    //         if (_playerHealth.currentHealth > 0)
+    //         {
+    //             _hurtTime = 0.5f;
+    //             _currentKnockbackTime = _knockbackTime;
+    //             _knockbackStrength = damageSource.knockbackStrength;
+    //             _playerMovement.SetInputEnabled(!damageSource.blocksMovement);
+    //         }
+    //         else
+    //         {
+    //             Restart();
+    //         }
+    //     }
+    // }
 
     #region Movement
     public void Move(float move)
@@ -178,16 +190,20 @@ public class PlayerController: MonoBehaviour
             else
                 _velocityVector.Set(_rigidBody2D.velocity.x, _rigidBody2D.velocity.y);
         }
-        else if (_isGrounded && !_isOnSlope)
+        // else if (_isGrounded && !_isOnSlope)
+        else
         {
-            _velocityVector.Set(move * _currentMoveSpeed, 0.0f);
+            // // if (_rigidBody2D.velocity.y > 0f)
+            // //     _velocityVector.Set(_rigidBody2D.velocity.x, _rigidBody2D.velocity.y);
+            // else
+                _velocityVector.Set(move * _currentMoveSpeed, 0);
         }
-        else if (_isOnSlope)
-        {
-            _velocityVector.Set(
-                -move * _currentMoveSpeed * _flatGroundChecker.slopeNormalPerpendicular.x,
-                _moveSpeed * _flatGroundChecker.slopeNormalPerpendicular.y * -move);
-        }
+        // else if (_isOnSlope)
+        // {
+        //     _velocityVector.Set(
+        //         -move * _currentMoveSpeed * _flatGroundChecker.slopeNormalPerpendicular.x,
+        //         _moveSpeed * _flatGroundChecker.slopeNormalPerpendicular.y * -move);
+        // }
 
         _rigidBody2D.velocity = _velocityVector;
 
@@ -224,7 +240,7 @@ public class PlayerController: MonoBehaviour
             }
         }
 
-        _animator.SetFloat("Speed", Mathf.Abs(move));
+        _animator.SetInteger("speedX", Math.Sign(move));
     }
     public void Jump(bool jump, bool keyHeld)
     {
@@ -264,7 +280,7 @@ public class PlayerController: MonoBehaviour
         //    ofWallJumpTimeLeft -= Time.fixedDeltaTime;
         //    Debug.Log("JumpTimeLeft: " + ofWallJumpTimeLeft);
         //}
-        _animator.SetFloat("VerticalSpeed", _rigidBody2D.velocity.y);
+        _animator.SetFloat("speedY", _rigidBody2D.velocity.y);
     }
     public void Flip()
     {
@@ -306,6 +322,48 @@ public class PlayerController: MonoBehaviour
     }
 
     #endregion Movement
+
+    #region Actions
+
+    public void Attack(int spellIndex)
+    {
+        switch (spellIndex)
+        {
+            case 0:
+                Attack_Bolt();
+                break;
+            case 1:
+                Attack_SelfAoE();
+                break;
+        }
+    }
+
+    private void Attack_Bolt()
+    {
+        _animator.SetTrigger(AttackBoltTrigger);
+    }
+
+    private void Attack_SelfAoE()
+    {
+        _animator.SetTrigger(AttackSelfAoETrigger);
+    }
+    
+    public void Test(int spellIndex)
+    {
+        switch (spellIndex)
+        {
+            case 0:
+                _spellbook.CastFireBall(_facingLeft ? -1  : 1);
+                break;
+            case 1:
+                _spellbook.CastEyeBall(_facingLeft ? -1  : 1);
+                break;
+        }
+        _playerMovement.CastingAnimationFinished();
+        _playerMovement.SetInputEnabled(true);
+    }
+
+    #endregion
 
     #region Waiters
     private IEnumerator BlockInputForSeconds(float seconds)

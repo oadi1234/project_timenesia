@@ -8,7 +8,9 @@ namespace _2___Scripts.Global.Events
         public static event Action<IOnPlayerEnteredEvent> OnPlayerEntered;
 
         [SerializeField] private string _eventName;
+        [SerializeField] private int _numericData;
         public string EventName => _eventName;
+        public int NumericData => _numericData;
 
         public void OnTriggerEnter2D(Collider2D collision)
         {
@@ -20,5 +22,6 @@ namespace _2___Scripts.Global.Events
         {
             Destroy(gameObject);
         }
+
     }
 }

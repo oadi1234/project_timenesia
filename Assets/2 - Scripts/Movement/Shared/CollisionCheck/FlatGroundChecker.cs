@@ -35,8 +35,8 @@ public class FlatGroundChecker : MonoBehaviour
         bottomRightColliderCorner.Set(boxBounds.max.x, boxBounds.min.y);
         hitBottomLeft = Physics2D.Raycast(bottomLeftColliderCorner, Vector2.down, groundedCheckRay, whatIsGround);
         hitBottomRight = Physics2D.Raycast(bottomRightColliderCorner, Vector2.down, groundedCheckRay, whatIsGround);
-        Debug.DrawRay(hitBottomLeft.point, hitBottomLeft.normal, Color.red);
-        Debug.DrawRay(hitBottomRight.point, hitBottomRight.normal, Color.red);
+        Debug.DrawRay(hitBottomLeft.point, hitBottomLeft.normal, Color.cyan);
+        Debug.DrawRay(hitBottomRight.point, hitBottomRight.normal, Color.magenta);
     }
 
     public bool IsGrounded()

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using _2___Scripts.Enemies.Attacks;
+using _2___Scripts.Player;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -14,6 +16,7 @@ namespace Assets.Scripts.Enemies.Attacks
 
         [SerializeField] private string attackName;
         public string AttackName => attackName;
+        public Hurt Params => gameObject.AddComponent<Hurt>(); /*TODO*/
 
         public virtual void OnTriggerEnter2D(Collider2D collision)
         {

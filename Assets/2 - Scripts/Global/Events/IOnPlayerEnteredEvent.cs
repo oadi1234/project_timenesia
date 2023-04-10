@@ -8,5 +8,6 @@ namespace _2___Scripts.Global.Events
         public static event Action<IOnPlayerEnteredEvent> OnPlayerEnteredEvent;
         public string EventName { get; }
         public void Remove();
+        public int NumericData { get; }
     }
 }
