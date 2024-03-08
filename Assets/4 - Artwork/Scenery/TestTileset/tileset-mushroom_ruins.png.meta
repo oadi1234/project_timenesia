@@ -75,7 +75,7 @@ TextureImporter:
       213: -5209835140470309936
     second: tileset-mushroom_ruins_23
   externalObjects: {}
-  serializedVersion: 11
+  serializedVersion: 12
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -92,11 +92,12 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
+    flipGreenChannel: 0
   isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
-  ignoreMasterTextureLimit: 0
+  ignoreMipmapLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -135,6 +136,8 @@ TextureImporter:
   textureFormatSet: 0
   ignorePngGamma: 0
   applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -146,6 +149,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -158,6 +162,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -170,6 +175,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -182,6 +188,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
@@ -315,9 +322,9 @@ TextureImporter:
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape:
-      - - {x: -20, y: -32}
+      - - {x: -17, y: -32}
         - {x: 32, y: -32}
-        - {x: 32, y: -2}
+        - {x: 32, y: -7}
       tessellationDetail: 0
       bones: []
       spriteID: 8d4f2aaab5f8a9ff0800000000000000
@@ -339,11 +346,10 @@ TextureImporter:
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape:
-      - - {x: 23, y: 25}
-        - {x: -32, y: -2}
+      - - {x: 32, y: 25}
+        - {x: -32, y: -7}
         - {x: -32, y: -32}
         - {x: 32, y: -32}
-        - {x: 32, y: 25}
       tessellationDetail: 0
       bones: []
       spriteID: dd7f480d1676459b0800000000000000
@@ -390,11 +396,11 @@ TextureImporter:
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape:
-      - - {x: -23, y: 25}
+      - - {x: -32, y: 25}
         - {x: -32, y: 25}
         - {x: -32, y: -32}
         - {x: 32, y: -32}
-        - {x: 32, y: -5}
+        - {x: 32, y: -7}
       tessellationDetail: 0
       bones: []
       spriteID: 8d239a337c78b04d0800000000000000
@@ -416,8 +422,8 @@ TextureImporter:
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape:
-      - - {x: 19, y: -32}
-        - {x: -32, y: -5}
+      - - {x: 18, y: -32}
+        - {x: -32, y: -7}
         - {x: -32, y: -32}
       tessellationDetail: 0
       bones: []
@@ -569,7 +575,7 @@ TextureImporter:
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape:
-      - - {x: -20, y: 32}
+      - - {x: -17, y: 32}
         - {x: -32, y: 25}
         - {x: -32, y: -32}
         - {x: 32, y: -32}
@@ -670,7 +676,7 @@ TextureImporter:
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape:
-      - - {x: 19, y: 32}
+      - - {x: 18, y: 32}
         - {x: -32, y: 32}
         - {x: -32, y: -32}
         - {x: 32, y: -32}
@@ -821,33 +827,32 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      tileset-mushroom_ruins_2: -8421477212022976497
-      tileset-mushroom_ruins_13: -1471015102954477276
-      tileset-mushroom_ruins_7: -3167288623290043688
-      tileset-mushroom_ruins_14: 4814987592741604608
-      tileset-mushroom_ruins_4: -28552823756884776
-      tileset-mushroom_ruins_6: 1947027641520693214
-      tileset-mushroom_ruins_12: 1047511043386636849
-      tileset-mushroom_ruins_18: -1574050727312808213
-      tileset-mushroom_ruins_17: -2414106939454387447
-      tileset-mushroom_ruins_20: 3341678890535985824
+      tileset-mushroom_ruins_0: 387885601062915557
       tileset-mushroom_ruins_1: 4441521568392446692
+      tileset-mushroom_ruins_10: 8031236689065182610
+      tileset-mushroom_ruins_11: -6379277833500934283
+      tileset-mushroom_ruins_12: 1047511043386636849
+      tileset-mushroom_ruins_13: -1471015102954477276
+      tileset-mushroom_ruins_14: 4814987592741604608
       tileset-mushroom_ruins_15: 474854170343443371
       tileset-mushroom_ruins_16: -887801021943726790
-      tileset-mushroom_ruins_8: 3069185452673187710
-      tileset-mushroom_ruins_21: 2824508698099447319
+      tileset-mushroom_ruins_17: -2414106939454387447
+      tileset-mushroom_ruins_18: -1574050727312808213
       tileset-mushroom_ruins_19: 3205390339519847164
-      tileset-mushroom_ruins_5: -5092331608841324579
-      tileset-mushroom_ruins_9: -7789021698148525991
+      tileset-mushroom_ruins_2: -8421477212022976497
+      tileset-mushroom_ruins_20: 3341678890535985824
+      tileset-mushroom_ruins_21: 2824508698099447319
       tileset-mushroom_ruins_22: -6010715627398849408
       tileset-mushroom_ruins_23: -5209835140470309936
       tileset-mushroom_ruins_3: 778693977885150425
-      tileset-mushroom_ruins_10: 8031236689065182610
-      tileset-mushroom_ruins_11: -6379277833500934283
-      tileset-mushroom_ruins_0: 387885601062915557
-  spritePackingTag: 
+      tileset-mushroom_ruins_4: -28552823756884776
+      tileset-mushroom_ruins_5: -5092331608841324579
+      tileset-mushroom_ruins_6: 1947027641520693214
+      tileset-mushroom_ruins_7: -3167288623290043688
+      tileset-mushroom_ruins_8: 3069185452673187710
+      tileset-mushroom_ruins_9: -7789021698148525991
+  mipmapLimitGroupName: 
   pSDRemoveMatte: 0
-  pSDShowRemoveMatteOption: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 

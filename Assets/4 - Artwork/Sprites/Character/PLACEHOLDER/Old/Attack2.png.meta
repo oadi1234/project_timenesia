@@ -1,9 +1,9 @@
 fileFormatVersion: 2
-guid: 2250642cd6eed364a9fb33d5a4cf502f
+guid: 9a959a18c5f08234da19ae820408b333
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
-  serializedVersion: 11
+  serializedVersion: 12
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -20,11 +20,12 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
+    flipGreenChannel: 0
   isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
-  ignoreMasterTextureLimit: 0
+  ignoreMipmapLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -63,6 +64,8 @@ TextureImporter:
   textureFormatSet: 0
   ignorePngGamma: 0
   applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -74,6 +77,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -86,6 +90,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -98,13 +103,14 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Death_0
+      name: Attack2_0
       rect:
         serializedVersion: 2
         x: 0
@@ -118,14 +124,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2e20066aee6a6174d8d588bd48d7807a
-      internalID: -630294927
+      spriteID: c01e46ffa811c1d429a8e360e4ee4120
+      internalID: 2120158546
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Death_1
+      name: Attack2_1
       rect:
         serializedVersion: 2
         x: 231
@@ -139,14 +145,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1c6290a934882444fb61b5bcde264aee
-      internalID: -361118952
+      spriteID: 700cc4988e2e3b3478763e91b0c7353d
+      internalID: -645057701
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Death_2
+      name: Attack2_2
       rect:
         serializedVersion: 2
         x: 462
@@ -160,14 +166,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 71fead21ddab74441978c2e49aa00aeb
-      internalID: 1738729354
+      spriteID: e9b8fa13ad8765147a5300066e6c81ee
+      internalID: 1625562473
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Death_3
+      name: Attack2_3
       rect:
         serializedVersion: 2
         x: 693
@@ -181,14 +187,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 59f3bd57e90034e4cbe2c8e4d3ca47c8
-      internalID: 104693198
+      spriteID: 5d3985f523ce4284b9ca9fad65cd1f35
+      internalID: 298908986
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Death_4
+      name: Attack2_4
       rect:
         serializedVersion: 2
         x: 924
@@ -202,14 +208,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 02657cc83f30ab6469af97d772d263dc
-      internalID: 1283345418
+      spriteID: 822fafcef998acd4198fce47406b8366
+      internalID: -305703562
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Death_5
+      name: Attack2_5
       rect:
         serializedVersion: 2
         x: 1155
@@ -223,14 +229,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c85f747f33448ea40810f5e527a80559
-      internalID: 1514473205
+      spriteID: 7d2af45c532390e4296c2422debf74ec
+      internalID: 718917033
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Death_6
+      name: Attack2_6
       rect:
         serializedVersion: 2
         x: 1386
@@ -244,8 +250,29 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e2facf7397098894d84702593f73481c
-      internalID: 2096273253
+      spriteID: d9382e0a72df72e4d956e0ee56a2d57f
+      internalID: 2128775290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Attack2_7
+      rect:
+        serializedVersion: 2
+        x: 1617
+        y: 0
+        width: 231
+        height: 190
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6c6a097bb4072f64a8d726f216affac2
+      internalID: 2137338606
       vertices: []
       indices: 
       edges: []
@@ -261,16 +288,16 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Death_1: -361118952
-      Death_5: 1514473205
-      Death_0: -630294927
-      Death_4: 1283345418
-      Death_2: 1738729354
-      Death_6: 2096273253
-      Death_3: 104693198
-  spritePackingTag: 
+      Attack2_0: 2120158546
+      Attack2_1: -645057701
+      Attack2_2: 1625562473
+      Attack2_3: 298908986
+      Attack2_4: -305703562
+      Attack2_5: 718917033
+      Attack2_6: 2128775290
+      Attack2_7: 2137338606
+  mipmapLimitGroupName: 
   pSDRemoveMatte: 0
-  pSDShowRemoveMatteOption: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 
