@@ -546,11 +546,13 @@ MonoBehaviour:
   _slideSpeed: -4.5
   _crouchSpeed: 0.3
   _glideSpeed: 5
-  _spatialDashCooldown: 99
+  _dashCooldown: 0.6
   _wallCheckMarker: {fileID: 0}
   _noFriction: {fileID: 6200000, guid: 871b760142bf49947a337fccc571385c, type: 2}
   _allFriction: {fileID: 6200000, guid: 776c18e70f9729a49bd0d5f9c98edb3d, type: 2}
   _moveSpeed: 350
+  _wallJumpPersistenceModifier: 1.5
+  _postWallJumpSpeedModifier: 1.1
 --- !u!114 &501173465
 MonoBehaviour:
   m_ObjectHideFlags: 0

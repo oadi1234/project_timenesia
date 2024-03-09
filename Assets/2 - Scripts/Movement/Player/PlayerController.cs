@@ -39,7 +39,7 @@ public class PlayerController: MonoBehaviour
     private float _glideSpeed = 5f;
 
     [SerializeField]
-    private int _spatialDashCooldown = 99;
+    private float _dashCooldown = 0.6f;
 
     [SerializeField]
     private Transform _wallCheckMarker;
@@ -65,6 +65,7 @@ public class PlayerController: MonoBehaviour
 
     private bool _isGliding;
     private bool _usedDoubleJump;
+    private bool _canDash; //only one dash mid-air.
     private bool _hasDoubleJumpCollected = false;
     private bool _hasGlidingCollected = false;
     private bool _hasSpatialDash = false;
@@ -82,6 +83,7 @@ public class PlayerController: MonoBehaviour
     private bool _isWallSliding;
     private bool _isWallTouching;
     private bool _isOnSlope;
+    private bool _isDashing;
 
     private float _currentCoyoteTime;
     private float _timeAfterJumpPressed; //cooldown for setting variables after pressing jump.
@@ -90,6 +92,7 @@ public class PlayerController: MonoBehaviour
     private float _flipCooldown;
     private float _hurtTime;
     private float _currentMoveSpeed;
+    private float _currentDashCooldown;
 
     private const float _coyoteTime = 0.1f;
     private const float _knockbackTime = 0.5f;
@@ -107,6 +110,8 @@ public class PlayerController: MonoBehaviour
     private Animator _animator;
     private PlayerMovement _playerMovement;
     private PlayerHealth _playerHealth;
+    private IEnumerator blockInputCoroutine;
+    private IEnumerator dashVariableReverserCoroutine;
     private static readonly int AttackBoltTrigger = Animator.StringToHash("AttackBoltTrigger");
     private static readonly int AttackSelfAoETrigger = Animator.StringToHash("AttackSelfAoETrigger");
 
@@ -133,8 +138,9 @@ public class PlayerController: MonoBehaviour
     private void FixedUpdate()
     {
         IsGrounded();
-        IsTouchingWall(); //disabled for now as it is unused.
+        IsTouchingWall();
         IsOnSlope();
+        ShouldStopDash();
 
         _animator.SetBool("isGrounded", _isGrounded);
         // _animator.SetFloat("Hurt", _hurtTime);
@@ -148,6 +154,10 @@ public class PlayerController: MonoBehaviour
         if (_flipCooldown>0)
         {
             _flipCooldown -= Time.fixedDeltaTime;
+        }
+        if (_currentDashCooldown > 0)
+        {
+            _currentDashCooldown -= Time.fixedDeltaTime;
         }
     }
     private void Initialize()
@@ -332,6 +342,17 @@ public class PlayerController: MonoBehaviour
             _rigidBody2D.AddForce(_velocityVector, ForceMode2D.Impulse);
         }
     }
+    public void Dash(bool dash, float move)
+    {
+        if (_currentDashCooldown <= 0 && _canDash && dash)
+        {
+            SetVariablesWhenDashing(move);
+            blockInputCoroutine = BlockInputForSeconds(0.25f);
+            dashVariableReverserCoroutine = ReverseDashVariablesAfterSeconds(0.25f);
+            StartCoroutine(blockInputCoroutine);
+            StartCoroutine(dashVariableReverserCoroutine);
+        }
+    }
 
     #endregion Movement
 
@@ -390,6 +411,12 @@ public class PlayerController: MonoBehaviour
         yield return new WaitForSecondsRealtime(seconds);
         _isWallJumping = false;
     }
+    
+    private IEnumerator ReverseDashVariablesAfterSeconds(float seconds)
+    {
+        yield return new WaitForSecondsRealtime(seconds);
+        EndDash();
+    }
     #endregion Waiters
 
     #region Checkers
@@ -440,6 +467,20 @@ public class PlayerController: MonoBehaviour
             }
         }
     }
+    
+    private void ShouldStopDash()
+    {
+        if (_isWallTouching)
+        {
+            if (_isDashing)
+            {
+                StopCoroutine(blockInputCoroutine);
+                StopCoroutine(dashVariableReverserCoroutine);
+                EndDash();
+                _playerMovement.SetInputEnabled(true);
+            }
+        }
+    }
 
     private bool CanWallSlide()
     {
@@ -467,6 +508,7 @@ public class PlayerController: MonoBehaviour
             _isWallJumping = false;
             _usedDoubleJump = false;
             _isJumping = false;
+            _canDash = true;
             _jumpTime = 0f;
             _currentMoveSpeed = _moveSpeed;
             _currentCoyoteTime = _coyoteTime;
@@ -478,6 +520,7 @@ public class PlayerController: MonoBehaviour
         _jumpTime = 0f;
         //currentMoveSpeed = 0;
         _currentCoyoteTime = _coyoteTime;
+        _canDash = true;
     }
     private void SetVariablesWhenWallJumping()
     {
@@ -487,6 +530,24 @@ public class PlayerController: MonoBehaviour
         _isWallSliding = false;
         _jumpTime = 0f;
         _currentMoveSpeed = _moveSpeed;
+    }
+    private void SetVariablesWhenDashing(float move)
+    {
+        _currentDashCooldown = _dashCooldown;
+        _isDashing = true;
+        _rigidBody2D.gravityScale = 0f;
+        _velocityVector.Set(0, 0);
+        _rigidBody2D.velocity = _velocityVector;
+        _velocityVector.Set(25f * (Convert.ToInt32(move==0 ? !_facingLeft : move > 0) * 2 - 1), _rigidBody2D.velocity.y);
+        _rigidBody2D.velocity = _velocityVector;
+        _animator.SetBool("dashing", true);
+    }
+    private void EndDash()
+    {
+        _isDashing = false;
+        _rigidBody2D.gravityScale = 4f;
+        _animator.SetBool("dashing", false);
+        _canDash = _isGrounded || _isWallTouching;
     }
     #endregion SETTING-VARIABLES
 }
