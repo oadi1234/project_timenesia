@@ -9,26 +9,22 @@ public class PlayerController: MonoBehaviour
 {
     public Spellbook _spellbook;
     #region variables
-    //jump force applied while key is being held
-    [SerializeField] 
-    private float _continousJumpForce = 0.9f;
 
     [SerializeField]
-    private float _initialJumpForce = 12f;
+    private float _initialJumpForce = 10f;
 
     [SerializeField]
     private float _doubleJumpForce = 3f;
 
     [SerializeField]
-    private float _maxFallingSpeed = 175f;
+    private float _maxVerticalSpeed = 15f;
+
+    [SerializeField]
+    private float _maxHorizontalSpeed = 15f;
 
     [Range(0f, 200f)]
     [SerializeField]
     private float _wallJumpForce = 50f;
-
-    [Range(0, 1f)] 
-    [SerializeField] 
-    private float _airControl = 1f;  //might make it 1 at default if it proves to be a poorly feeling design choice. Could leave it for fun for future.
 
     [Range(-8f, 0f)]
     [SerializeField]
@@ -43,7 +39,7 @@ public class PlayerController: MonoBehaviour
     private float _glideSpeed = 5f;
 
     [SerializeField]
-    private int _spatialDashCooldown = 99;
+    private float _dashCooldown = 0.6f;
 
     [SerializeField]
     private Transform _wallCheckMarker;
@@ -60,9 +56,19 @@ public class PlayerController: MonoBehaviour
     [SerializeField]
     private float _moveSpeed = 350f;
 
+    [SerializeField]
+    private float _wallJumpPersistenceModifier = 1.5f; //increases time counted after jumping, so holding the key is a bit shorter. To count by how much it decreases do 1/(this variable)
+
+    [SerializeField]
+    private float _postWallJumpSpeedModifier = 1.1f;
+
+    [SerializeField]
+    private float _doubleJumpPersistenceModifier = 2f;
+
 
     private bool _isGliding;
-    private bool _usedDoubleJump;
+    private bool _isDoubleJumping;
+    private bool _canDash; //only one dash mid-air.
     private bool _hasDoubleJumpCollected = false;
     private bool _hasGlidingCollected = false;
     private bool _hasSpatialDash = false;
@@ -70,39 +76,52 @@ public class PlayerController: MonoBehaviour
     private const float _groundedCheckRay = 0.1f;
     private const float _ceilingCheckRadius = 0.1f;
     private const float _wallCheckRay = 0.2f;
+    private const float _maxJumpTime = 0.11f;
+    private const float _jumpVerticalSpeed = 22f;
 
 
     private bool _facingLeft = false;
-    private bool _isGettingKnockedBack = false; 
-    private bool _afterWallJumpForceFinished = true;
+    private bool _isGettingKnockedBack = false;
     private bool _isGrounded;
     private bool _isJumping;
+    private bool _isWallJumping = false;
     private bool _isWallSliding;
     private bool _isWallTouching;
     private bool _isOnSlope;
+    private bool _isDashing;
 
     private float _currentCoyoteTime;
+    private float _timeAfterJumpPressed; //cooldown for setting variables after pressing jump.
     private float _currentKnockbackTime;
     private float _knockbackStrength;
     private float _flipCooldown;
+    private float _hurtTime;
+    private float _currentMoveSpeed;
+    private float _currentDashCooldown;
 
     private const float _coyoteTime = 0.1f;
     private const float _knockbackTime = 0.5f;
-    private const float _minJumpTimeBeforeWallSlidingEnabled = 0.15f;    
+    private const float _jumpGroundCheckCooldown = 0.1f;
+    private const float _minJumpTimeBeforeWallSlidingEnabled = 0.15f;
 
-    private float _hurtTime;
-    private float _currentMoveSpeed;
+
 
     private Rigidbody2D _rigidBody2D;
     private Vector2 _velocityVector;
+    private Vector2 _brakeVector = Vector2.zero;
     private Vector3 _startingPosition;
     private FlatGroundChecker _flatGroundChecker;
     private WallChecker _wallChecker;
     private Animator _animator;
     private PlayerMovement _playerMovement;
     private PlayerHealth _playerHealth;
+    private IEnumerator blockInputCoroutine;
+    private IEnumerator dashVariableReverserCoroutine;
     private static readonly int AttackBoltTrigger = Animator.StringToHash("AttackBoltTrigger");
     private static readonly int AttackSelfAoETrigger = Animator.StringToHash("AttackSelfAoETrigger");
+    private static readonly int doubleJumpTrigger = Animator.StringToHash("doubleJump");
+    private static readonly int groundJumpTrigger = Animator.StringToHash("groundJump");
+    private static readonly int wallJumpTrigger = Animator.StringToHash("wallJump");
 
     #endregion
 
@@ -129,19 +148,26 @@ public class PlayerController: MonoBehaviour
         IsGrounded();
         IsTouchingWall();
         IsOnSlope();
+        CheckIfShouldStopDash();
 
         _animator.SetBool("isGrounded", _isGrounded);
-        Debug.Log(_isGrounded);
+        _animator.SetBool("wallSliding", _isWallSliding);
         // _animator.SetFloat("Hurt", _hurtTime);
 
         Knockback();
-        if(_flipCooldown>0)
+
+        if (_timeAfterJumpPressed > 0)
+        {
+            _timeAfterJumpPressed -= Time.fixedDeltaTime;
+        }
+        if (_flipCooldown>0)
         {
             _flipCooldown -= Time.fixedDeltaTime;
         }
-        
-        // Debug.Log($"IsGrounded: {_isGrounded}, IsWallTouching: {_isWallTouching}" +
-        //           $"isJumping: {_isJumping}, isGliding: {_isGliding}, isOnSlope {_isOnSlope}");
+        if (_currentDashCooldown > 0)
+        {
+            _currentDashCooldown -= Time.fixedDeltaTime;
+        }
     }
     private void Initialize()
     {
@@ -184,104 +210,142 @@ public class PlayerController: MonoBehaviour
             if (_isWallSliding)
                 _velocityVector.Set(move * _currentMoveSpeed, _slideSpeed);
 
-            else if (_afterWallJumpForceFinished)   //if jumped of the wall recently
-                _velocityVector.Set(move * _currentMoveSpeed, _rigidBody2D.velocity.y);
-
+            else if (_isWallJumping && _facingLeft)   //if jumped of the wall recently {
+            {
+                _velocityVector.Set(Mathf.Min(move * _currentMoveSpeed, _rigidBody2D.velocity.x), _rigidBody2D.velocity.y);
+            }
+            else if (_isWallJumping && !_facingLeft)
+            {
+                _velocityVector.Set(Mathf.Max(move * _currentMoveSpeed, _rigidBody2D.velocity.x), _rigidBody2D.velocity.y);
+            }
             else
-                _velocityVector.Set(_rigidBody2D.velocity.x, _rigidBody2D.velocity.y);
+                _velocityVector.Set(move * _currentMoveSpeed, _rigidBody2D.velocity.y);
         }
-        // else if (_isGrounded && !_isOnSlope)
-        else
+        else if (_isGrounded && !_isOnSlope)
         {
-            // // if (_rigidBody2D.velocity.y > 0f)
-            // //     _velocityVector.Set(_rigidBody2D.velocity.x, _rigidBody2D.velocity.y);
-            // else
-                _velocityVector.Set(move * _currentMoveSpeed, 0);
+            _velocityVector.Set(move * _currentMoveSpeed, _rigidBody2D.velocity.y);
         }
-        // else if (_isOnSlope)
-        // {
-        //     _velocityVector.Set(
-        //         -move * _currentMoveSpeed * _flatGroundChecker.slopeNormalPerpendicular.x,
-        //         _moveSpeed * _flatGroundChecker.slopeNormalPerpendicular.y * -move);
-        // }
+        else if (_isOnSlope)
+        {
+            _velocityVector.Set(
+                move * _currentMoveSpeed,
+                _moveSpeed * _flatGroundChecker.slopeNormalPerpendicular.y * -move);
+        }
 
         _rigidBody2D.velocity = _velocityVector;
 
-        if (/*_afterWallJumpForceFinished*/true) //no idea why _afterWallJumpForceFinished was here, currently leaving this as it is, maybe will delete if later
+        if (move > 0 && _facingLeft)
         {
-            float speed = Vector2.SqrMagnitude(_rigidBody2D.velocity);
-            if (move > 0 && _facingLeft)
-            {
-                Flip();
-                _currentMoveSpeed *= _airControl;
-            }
-            else if (move < 0 && !_facingLeft)
-            {
-                Flip();
-                _currentMoveSpeed *= _airControl;
-            }
+            Flip();
+        }
+        else if (move < 0 && !_facingLeft)
+        {
+            Flip();
+        }
+        float brakeSpeedY = 0f;
+        float brakeSpeedX = 0f;
+        // Speed when falling/ascending. Most likely not ideal but it works.
+        if (Math.Abs(_rigidBody2D.velocity.y) > _maxVerticalSpeed)
+        {
+            brakeSpeedY = Math.Abs(_rigidBody2D.velocity.y) - _maxVerticalSpeed;
+        }
+        if (Math.Abs(_rigidBody2D.velocity.x) > _maxHorizontalSpeed)
+        {
+            brakeSpeedX = Math.Abs(_rigidBody2D.velocity.x) - _maxHorizontalSpeed;
 
-            //TODO: change to speed in y axis, not speed of whole rigidBody
-            if (speed > _maxFallingSpeed)
-            {
-                float brakeSpeed = speed - _maxFallingSpeed;
-                Vector2 normalisedVelocity = _rigidBody2D.velocity.normalized;
-                Vector2 brakeVelocity = normalisedVelocity * brakeSpeed;
-                _rigidBody2D.AddForce(-brakeVelocity);
-            }
+        }
+        _brakeVector.Set(_rigidBody2D.velocity.x*brakeSpeedX, _rigidBody2D.velocity.y*brakeSpeedY);
+        _rigidBody2D.AddForce(-_brakeVector);
 
-            if (_isOnSlope && move == 0f)
-            {
-                _rigidBody2D.sharedMaterial = _allFriction;
-            }
-            else
-            {
-                _rigidBody2D.sharedMaterial = _noFriction;
-            }
+        if (_isOnSlope && move == 0f)
+        {
+            _rigidBody2D.sharedMaterial = _allFriction;
+        }
+        else
+        {
+            _rigidBody2D.sharedMaterial = _noFriction;
         }
 
         _animator.SetInteger("speedX", Math.Sign(move));
     }
     public void Jump(bool jump, bool keyHeld)
     {
-        if (jump && !_isGrounded && _isWallTouching)    //of the wall jumping
+        if (jump && !_isGrounded && _isWallTouching)
         {
-            SetVariablesWhenWallJumping();
-            _rigidBody2D.AddForce((transform.up + (_wallChecker.IsLeftTouching() ? transform.right/1.2f : -transform.right/1.2f)) * _initialJumpForce, ForceMode2D.Impulse);
-            CheckFlipWhenWallJump();
-            StartCoroutine(ReverseAfterWallJumpAfterSeconds(0.15f));
+            WallJump();
         }
-        else if (jump && _isGrounded)    //classic jumping from the ground
+        else if (jump && _isGrounded)
         {
-            _isJumping = true;
-            _isGrounded = false;
-            _rigidBody2D.velocity = new Vector2(_rigidBody2D.velocity.x, 0);
-
-            _rigidBody2D.AddForce(transform.up * _initialJumpForce, ForceMode2D.Impulse);
+            GroundJump();
         }
-        else if (_isJumping && keyHeld && _rigidBody2D.velocity.y > 0)    //longer jumping when holding key; velo > 0 to ommit falling
+        else if ((_isJumping || _isDoubleJumping) && keyHeld && _rigidBody2D.velocity.y > 0 && _jumpTime < _maxJumpTime)
         {
-            _rigidBody2D.AddForce(new Vector2(0f, _continousJumpForce * (1 - _jumpTime * 4)), ForceMode2D.Impulse);
-            _jumpTime += Time.fixedDeltaTime;
+            KeyHoldAscendWhileJumping();
         }
-        else if (_isJumping && _afterWallJumpForceFinished && !keyHeld && _rigidBody2D.velocity.y > 0)
+        else if (_isJumping && !keyHeld && _rigidBody2D.velocity.y > 0) 
         {
-            _rigidBody2D.velocity = new Vector2(_rigidBody2D.velocity.x, 0);
+            LoseVelocityAfterJumping();
         }
-        else if (_isJumping && _rigidBody2D.velocity.y <= 0) //falling
+        else if (jump && !_isDoubleJumping)
         {
-            _jumpTime = -1;
+            DoubleJump();
         }
 
-        //no idea what it is
-        //if (ofWallJumpTimeLeft > 0f)
-        //{
-        //    rigidBody2D.AddForce(new Vector2(_continousJumpForce * (ofWallJumpTimeLeft * 4), 0), ForceMode2D.Impulse);
-        //    ofWallJumpTimeLeft -= Time.fixedDeltaTime;
-        //    Debug.Log("JumpTimeLeft: " + ofWallJumpTimeLeft);
-        //}
-        _animator.SetFloat("speedY", _rigidBody2D.velocity.y);
+        _animator.SetFloat("speedY", _rigidBody2D.velocity.y); // TODO move animator events to its own class
     }
+
+    private void GroundJump()
+    {
+        _timeAfterJumpPressed = _jumpGroundCheckCooldown; //a cooldown made to avoid setting values on being grounded a short while after jumping.
+        _isJumping = true;
+        _isGrounded = false;
+        if (!_flatGroundChecker.IsGrounded()) //coyote time case, otherwise player just awkwardly floats for a second
+        {
+            MidAirJumpVerticalSpeedReset();
+        }
+        _rigidBody2D.AddForce(transform.up * _initialJumpForce, ForceMode2D.Impulse);
+        _animator.SetTrigger(groundJumpTrigger);
+    }
+
+    private void WallJump()
+    {
+        SetVariablesWhenWallJumping();
+        _rigidBody2D.AddForce((transform.up + (_wallChecker.IsLeftTouching() ? transform.right * _postWallJumpSpeedModifier : -transform.right * _postWallJumpSpeedModifier)) * _initialJumpForce, ForceMode2D.Impulse);
+        CheckFlipWhenWallJump();
+        StartCoroutine(ReverseAfterWallJumpAfterSeconds(0.15f));
+    }
+
+    private void DoubleJump()
+    {
+        _isWallJumping = false; //reset the flag so wall jumping penalty for KeyHoldAscendWhileJumping does not apply.
+        _isDoubleJumping = true;
+        MidAirJumpVerticalSpeedReset();
+        _jumpTime = 0;
+        _rigidBody2D.AddForce(transform.up * _initialJumpForce, ForceMode2D.Impulse);
+        _animator.SetTrigger(doubleJumpTrigger);
+    }
+
+    private void KeyHoldAscendWhileJumping()
+    {
+        _jumpTime += Time.fixedDeltaTime + Time.fixedDeltaTime * Convert.ToInt32(_isWallJumping) * _wallJumpPersistenceModifier + Time.fixedDeltaTime * Convert.ToInt32(_isDoubleJumping) * _doubleJumpPersistenceModifier;
+        _velocityVector.Set(_rigidBody2D.velocity.x, _jumpVerticalSpeed);
+        _rigidBody2D.velocity = _velocityVector;
+    }
+
+    private void LoseVelocityAfterJumping()
+    {
+        // smooth ascend to 0 once key is no longer held. Allows for finer control without jerky movement.
+        _velocityVector.Set(_rigidBody2D.velocity.x, _rigidBody2D.velocity.y * 0.8f);
+        _rigidBody2D.velocity = _velocityVector;
+        _jumpTime = 99f;
+    }
+
+    private void MidAirJumpVerticalSpeedReset()
+    {
+        _velocityVector.Set(_rigidBody2D.velocity.x, 0);
+        _rigidBody2D.velocity = _velocityVector;
+    }
+
     public void Flip()
     {
         if (_flipCooldown <= 0)
@@ -318,6 +382,17 @@ public class PlayerController: MonoBehaviour
         {
             _velocityVector.Set(_knockbackStrength * _currentKnockbackTime, _knockbackStrength * _currentKnockbackTime);
             _rigidBody2D.AddForce(_velocityVector, ForceMode2D.Impulse);
+        }
+    }
+    public void Dash(bool dash, float move)
+    {
+        if (_currentDashCooldown <= 0 && _canDash && dash)
+        {
+            SetVariablesWhenDashing(move);
+            blockInputCoroutine = BlockInputForSeconds(0.25f);
+            dashVariableReverserCoroutine = ReverseDashVariablesAfterSeconds(0.25f);
+            StartCoroutine(blockInputCoroutine);
+            StartCoroutine(dashVariableReverserCoroutine);
         }
     }
 
@@ -376,7 +451,13 @@ public class PlayerController: MonoBehaviour
     private IEnumerator ReverseAfterWallJumpAfterSeconds(float seconds)
     {
         yield return new WaitForSecondsRealtime(seconds);
-        _afterWallJumpForceFinished = true;
+        _isWallJumping = false;
+    }
+    
+    private IEnumerator ReverseDashVariablesAfterSeconds(float seconds)
+    {
+        yield return new WaitForSecondsRealtime(seconds);
+        EndDash();
     }
     #endregion Waiters
 
@@ -428,10 +509,22 @@ public class PlayerController: MonoBehaviour
             }
         }
     }
+    
+    private void CheckIfShouldStopDash()
+    {
+        if (_isWallTouching && _isDashing)
+        {
+            StopCoroutine(blockInputCoroutine);
+            StopCoroutine(dashVariableReverserCoroutine);
+            EndDash();
+            _playerMovement.SetInputEnabled(true);
+           
+        }
+    }
 
     private bool CanWallSlide()
     {
-        return _isWallTouching && _afterWallJumpForceFinished && _rigidBody2D.velocity.y <= 0 && (_jumpTime <= 0f || _jumpTime > _minJumpTimeBeforeWallSlidingEnabled);
+        return _isWallTouching && !_isWallJumping && _rigidBody2D.velocity.y <= 0 && (_jumpTime <= 0f || _jumpTime > _minJumpTimeBeforeWallSlidingEnabled);
     }
 
     private void CheckFlipWhenWallJump()
@@ -447,14 +540,19 @@ public class PlayerController: MonoBehaviour
     #region SETTING-VARIABLES
     private void SetVariablesWhenGrounded()
     {
-        _isGrounded = true;
-        _isWallTouching = false;
-        _isWallSliding = false;
-        _usedDoubleJump = false;
-        _isJumping = false;
-        _jumpTime = 0f;
-        _currentMoveSpeed = _moveSpeed;
-        _currentCoyoteTime = _coyoteTime;
+        if (_timeAfterJumpPressed <= 0)
+        {
+            _isGrounded = true;
+            _isWallTouching = false;
+            _isWallSliding = false;
+            _isWallJumping = false;
+            _isDoubleJumping = false;
+            _isJumping = false;
+            _canDash = true;
+            _jumpTime = 0f;
+            _currentMoveSpeed = _moveSpeed;
+            _currentCoyoteTime = _coyoteTime;
+        }
     }
     private void SetVariablesWhenWallSliding()
     {
@@ -462,15 +560,37 @@ public class PlayerController: MonoBehaviour
         _jumpTime = 0f;
         //currentMoveSpeed = 0;
         _currentCoyoteTime = _coyoteTime;
+        _canDash = true;
     }
     private void SetVariablesWhenWallJumping()
     {
         _rigidBody2D.velocity = new Vector2(0, 0);
+        _isWallJumping = true;
         _isJumping = true;
         _isWallSliding = false;
+        _isDoubleJumping = false;
         _jumpTime = 0f;
-        _afterWallJumpForceFinished = false;
         _currentMoveSpeed = _moveSpeed;
+        _animator.SetTrigger(wallJumpTrigger);
+    }
+    private void SetVariablesWhenDashing(float move)
+    {
+        _currentDashCooldown = _dashCooldown;
+        _isDashing = true;
+        _rigidBody2D.gravityScale = 0f;
+        _velocityVector.Set(0, 0);
+        _rigidBody2D.velocity = _velocityVector;
+        _velocityVector.Set(25f * (Convert.ToInt32(move==0 ? !_facingLeft : move > 0) * 2 - 1), _rigidBody2D.velocity.y);
+        _rigidBody2D.velocity = _velocityVector;
+        _animator.SetBool("dashing", true);
+    }
+    private void EndDash()
+    {
+        _isDashing = false;
+        _rigidBody2D.gravityScale = 4f;
+        _animator.SetBool("dashing", false);
+        _canDash = _isGrounded || _isWallTouching;
+        _jumpTime = 0f; // set so you can double jump after a dash
     }
     #endregion SETTING-VARIABLES
 }

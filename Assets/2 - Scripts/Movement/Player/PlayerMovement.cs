@@ -9,8 +9,9 @@ public class PlayerMovement : MonoBehaviour
     float _xInput = 0f;
     bool _isInputEnabled = true;
     bool _jumpPressed = false;
-    bool _keyHeld = false;
+    bool _jumpKeyHold = false;
     bool _spellAttack = false;
+    bool _dashPressed = false;
     int _spellIndex = -1;
 
     private bool _castingAnimationInProgress = false;
@@ -25,11 +26,11 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetButtonDown("Jump"))
         {
             _jumpPressed = true;
-            _keyHeld = true;
+            _jumpKeyHold = true;
         }
         else if (Input.GetButtonUp("Jump"))
         {
-            _keyHeld = false;
+            _jumpKeyHold = false;
         }
 
         if (Input.GetButtonDown("Fire1") && !_castingAnimationInProgress)
@@ -41,6 +42,10 @@ public class PlayerMovement : MonoBehaviour
         {
             _spellAttack = true;
             _spellIndex = 1;
+        }
+        if(Input.GetButtonDown("Dash"))
+        {
+            _dashPressed = true;
         }
     }
 
@@ -57,16 +62,18 @@ public class PlayerMovement : MonoBehaviour
             }
             else
             {
-                playerController.Jump(_jumpPressed, _keyHeld);
+                playerController.Jump(_jumpPressed, _jumpKeyHold);
                 playerController.Move(_xInput * Time.fixedDeltaTime);
+                playerController.Dash(_dashPressed, _xInput);
 
                 _jumpPressed = false;
+                _dashPressed = false;
             }
         }
         else
         {
             _xInput = 0;
-            _keyHeld = false;
+            _jumpKeyHold = false;
             _jumpPressed = false;
         }
     }

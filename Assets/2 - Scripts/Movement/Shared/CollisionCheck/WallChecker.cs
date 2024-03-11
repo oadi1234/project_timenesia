@@ -88,7 +88,7 @@ public class WallChecker : MonoBehaviour
         {
             if (isFacingLeft)
             {
-                _leftHit = Physics2D.Raycast(new Vector2(_leftPositionX, _centerPositionY), Vector2.left, distance);
+                _leftHit = Physics2D.Raycast(new Vector2(_leftPositionX, bottomPositionY), Vector2.left, distance);
 
                 if (_leftHit.collider != null)
                 {
@@ -101,7 +101,7 @@ public class WallChecker : MonoBehaviour
             }
             else
             {
-                _rightHit = Physics2D.Raycast(new Vector2(_rightPositionX, _centerPositionY), Vector2.right, distance);
+                _rightHit = Physics2D.Raycast(new Vector2(_rightPositionX, bottomPositionY), Vector2.right, distance);
 
                 if (_rightHit.collider != null/* && !isFacingLeft*/)
                 {
@@ -116,8 +116,8 @@ public class WallChecker : MonoBehaviour
         
         if (isPlayer)
         {
-            Debug.DrawRay(new Vector2(_leftPositionX, _centerPositionY), Vector2.left * distance, Color.green);
-            Debug.DrawRay(new Vector2(_rightPositionX, _centerPositionY), Vector2.right * distance, Color.red);
+            Debug.DrawRay(new Vector2(_leftPositionX, bottomPositionY), Vector2.left * distance, Color.green);
+            Debug.DrawRay(new Vector2(_rightPositionX, bottomPositionY), Vector2.right * distance, Color.red);
         }
     }
 
