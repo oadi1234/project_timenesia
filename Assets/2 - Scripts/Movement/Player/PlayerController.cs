@@ -62,9 +62,12 @@ public class PlayerController: MonoBehaviour
     [SerializeField]
     private float _postWallJumpSpeedModifier = 1.1f;
 
+    [SerializeField]
+    private float _doubleJumpPersistenceModifier = 2f;
+
 
     private bool _isGliding;
-    private bool _usedDoubleJump;
+    private bool _isDoubleJumping;
     private bool _canDash; //only one dash mid-air.
     private bool _hasDoubleJumpCollected = false;
     private bool _hasGlidingCollected = false;
@@ -73,6 +76,8 @@ public class PlayerController: MonoBehaviour
     private const float _groundedCheckRay = 0.1f;
     private const float _ceilingCheckRadius = 0.1f;
     private const float _wallCheckRay = 0.2f;
+    private const float _maxJumpTime = 0.11f;
+    private const float _jumpVerticalSpeed = 22f;
 
 
     private bool _facingLeft = false;
@@ -114,6 +119,9 @@ public class PlayerController: MonoBehaviour
     private IEnumerator dashVariableReverserCoroutine;
     private static readonly int AttackBoltTrigger = Animator.StringToHash("AttackBoltTrigger");
     private static readonly int AttackSelfAoETrigger = Animator.StringToHash("AttackSelfAoETrigger");
+    private static readonly int doubleJumpTrigger = Animator.StringToHash("doubleJump");
+    private static readonly int groundJumpTrigger = Animator.StringToHash("groundJump");
+    private static readonly int wallJumpTrigger = Animator.StringToHash("wallJump");
 
     #endregion
 
@@ -140,9 +148,10 @@ public class PlayerController: MonoBehaviour
         IsGrounded();
         IsTouchingWall();
         IsOnSlope();
-        ShouldStopDash();
+        CheckIfShouldStopDash();
 
         _animator.SetBool("isGrounded", _isGrounded);
+        _animator.SetBool("wallSliding", _isWallSliding);
         // _animator.SetFloat("Hurt", _hurtTime);
 
         Knockback();
@@ -261,49 +270,82 @@ public class PlayerController: MonoBehaviour
     }
     public void Jump(bool jump, bool keyHeld)
     {
-        if (jump && !_isGrounded && _isWallTouching)    //of the wall jumping
+        if (jump && !_isGrounded && _isWallTouching)
         {
-            SetVariablesWhenWallJumping();
-            _rigidBody2D.AddForce((transform.up + (_wallChecker.IsLeftTouching() ? transform.right * _postWallJumpSpeedModifier : -transform.right * _postWallJumpSpeedModifier)) * _initialJumpForce, ForceMode2D.Impulse);
-            CheckFlipWhenWallJump();
-            StartCoroutine(ReverseAfterWallJumpAfterSeconds(0.15f));
+            WallJump();
         }
-        else if (jump && _isGrounded)    //classic jumping from the ground
+        else if (jump && _isGrounded)
         {
-            _timeAfterJumpPressed = _jumpGroundCheckCooldown; //a cooldown made to avoid setting values on being grounded a short while after jumping.
-            _isJumping = true;
-            _isGrounded = false;
-            if(!_flatGroundChecker.IsGrounded())
-            {
-                _velocityVector.Set(_rigidBody2D.velocity.x, 0);
-                _rigidBody2D.velocity = _velocityVector;
-            }
-            _rigidBody2D.AddForce(transform.up * _initialJumpForce, ForceMode2D.Impulse);
+            GroundJump();
         }
-        else if (_isJumping && keyHeld && _rigidBody2D.velocity.y > 0 && _jumpTime < 0.2f)    //longer jumping when holding key; velo > 0 to ommit falling
+        else if ((_isJumping || _isDoubleJumping) && keyHeld && _rigidBody2D.velocity.y > 0 && _jumpTime < _maxJumpTime)
         {
-            _jumpTime += Time.fixedDeltaTime + Time.fixedDeltaTime * Convert.ToInt32(_isWallJumping) * _wallJumpPersistenceModifier;
-            _velocityVector.Set(_rigidBody2D.velocity.x, 15f);
-            _rigidBody2D.velocity = _velocityVector;
+            KeyHoldAscendWhileJumping();
         }
         else if (_isJumping && !keyHeld && _rigidBody2D.velocity.y > 0) 
         {
-            //quickly smooth ascend to 0 once key is no longer held. Allows for finer control without jerky movement.
-            _velocityVector.Set(_rigidBody2D.velocity.x, _rigidBody2D.velocity.y*0.8f);
-            _rigidBody2D.velocity = _velocityVector;
-            _jumpTime = 99f;
-
+            LoseVelocityAfterJumping();
+        }
+        else if (jump && !_isDoubleJumping)
+        {
+            DoubleJump();
         }
 
-        //no idea what it is
-        //if (ofWallJumpTimeLeft > 0f)
-        //{
-        //    rigidBody2D.AddForce(new Vector2(_continousJumpForce * (ofWallJumpTimeLeft * 4), 0), ForceMode2D.Impulse);
-        //    ofWallJumpTimeLeft -= Time.fixedDeltaTime;
-        //    Debug.Log("JumpTimeLeft: " + ofWallJumpTimeLeft);
-        //}
-        _animator.SetFloat("speedY", _rigidBody2D.velocity.y);
+        _animator.SetFloat("speedY", _rigidBody2D.velocity.y); // TODO move animator events to its own class
     }
+
+    private void GroundJump()
+    {
+        _timeAfterJumpPressed = _jumpGroundCheckCooldown; //a cooldown made to avoid setting values on being grounded a short while after jumping.
+        _isJumping = true;
+        _isGrounded = false;
+        if (!_flatGroundChecker.IsGrounded()) //coyote time case, otherwise player just awkwardly floats for a second
+        {
+            MidAirJumpVerticalSpeedReset();
+        }
+        _rigidBody2D.AddForce(transform.up * _initialJumpForce, ForceMode2D.Impulse);
+        _animator.SetTrigger(groundJumpTrigger);
+    }
+
+    private void WallJump()
+    {
+        SetVariablesWhenWallJumping();
+        _rigidBody2D.AddForce((transform.up + (_wallChecker.IsLeftTouching() ? transform.right * _postWallJumpSpeedModifier : -transform.right * _postWallJumpSpeedModifier)) * _initialJumpForce, ForceMode2D.Impulse);
+        CheckFlipWhenWallJump();
+        StartCoroutine(ReverseAfterWallJumpAfterSeconds(0.15f));
+    }
+
+    private void DoubleJump()
+    {
+        _isWallJumping = false; //reset the flag so wall jumping penalty for KeyHoldAscendWhileJumping does not apply.
+        _isDoubleJumping = true;
+        MidAirJumpVerticalSpeedReset();
+        _jumpTime = 0;
+        _rigidBody2D.AddForce(transform.up * _initialJumpForce, ForceMode2D.Impulse);
+        _animator.SetTrigger(doubleJumpTrigger);
+    }
+
+    private void KeyHoldAscendWhileJumping()
+    {
+        _jumpTime += Time.fixedDeltaTime + Time.fixedDeltaTime * Convert.ToInt32(_isWallJumping) * _wallJumpPersistenceModifier + Time.fixedDeltaTime * Convert.ToInt32(_isDoubleJumping) * _doubleJumpPersistenceModifier;
+        _velocityVector.Set(_rigidBody2D.velocity.x, _jumpVerticalSpeed);
+        _rigidBody2D.velocity = _velocityVector;
+    }
+
+    private void LoseVelocityAfterJumping()
+    {
+        // smooth ascend to 0 once key is no longer held. Allows for finer control without jerky movement.
+        _velocityVector.Set(_rigidBody2D.velocity.x, _rigidBody2D.velocity.y * 0.8f);
+        _rigidBody2D.velocity = _velocityVector;
+        _jumpTime = 99f;
+    }
+
+    private void MidAirJumpVerticalSpeedReset()
+    {
+        _velocityVector.Set(_rigidBody2D.velocity.x, 0);
+        _rigidBody2D.velocity = _velocityVector;
+    }
+
     public void Flip()
     {
         if (_flipCooldown <= 0)
@@ -468,17 +510,15 @@ public class PlayerController: MonoBehaviour
         }
     }
     
-    private void ShouldStopDash()
+    private void CheckIfShouldStopDash()
     {
-        if (_isWallTouching)
+        if (_isWallTouching && _isDashing)
         {
-            if (_isDashing)
-            {
-                StopCoroutine(blockInputCoroutine);
-                StopCoroutine(dashVariableReverserCoroutine);
-                EndDash();
-                _playerMovement.SetInputEnabled(true);
-            }
+            StopCoroutine(blockInputCoroutine);
+            StopCoroutine(dashVariableReverserCoroutine);
+            EndDash();
+            _playerMovement.SetInputEnabled(true);
+           
         }
     }
 
@@ -506,7 +546,7 @@ public class PlayerController: MonoBehaviour
             _isWallTouching = false;
             _isWallSliding = false;
             _isWallJumping = false;
-            _usedDoubleJump = false;
+            _isDoubleJumping = false;
             _isJumping = false;
             _canDash = true;
             _jumpTime = 0f;
@@ -528,8 +568,10 @@ public class PlayerController: MonoBehaviour
         _isWallJumping = true;
         _isJumping = true;
         _isWallSliding = false;
+        _isDoubleJumping = false;
         _jumpTime = 0f;
         _currentMoveSpeed = _moveSpeed;
+        _animator.SetTrigger(wallJumpTrigger);
     }
     private void SetVariablesWhenDashing(float move)
     {
@@ -548,6 +590,7 @@ public class PlayerController: MonoBehaviour
         _rigidBody2D.gravityScale = 4f;
         _animator.SetBool("dashing", false);
         _canDash = _isGrounded || _isWallTouching;
+        _jumpTime = 0f; // set so you can double jump after a dash
     }
     #endregion SETTING-VARIABLES
 }
