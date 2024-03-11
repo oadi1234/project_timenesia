@@ -472,12 +472,13 @@ GameObject:
   - component: {fileID: 501173469}
   - component: {fileID: 501173468}
   - component: {fileID: 501173467}
+  - component: {fileID: 501173473}
   - component: {fileID: 501173466}
   - component: {fileID: 501173465}
-  - component: {fileID: 501173464}
   - component: {fileID: 501173463}
   - component: {fileID: 501173462}
   - component: {fileID: 501173461}
+  - component: {fileID: 501173472}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -521,38 +522,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _whatIsGround:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4096
   _wallCheckRay: 0.1
   _maxAngle: 50
   _wallAngleThreshold: 5
---- !u!114 &501173464
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 501173460}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c32907915b05cb947aa9f5b183c218d8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _spellbook: {fileID: 501173461}
-  _initialJumpForce: 10
-  _doubleJumpForce: 3
-  _maxVerticalSpeed: 15
-  _maxHorizontalSpeed: 15
-  _wallJumpForce: 50
-  _slideSpeed: -4.5
-  _crouchSpeed: 0.3
-  _glideSpeed: 5
-  _dashCooldown: 0.6
-  _wallCheckMarker: {fileID: 0}
-  _noFriction: {fileID: 6200000, guid: 871b760142bf49947a337fccc571385c, type: 2}
-  _allFriction: {fileID: 6200000, guid: 776c18e70f9729a49bd0d5f9c98edb3d, type: 2}
-  _moveSpeed: 350
-  _wallJumpPersistenceModifier: 1.5
-  _postWallJumpSpeedModifier: 1.1
 --- !u!114 &501173465
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -565,7 +538,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f32f3d43469e1ee4e8c05f451d3bea00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerController: {fileID: 501173464}
+  playerMovementController: {fileID: 501173473}
+  playerAttackController: {fileID: 501173472}
 --- !u!114 &501173466
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -710,6 +684,46 @@ Transform:
   - {fileID: 1289776343}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &501173472
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 501173460}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40f4b1deefb5c614a8812791ef7015f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &501173473
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 501173460}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c32907915b05cb947aa9f5b183c218d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _initialJumpForce: 10
+  _doubleJumpForce: 3
+  _maxVerticalSpeed: 15
+  _maxHorizontalSpeed: 25
+  _wallJumpForce: 50
+  _slideSpeed: -4.5
+  _crouchSpeed: 0.3
+  _glideSpeed: 5
+  _dashCooldown: 0.6
+  _wallCheckMarker: {fileID: 0}
+  _noFriction: {fileID: 6200000, guid: 871b760142bf49947a337fccc571385c, type: 2}
+  _allFriction: {fileID: 6200000, guid: 776c18e70f9729a49bd0d5f9c98edb3d, type: 2}
+  _moveSpeed: 350
+  _wallJumpPersistenceModifier: 1.5
+  _postWallJumpSpeedModifier: 1.1
+  _doubleJumpPersistenceModifier: 2
 --- !u!1 &673468616
 GameObject:
   m_ObjectHideFlags: 0
@@ -8158,7 +8172,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d78b4ff9ded6de04aa15b845cd089951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerController: {fileID: 501173464}
+  playerAttackController: {fileID: 0}
 --- !u!95 &1289776345
 Animator:
   serializedVersion: 5

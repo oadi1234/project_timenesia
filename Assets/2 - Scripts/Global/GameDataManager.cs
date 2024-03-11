@@ -20,8 +20,8 @@ namespace _2___Scripts.Global
         public int MaxHealth { get; private set; }
         public int CurrentConcentrationSlots { get; private set; }
         public int MaxConcentrationSlots { get; private set; }
-        public int CurrentMana { get; private set; }
-        public int MaxMana { get; private set; }
+        public int CurrentEffort { get; private set; }
+        public int MaxEffort { get; private set; }
         public int Coins { get; private set; }
         public string LastSavePoint  { get; private set; }
 	
@@ -63,7 +63,7 @@ namespace _2___Scripts.Global
         public void LoadFromSave(SaveDataSchema save)
         {
             MaxHealth = CurrentHealth = save.MaxHealth;
-            CurrentMana = MaxMana = save.MaxMana;
+            CurrentEffort = MaxEffort = save.MaxMana;
             CurrentConcentrationSlots = MaxConcentrationSlots = save.MaxConcentrationSlots;
             LastSavePoint = save.SavePoint;
             Coins = save.Coins;

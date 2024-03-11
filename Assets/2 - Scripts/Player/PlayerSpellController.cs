@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using _2___Scripts.Global;
 using UnityEngine;
 
-public class SpellController : MonoBehaviour
+public class PlayerSpellController : MonoBehaviour
 {
     public bool PassThrough = false;
     public void OnTriggerEnter2D(Collider2D col)

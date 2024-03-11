@@ -2,9 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerInputManager : MonoBehaviour
 {
-    public PlayerController playerController;
+    public PlayerMovementController playerMovementController;
+    public PlayerAttackController playerAttackController;
 
     float _xInput = 0f;
     bool _isInputEnabled = true;
@@ -15,8 +16,6 @@ public class PlayerMovement : MonoBehaviour
     int _spellIndex = -1;
 
     private bool _castingAnimationInProgress = false;
-    //float maximumPressTime = 0.25f;
-    //float currentPressTime = 0f;
     public bool IsInputEnabled => _isInputEnabled;
 
     // Update is called once per frame
@@ -55,16 +54,16 @@ public class PlayerMovement : MonoBehaviour
         { 
             if (_spellAttack)
             {
-                playerController.Attack(_spellIndex);
+                playerAttackController.Attack(_spellIndex);
                 _castingAnimationInProgress = true;
                 _spellAttack = false;
                 _spellIndex = -1;
             }
             else
             {
-                playerController.Jump(_jumpPressed, _jumpKeyHold);
-                playerController.Move(_xInput * Time.fixedDeltaTime);
-                playerController.Dash(_dashPressed, _xInput);
+                playerMovementController.Jump(_jumpPressed, _jumpKeyHold);
+                playerMovementController.Move(_xInput * Time.fixedDeltaTime);
+                playerMovementController.Dash(_dashPressed, _xInput);
 
                 _jumpPressed = false;
                 _dashPressed = false;

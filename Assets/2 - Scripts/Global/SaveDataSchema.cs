@@ -28,6 +28,9 @@ public class SaveDataSchema
    public string SavePoint { get; set; }
    public int Coins { get; set; }
 
+    //current scene (for manual saving)
+    //current location
+
    // public SaveDataSchema(int t, int t2)
    // {
    //    CurrentHealth = t;

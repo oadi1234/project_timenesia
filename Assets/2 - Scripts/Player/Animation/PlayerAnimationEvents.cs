@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class PlayerAnimationEvents : MonoBehaviour
 { 
-    public PlayerController playerController;
+    public PlayerAttackController playerAttackController;
     
     public void Test(int spellIndex)
     {
-        playerController.Test(spellIndex);
+        playerAttackController.Test(spellIndex);
     }
 }
