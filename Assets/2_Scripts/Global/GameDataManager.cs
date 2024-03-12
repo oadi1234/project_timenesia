@@ -11,7 +11,9 @@ namespace _2___Scripts.Global
         {
         }
 
-        public static GameDataManager Instance { get; } = new();
+        public SaveManager saveManager;
+
+        public static GameDataManager Instance { get; private set; }
         public static event Action<IBaseEvent> OnCollected;
     
         private TextMeshProUGUI CoinText;
@@ -27,11 +29,11 @@ namespace _2___Scripts.Global
 	
         private void Awake()
         {
-            // if (Instance == null)
-            // {
-            //     Instance = this;
-            // }
-            /*else*/ if (Instance != this)
+            if (Instance == null)
+            {
+                Instance = this;
+            }
+            else if (Instance != this)
             {
                 Destroy(gameObject);
             }
@@ -39,6 +41,7 @@ namespace _2___Scripts.Global
             CoinText = GameObject.Find("CoinCounter").GetComponent<TextMeshProUGUI>();
             DontDestroyOnLoad (gameObject);
             OnPlayerEnteredEvent.OnPlayerEntered += OnPlayer_Entered;
+            Loadpoint.OnLoad += Load;
         }
     
         private void OnPlayer_Entered(IOnPlayerEnteredEvent obj)
@@ -54,10 +57,19 @@ namespace _2___Scripts.Global
             }
         }
 
-        public void LoadFromSave2(SaveDataSchema save)
+        private void LoadFromSave2(SaveDataSchema save)
         {
-            MaxHealth = save.MaxHealth;
+            // MaxHealth = save.MaxHealth;
             CurrentHealth = save.CurrentHealth;
+            Coins = save.Coins;
+            CoinText.text = Coins.ToString();
+        }
+
+        private void Load(string fileName)
+        {
+            var data = saveManager.Load(fileName);
+            LoadFromSave2(data);
+            Console.WriteLine("loaded");
         }
     
         public void LoadFromSave(SaveDataSchema save)

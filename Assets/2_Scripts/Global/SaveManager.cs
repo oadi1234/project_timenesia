@@ -30,11 +30,12 @@ public class SaveManager : MonoBehaviour
         Savepoint.OnSave += Save;
     }
 
-    public void Save(string savepointCoordinates, int currentHealth)
+    public void Save(string savepointCoordinates, int currentHealth, int currentCoins = -1)
     {
         if (_saveDataSchema == null)
             _saveDataSchema = new SaveDataSchema();
         _saveDataSchema.CurrentHealth = currentHealth;
+        _saveDataSchema.Coins = currentCoins;
         
         // AudioManager.PlaySound();
         SoundManager.Instance.PlayOnce(GlobalAssets.Instance.SaveAudioClip);
