@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SwitchArea : MonoBehaviour
 {
+    [SerializeField] private string AreaToLoad;
+    [SerializeField] private string CurrentArea;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,8 +23,8 @@ public class SwitchArea : MonoBehaviour
     {
         if (collision.gameObject.tag == "Player")
         {
-            UnityEngine.SceneManagement.SceneManager.LoadScene("Area2", UnityEngine.SceneManagement.LoadSceneMode.Additive);
-            UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync("Area1");
+            UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(AreaToLoad, UnityEngine.SceneManagement.LoadSceneMode.Additive);
+            UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(CurrentArea);
         }
     }
 }
