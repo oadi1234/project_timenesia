@@ -7,11 +7,11 @@ namespace _2___Scripts.Player
 {
     public class PlayerEffort : MonoBehaviour
     {
-        public int maxEffort = 4;
+        public int maxEffort = 4; //temp starting values, make load from save later on.
         public int currentEffort = 0;
-        public int spellCapacity = 2;
+        public int spellCapacity = 2; //might get deleted.
 
-        public float regenInterval = 0.5f;
+        public float regenInterval = 0.8f; // TODO set this depending on the chosen difficulty, or allow concentrations to change it. Might get moved to PlayerAbilityAndStats or something like it.
         public int effortPerInterval = 1;
         public EffortBar effortBar;
         public EffortElement[] castCombination;
@@ -172,14 +172,15 @@ namespace _2___Scripts.Player
         }
 
     
-        public void UseEffort(int cost)
+        public bool UseEffort(int cost)
         {
-            if (cost >= currentEffort)
-                currentEffort = 0;
+            if (cost > currentEffort)
+                return false;
             else
                 currentEffort -= cost;
             effortBar.SetCurrentMana(currentEffort);
             effortBar.CleanManaSources();
+            return true;
         }
 
         //Freeze mana will sometimes keep rightmost mana points coloured - they cannot be used and

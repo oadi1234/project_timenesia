@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9ac4e7d68edbd54596395ed534d292b, type: 3}
+  m_Name: constants
+  m_EditorClassIdentifier: 
+  coyoteTime: 0.1
+  knockbackTime: 0.5
+  jumpGroundCheckCooldown: 0.1
+  minJumpTimeBeforeWallSlidingEnabled: 0.15
+  groundedCheckRay: 0.1
+  ceilingCheckRadius: 0.1
+  wallCheckRay: 0.2
+  maxJumpTime: 0.2
+  jumpVerticalSpeed: 19
+  dashSpeed: 25
+  doubleJumpPersistenceModifier: 1
+  postWallJumpSpeedModifier: 1.1
+  wallJumpPersistenceModifier: 1
+  moveSpeed: 7
+  dashCooldown: 0.6
+  maxHorizontalSpeed: 25
+  maxVerticalSpeed: 19
+  initialJumpForce: 10
+  doubleJumpForce: 3
+  wallSlideSpeed: -4.5

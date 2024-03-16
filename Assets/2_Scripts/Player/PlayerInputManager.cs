@@ -62,7 +62,9 @@ public class PlayerInputManager : MonoBehaviour
             else
             {
                 playerMovementController.Jump(_jumpPressed, _jumpKeyHold);
-                playerMovementController.Move(_xInput * Time.fixedDeltaTime);
+                //time.fixeddeltatime below is used to adjust movement for occasional lag, if it ever happens. It might be unnecessary.
+                //on normal run xInput*fixedDeltaTime is 0.02, so I multiply it by 50 to normalize it to 1. Makes movement speed easier to set in constants.
+                playerMovementController.Move(_xInput * Time.fixedDeltaTime * 50);
                 playerMovementController.Dash(_dashPressed, _xInput);
 
                 _jumpPressed = false;

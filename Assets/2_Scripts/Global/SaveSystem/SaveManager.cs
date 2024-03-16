@@ -23,23 +23,23 @@ public class SaveManager : MonoBehaviour
         DontDestroyOnLoad (gameObject);
     }
     
-    private static SaveDataSchema _saveDataSchema;
+    private static SaveDataSchema saveData;
 
     private void Initialize()
     {
         Savepoint.OnSave += Save;
     }
 
-    public void Save(string savepointCoordinates, int currentHealth)
+    public void Save(string savepointCoordinates, PlayerAbilityAndStats stats)
     {
-        if (_saveDataSchema == null)
-            _saveDataSchema = new SaveDataSchema();
-        _saveDataSchema.CurrentHealth = currentHealth;
-        
+        if (saveData == null)
+            saveData = new SaveDataSchema();
+        saveData.abilities = stats.abilities;
+
         // AudioManager.PlaySound();
-        SoundManager.Instance.PlayOnce(GlobalAssets.Instance.SaveAudioClip);
-        
-        Save(_saveDataSchema);
+        //SoundManager.Instance.PlayOnce(GlobalAssets.Instance.SaveAudioClip); //disabled for testing.
+
+        Save(saveData);
     }
 
     public SaveDataSchema Load(string filename = "save_00")
@@ -58,18 +58,15 @@ public class SaveManager : MonoBehaviour
 
         return data;
     }
-    
-    public SaveDataSchema Load(SaveDataSchema data)
-    {
-        return data;
-    }
 
     private bool Save(SaveDataSchema data, string filename = "save_00")
     {
+
         bool result = false;
         string fullpath = GetPath(filename);
         if (data != null)
         {
+            Debug.Log(data.Coins);
             BinaryFormatter bf = new BinaryFormatter();
             using (FileStream fs = File.Open(fullpath, FileMode.OpenOrCreate))
             {
