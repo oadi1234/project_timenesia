@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Loadpoint : MonoBehaviour
 {
-    public static event Action<string> OnLoad;
+    public static event Action OnLoad;
 
     [SerializeField] private string _loadpointCoordinates;
     public string LoadpointCoordinates => _loadpointCoordinates;
@@ -14,7 +14,7 @@ public class Loadpoint : MonoBehaviour
         if (OnLoad != null && collision.CompareTag("Player"))
         {   
             var playerHealth = collision.gameObject.GetComponent<PlayerHealth>();
-            OnLoad("save_00");
+            OnLoad();
         }
     }
 }

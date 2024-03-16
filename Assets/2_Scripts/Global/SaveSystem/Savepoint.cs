@@ -6,7 +6,7 @@ using UnityEngine;
 public class Savepoint : MonoBehaviour
 {
     public GameDataManager gdm;
-    public static event Action<string, int, int> OnSave;
+    public static event Action<string, PlayerAbilityAndStats> OnSave;
 
     [SerializeField] private string _savepointCoordinates;
     public string SavepointCoordinates => _savepointCoordinates;
@@ -14,9 +14,9 @@ public class Savepoint : MonoBehaviour
     public void OnTriggerEnter2D(Collider2D collision)
     {
         if (OnSave != null && collision.CompareTag("Player"))
-        {   
-            var playerHealth = collision.gameObject.GetComponent<PlayerHealth>();
-            OnSave(_savepointCoordinates, playerHealth.currentHealth, gdm.Coins);
+        {
+            //var playerHealth = collision.gameObject.GetComponent<PlayerHealth>();
+            OnSave(_savepointCoordinates, gdm.stats); //, playerHealth.currentHealth, gdm.stats.Coins);
         }
     }
 }
