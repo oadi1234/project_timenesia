@@ -53,7 +53,6 @@ public class SaveManager : MonoBehaviour
             using (FileStream fs = File.Open(fullpath, FileMode.Open))
             {
                 data = (SaveDataSchema) bf.Deserialize(fs);
-                Debug.Log(data.Coins);
             }
         }
 

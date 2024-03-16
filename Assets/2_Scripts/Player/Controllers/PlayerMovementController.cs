@@ -215,7 +215,7 @@ public class PlayerMovementController: MonoBehaviour
         {
             KeyHoldAscendWhileJumping();
         }
-        else if (isJumping && (!keyHeld || jumpTime >= PlayerConstants.instance.maxJumpTime) && rigidBody2D.velocity.y > 0 && !isDashing) 
+        else if ((isJumping || isDoubleJumping) && (!keyHeld || jumpTime >= PlayerConstants.instance.maxJumpTime) && rigidBody2D.velocity.y > 0 && !isDashing) 
         {
             LoseVelocityAfterJumping();
         }
