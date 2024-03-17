@@ -7,10 +7,12 @@ namespace _2___Scripts.Global.Events
     {
         public static event Action<IOnPlayerEnteredEvent> OnPlayerEntered;
 
-        [SerializeField] private string _eventName;
+        [SerializeField] private IOnPlayerEnteredEvent.EventType _eventType;
         [SerializeField] private int _numericData;
-        public string EventName => _eventName;
-        public int NumericData => _numericData;
+        public IOnPlayerEnteredEvent.EventType eventType => _eventType;
+        public int numericData => _numericData;
+        public string sceneName => gameObject.scene.name;
+        public string objectName => gameObject.name;
 
         public void OnTriggerEnter2D(Collider2D collision)
         {

@@ -6,13 +6,14 @@ using UnityEngine;
 [Serializable]
 public enum AbilityName
 {
-    DOUBLE_JUMP,
-    DASH,
-    LONG_DASH,
-    SPATIAL_DASH,
-    TIME_GATE, //save anywhere
-    WALL_JUMP,
-    SWIM_UNDERWATER,
-    SLOWMOTION_FOCUS, //debug only? Might not be fun mid actual game.
-    MIDAIR_FOCUS // might be deleted later or turned baseline ability.
+    DoubleJump = 0,
+    Dash = 1,
+    LongDash = 2,
+    SpatialDash = 3,
+    TimeGate = 4, //save anywhere
+    WallJump = 5,
+    SwimUnderwater = 6,
+    SlowmotionFocus = 7, //debug only? Might not be fun mid actual game.
+    MidairFocus = 8, // might be deleted later or turned baseline ability.
+    ChargedSpell = 9 // prepared spells (not focus) can be charged to increase their damage
 }

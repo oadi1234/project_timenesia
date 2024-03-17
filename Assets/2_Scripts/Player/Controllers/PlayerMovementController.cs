@@ -130,7 +130,7 @@ public class PlayerMovementController: MonoBehaviour
     #region Movement
     public void Move(float move)
     {
-        if (isGrounded)
+        if (isGrounded && !isWallTouching)
         {
             velocityVector.Set(
                 move * PlayerConstants.instance.moveSpeed,
@@ -203,7 +203,7 @@ public class PlayerMovementController: MonoBehaviour
 
     public void Jump(bool jump, bool keyHeld)
     {
-        if (jump && !isGrounded && isWallTouching && stats.GetAbilityFlag(AbilityName.WALL_JUMP))
+        if (jump && !isGrounded && isWallTouching && stats.GetAbilityFlag(AbilityName.WallJump))
         {
             WallJump();
         }
@@ -219,7 +219,7 @@ public class PlayerMovementController: MonoBehaviour
         {
             LoseVelocityAfterJumping();
         }
-        else if (jump && !isDoubleJumping && stats.GetAbilityFlag(AbilityName.DOUBLE_JUMP))
+        else if (jump && !isDoubleJumping && stats.GetAbilityFlag(AbilityName.DoubleJump))
         {
             DoubleJump();
         }
@@ -321,7 +321,7 @@ public class PlayerMovementController: MonoBehaviour
     }
     public void Dash(bool dash, float move)
     {
-        if (currentDashCooldown <= 0 && canDash && dash && stats.GetAbilityFlag(AbilityName.DASH) && UseEffort(1)) //use effort for testing only
+        if (currentDashCooldown <= 0 && canDash && dash && stats.GetAbilityFlag(AbilityName.Dash) && UseEffort(1)) //use effort for testing only
         {
             SetVariablesWhenDashing(move);
             blockInputCoroutine = BlockInputForSeconds(0.25f);
@@ -381,11 +381,10 @@ public class PlayerMovementController: MonoBehaviour
     private void IsTouchingWall()
     {
         wallChecker.CalculateRays(facingLeft, true);
+        isWallTouching = wallChecker.IsTouchingWall();  //if this is needed even when onGround, then it have to be moved outside of if statement
 
         if (!isGrounded)
         {
-            isWallTouching = wallChecker.IsTouchingWall();  //if this is needed even when onGround, then it have to be moved outside of if statement
-
             if (CanWallSlide())
             {
                 isWallSliding = facingLeft ? Input.GetKey(KeyCode.LeftArrow) : Input.GetKey(KeyCode.RightArrow);
@@ -420,7 +419,7 @@ public class PlayerMovementController: MonoBehaviour
             !isWallJumping &&
             rigidBody2D.velocity.y <= 0 &&
             (jumpTime <= 0f || jumpTime > PlayerConstants.instance.minJumpTimeBeforeWallSlidingEnabled) &&
-            stats.GetAbilityFlag(AbilityName.WALL_JUMP);
+            stats.GetAbilityFlag(AbilityName.WallJump);
     }
 
     private void CheckFlipWhenWallJump()
@@ -435,7 +434,7 @@ public class PlayerMovementController: MonoBehaviour
 
     #region SETTING-VARIABLES
 
-    public void SetVariablesOnLoad(ref PlayerAbilityAndStats stats)
+    internal void SetVariablesOnLoad(ref PlayerAbilityAndStats stats)
     {
         this.stats = stats;
     }

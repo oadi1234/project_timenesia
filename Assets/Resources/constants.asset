@@ -24,8 +24,8 @@ MonoBehaviour:
   dashSpeed: 25
   doubleJumpPersistenceModifier: 1
   postWallJumpSpeedModifier: 1.1
-  wallJumpPersistenceModifier: 1
-  moveSpeed: 7
+  wallJumpPersistenceModifier: 0.2
+  moveSpeed: 10
   dashCooldown: 0.6
   maxHorizontalSpeed: 25
   maxVerticalSpeed: 19

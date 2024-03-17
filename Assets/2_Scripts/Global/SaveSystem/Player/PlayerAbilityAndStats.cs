@@ -7,7 +7,7 @@ using UnityEngine;
 public class PlayerAbilityAndStats : ScriptableObject
 {
     #region ABILITIES
-    public Dictionary<AbilityName, bool> abilities = new Dictionary<AbilityName, bool>();
+    public Dictionary<AbilityName, bool> abilities = new();
     #endregion
 
 

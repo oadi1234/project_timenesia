@@ -21,6 +21,10 @@ public class SaveDataSchema
     public Dictionary<AbilityName, bool> abilities = new Dictionary<AbilityName, bool>();
     #endregion
 
+    #region INACTIVE_OBJECTS
+    public Dictionary<string, List<string>> alteredObjects = new Dictionary<string, List<string>>(); //scene name - object name list pairs.
+    #endregion
+
     #region SPELLS
     // TODO fill out when spells are implemented... in some way.
     #endregion
