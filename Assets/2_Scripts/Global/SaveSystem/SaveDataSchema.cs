@@ -22,7 +22,7 @@ public class SaveDataSchema
     #endregion
 
     #region INACTIVE_OBJECTS
-    public Dictionary<string, List<string>> alteredObjects = new Dictionary<string, List<string>>(); //scene name - object name list pairs.
+    public Dictionary<string, bool> alteredObjects = new Dictionary<string, bool>(); //only objects which should be inactivated across save games should land here.
     #endregion
 
     #region SPELLS

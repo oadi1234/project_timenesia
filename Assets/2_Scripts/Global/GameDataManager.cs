@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using _2___Scripts.Global.Events;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 
 namespace _2___Scripts.Global
@@ -15,7 +16,6 @@ namespace _2___Scripts.Global
 
         public SaveManager saveManager;
         public PlayerAbilityAndStats stats;
-        public SceneDataHolder sceneDataHolder;
         public string LastSavePoint { get; private set; }
 
         public static GameDataManager Instance { get; private set; }
@@ -39,10 +39,7 @@ namespace _2___Scripts.Global
             }
             if(!stats)
                 stats = ScriptableObject.CreateInstance<PlayerAbilityAndStats>();
-            if (!sceneDataHolder)
-                sceneDataHolder = ScriptableObject.CreateInstance<SceneDataHolder>();
             GameObject.Find("Player").GetComponent<PlayerMovementController>().SetVariablesOnLoad(ref stats);
-            GameObject.Find("SceneLoader").GetComponent<SceneLoader>().SetSceneDataHolder(ref sceneDataHolder);
             CoinText = GameObject.Find("CoinCounter").GetComponent<TextMeshProUGUI>();
             DontDestroyOnLoad (gameObject); // this line might be deleted - game data manager is part of persistent scene now anyway.
             OnPlayerEnteredEvent.OnPlayerEntered += OnPlayer_Entered;
@@ -56,25 +53,26 @@ namespace _2___Scripts.Global
                 case IOnPlayerEnteredEvent.EventType.CoinCollected:
                     GainCoins(obj.numericData);
                     obj.Remove();
-                    // Debug.Log("COINY: " + Coins);
-                    //alterObjectLoadingDict.Add(obj.sceneName, new LoadObjectSpecification(obj.objectName, LoadObjectSpecification.OnSceneLoadBehaviour.INACTIVE));
-                    sceneDataHolder.AddData(obj.sceneName, obj.objectName);
+                    SceneDataHolder.instance.AddData(obj.sceneName, obj.objectName);
                     CoinText.text = stats.Coins.ToString();
                     break;
                 case IOnPlayerEnteredEvent.EventType.DashCollected:
                     obj.Remove();
                     stats.UnlockAbility(AbilityName.Dash);
-                    sceneDataHolder.AddData(obj.sceneName, obj.objectName, LoadObjectBehaviour.SAVE_PERSIST);
+                    SceneDataHolder.instance.AddData(obj.sceneName, obj.objectName);
+                    saveManager.PersistObjectLoadingStrategy(obj.sceneName, obj.objectName);
                     break;
                 case IOnPlayerEnteredEvent.EventType.DoubleJumpCollected:
                     obj.Remove();
                     stats.UnlockAbility(AbilityName.DoubleJump);
-                    sceneDataHolder.AddData(obj.sceneName, obj.objectName, LoadObjectBehaviour.SAVE_PERSIST);
+                    SceneDataHolder.instance.AddData(obj.sceneName, obj.objectName);
+                    saveManager.PersistObjectLoadingStrategy(obj.sceneName, obj.objectName);
                     break;
                 case IOnPlayerEnteredEvent.EventType.WallJumpCollected:
                     obj.Remove();
                     stats.UnlockAbility(AbilityName.WallJump);
-                    sceneDataHolder.AddData(obj.sceneName, obj.objectName, LoadObjectBehaviour.SAVE_PERSIST);
+                    SceneDataHolder.instance.AddData(obj.sceneName, obj.objectName);
+                    saveManager.PersistObjectLoadingStrategy(obj.sceneName, obj.objectName);
                     break;
             }
         }
@@ -92,7 +90,7 @@ namespace _2___Scripts.Global
             AssignLoadDataToAbilities(saveData);
             AssignLoadDataToCurrencies(saveData);
             AssignLoadDataToStats(saveData);
-            AssignAlteredObjectDataToSceneData(saveData);
+            AssignLoadDataToObjectLoadingStrategy(saveData);
 
             LastSavePoint = saveData.SavePoint;
         }
@@ -116,9 +114,9 @@ namespace _2___Scripts.Global
             stats.abilities = saveData.abilities;
         }
 
-        private void AssignAlteredObjectDataToSceneData(SaveDataSchema saveData)
+        private void AssignLoadDataToObjectLoadingStrategy(SaveDataSchema saveData)
         {
-            sceneDataHolder.setAlteredObjectsOnLoad(saveData.alteredObjects);
+            SceneDataHolder.instance.SetLoadStrategyOnGameLoad(saveData.alteredObjects);
         }
         #endregion
 

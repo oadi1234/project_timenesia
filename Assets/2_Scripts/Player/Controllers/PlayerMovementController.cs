@@ -130,11 +130,22 @@ public class PlayerMovementController: MonoBehaviour
     #region Movement
     public void Move(float move)
     {
-        if (isGrounded && !isWallTouching)
+        if (!isJumping && isGrounded && !isOnSlope)
+        {
+            velocityVector.Set(
+                move * PlayerConstants.instance.moveSpeed, 0f);
+            //PlayerConstants.instance.moveSpeed * flatGroundChecker.slopeNormalPerpendicular.y * -move * Convert.ToInt32(isOnSlope));
+        }
+        else if (!isJumping && isOnSlope && !isWallTouching)
         {
             velocityVector.Set(
                 move * PlayerConstants.instance.moveSpeed,
                 PlayerConstants.instance.moveSpeed * flatGroundChecker.slopeNormalPerpendicular.y * -move * Convert.ToInt32(isOnSlope));
+        }
+        else if (!isJumping && isOnSlope && isWallTouching)
+        {
+            velocityVector.Set(
+                move * PlayerConstants.instance.moveSpeed, 0f);
         }
 
         else if (!isGrounded)
@@ -153,7 +164,7 @@ public class PlayerMovementController: MonoBehaviour
             else
                 velocityVector.Set(move * PlayerConstants.instance.moveSpeed, rigidBody2D.velocity.y);
         }
-
+        
         rigidBody2D.velocity = velocityVector;
 
         if (move > 0 && facingLeft)
