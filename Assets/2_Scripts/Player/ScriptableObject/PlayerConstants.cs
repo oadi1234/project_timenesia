@@ -22,7 +22,7 @@ public class PlayerConstants : ScriptableObject
     #region CONSTANTS
     public float coyoteTime = 0.1f;
     public float knockbackTime = 0.5f;
-    public float jumpGroundCheckCooldown = 0.1f;
+    public float jumpGroundCheckCooldown = 0.01f;
     public float minJumpTimeBeforeWallSlidingEnabled = 0.15f;
     public float groundedCheckRay = 0.1f;
     public float ceilingCheckRadius = 0.1f;

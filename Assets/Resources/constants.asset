@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   coyoteTime: 0.1
   knockbackTime: 0.5
-  jumpGroundCheckCooldown: 0.1
+  jumpGroundCheckCooldown: 0.01
   minJumpTimeBeforeWallSlidingEnabled: 0.15
   groundedCheckRay: 0.1
   ceilingCheckRadius: 0.1

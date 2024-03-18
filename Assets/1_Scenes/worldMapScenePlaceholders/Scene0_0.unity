@@ -844,10 +844,6 @@ CompositeCollider2D:
       - X: 70000000
         Y: 60000000
       - X: 70000000
-        Y: -20000000
-      - X: 62343752
-        Y: -20000000
-      - X: 60000000
         Y: -21093750
       - X: 50000000
         Y: -21093750
@@ -1463,9 +1459,7 @@ CompositeCollider2D:
       - {x: 4, y: 6.9999704}
       - {x: 4.000029, y: 6}
       - {x: 7, y: 5.9999704}
-      - {x: 6.9999704, y: -2}
-      - {x: 6.23437, y: -2.0000024}
-      - {x: 5.9999948, y: -2.109375}
+      - {x: 6.9999704, y: -2.109375}
       - {x: 4.9999943, y: -2.1093776}
       - {x: 4.000007, y: -2.6093712}
       - {x: 3.234376, y: -2.9999995}
@@ -18101,8 +18095,8 @@ Tilemap:
   - first: {x: 6, y: -3, z: 0}
     second:
       serializedVersion: 2
-      m_TileIndex: 11
-      m_TileSpriteIndex: 11
+      m_TileIndex: 15
+      m_TileSpriteIndex: 1
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -24912,7 +24906,7 @@ Tilemap:
     m_Data: {fileID: 11400000, guid: 51d568b63dca44241a366814baa5d0f9, type: 2}
   - m_RefCount: 11
     m_Data: {fileID: 11400000, guid: 0e2c12a192e47044abfe7987aeb1a0a7, type: 2}
-  - m_RefCount: 12
+  - m_RefCount: 11
     m_Data: {fileID: 11400000, guid: d4cc14cdcba08c04d99cd60bf37ddebc, type: 2}
   - m_RefCount: 2210
     m_Data: {fileID: 11400000, guid: 972fe59b527b4964bab797557e179d69, type: 2}
@@ -24920,7 +24914,7 @@ Tilemap:
     m_Data: {fileID: 11400000, guid: 4262bbc87426bc24ab957c7c5ce58ea4, type: 2}
   - m_RefCount: 1
     m_Data: {fileID: 11400000, guid: 3241cd148d36304488aa3b21725106d3, type: 2}
-  - m_RefCount: 1
+  - m_RefCount: 2
     m_Data: {fileID: 11400000, guid: 990eeab4d341b1941bf005ab029873ef, type: 2}
   - m_RefCount: 1
     m_Data: {fileID: 11400000, guid: d034eb49dfa0bcd40a739ebbe7bd9908, type: 2}
@@ -24935,7 +24929,7 @@ Tilemap:
   m_TileSpriteArray:
   - m_RefCount: 7
     m_Data: {fileID: 778693977885150425, guid: a21379f85be29bd429c5c046bb409751, type: 3}
-  - m_RefCount: 1
+  - m_RefCount: 2
     m_Data: {fileID: 4441521568392446692, guid: a21379f85be29bd429c5c046bb409751, type: 3}
   - m_RefCount: 10
     m_Data: {fileID: 1047511043386636849, guid: a21379f85be29bd429c5c046bb409751, type: 3}
@@ -24955,7 +24949,7 @@ Tilemap:
     m_Data: {fileID: -887801021943726790, guid: a21379f85be29bd429c5c046bb409751, type: 3}
   - m_RefCount: 11
     m_Data: {fileID: 474854170343443371, guid: a21379f85be29bd429c5c046bb409751, type: 3}
-  - m_RefCount: 12
+  - m_RefCount: 11
     m_Data: {fileID: 4814987592741604608, guid: a21379f85be29bd429c5c046bb409751, type: 3}
   - m_RefCount: 2210
     m_Data: {fileID: -6379277833500934283, guid: a21379f85be29bd429c5c046bb409751, type: 3}
@@ -25301,9 +25295,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1341210317}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: LoadGatesScene0_-1
-  m_TagString: Untagged
+  m_TagString: LoadingArea
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -25540,7 +25534,7 @@ GameObject:
   - component: {fileID: 1764766789}
   m_Layer: 0
   m_Name: LoadGatesScene1_0
-  m_TagString: Untagged
+  m_TagString: LoadingArea
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -25598,11 +25592,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4501781565014132703, guid: cce424c0c38c1e14795e5f6b913732f2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4.16
+      value: 9.13
       objectReference: {fileID: 0}
     - target: {fileID: 4501781565014132703, guid: cce424c0c38c1e14795e5f6b913732f2, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.08
+      value: -1.13
       objectReference: {fileID: 0}
     - target: {fileID: 4501781565014132703, guid: cce424c0c38c1e14795e5f6b913732f2, type: 3}
       propertyPath: m_LocalPosition.z
@@ -25660,6 +25654,10 @@ PrefabInstance:
     - target: {fileID: 3097630166231376326, guid: 57438733fbab7cf40858801354518e02, type: 3}
       propertyPath: AreaToLoad
       value: Scene0_-1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3883654216562420442, guid: 57438733fbab7cf40858801354518e02, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 4.25
       objectReference: {fileID: 0}
     - target: {fileID: 3883654216562420442, guid: 57438733fbab7cf40858801354518e02, type: 3}
       propertyPath: m_LocalPosition.x

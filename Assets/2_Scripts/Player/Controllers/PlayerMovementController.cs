@@ -46,7 +46,7 @@ public class PlayerMovementController: MonoBehaviour
     private Rigidbody2D rigidBody2D;
     private Vector2 velocityVector;
     private Vector2 brakeVector = Vector2.zero;
-    private Vector3 startingPosition;
+    private Vector2 startingPosition;
     private FlatGroundChecker flatGroundChecker;
     private WallChecker wallChecker;
     private Animator animator;
@@ -87,9 +87,9 @@ public class PlayerMovementController: MonoBehaviour
         IsOnSlope();
         CheckIfShouldStopDash();
         KeepVelocityYAtZeroWhenDashing();
-        Brake(); //might be moved to "Move()" so it becomes less costly, but the operations don't seem too intensive.
+        Brake();
 
-        animator.SetBool("isGrounded", isGrounded);
+        animator.SetBool("isGrounded", isGrounded); // TODO move animator to Update on its own class.
         animator.SetBool("wallSliding", isWallSliding);
         // _animator.SetFloat("Hurt", _hurtTime);
 
@@ -134,13 +134,12 @@ public class PlayerMovementController: MonoBehaviour
         {
             velocityVector.Set(
                 move * PlayerConstants.instance.moveSpeed, 0f);
-            //PlayerConstants.instance.moveSpeed * flatGroundChecker.slopeNormalPerpendicular.y * -move * Convert.ToInt32(isOnSlope));
         }
         else if (!isJumping && isOnSlope && !isWallTouching)
         {
             velocityVector.Set(
                 move * PlayerConstants.instance.moveSpeed,
-                PlayerConstants.instance.moveSpeed * flatGroundChecker.slopeNormalPerpendicular.y * -move * Convert.ToInt32(isOnSlope));
+                flatGroundChecker.slopeNormalPerpendicular.y * -move * PlayerConstants.instance.moveSpeed);
         }
         else if (!isJumping && isOnSlope && isWallTouching)
         {
@@ -152,8 +151,7 @@ public class PlayerMovementController: MonoBehaviour
         {
             if (isWallSliding)
                 velocityVector.Set(move * PlayerConstants.instance.moveSpeed, PlayerConstants.instance.wallSlideSpeed);
-
-            else if (isWallJumping && facingLeft)   //if jumped of the wall recently {
+            else if (isWallJumping && facingLeft)
             {
                 velocityVector.Set(Mathf.Min(move * PlayerConstants.instance.moveSpeed, rigidBody2D.velocity.x), rigidBody2D.velocity.y);
             }
@@ -164,8 +162,15 @@ public class PlayerMovementController: MonoBehaviour
             else
                 velocityVector.Set(move * PlayerConstants.instance.moveSpeed, rigidBody2D.velocity.y);
         }
-        
+
         rigidBody2D.velocity = velocityVector;
+
+        //if (!flatGroundChecker.CornerAhead())
+        //{
+        //    Debug.Log("Test");
+        //    rigidBody2D.AddForce(Vector2.down*2, ForceMode2D.Impulse);
+        //}
+
 
         if (move > 0 && facingLeft)
         {
@@ -200,18 +205,6 @@ public class PlayerMovementController: MonoBehaviour
         rigidBody2D.AddForce(-brakeVector);
     }
 
-    private void HandleSlipperySlopes(float move)
-    {
-        if (isOnSlope && move == 0f)
-        {
-            rigidBody2D.sharedMaterial = _allFriction;
-        }
-        else
-        {
-            rigidBody2D.sharedMaterial = _noFriction;
-        }
-    }
-
     public void Jump(bool jump, bool keyHeld)
     {
         if (jump && !isGrounded && isWallTouching && stats.GetAbilityFlag(AbilityName.WallJump))
@@ -222,6 +215,10 @@ public class PlayerMovementController: MonoBehaviour
         {
             GroundJump();
         }
+        else if (jump && !isDoubleJumping && stats.GetAbilityFlag(AbilityName.DoubleJump))
+        {
+            DoubleJump();
+        }
         else if ((isJumping || isDoubleJumping) && keyHeld && rigidBody2D.velocity.y > 0 && jumpTime < PlayerConstants.instance.maxJumpTime)
         {
             KeyHoldAscendWhileJumping();
@@ -230,12 +227,19 @@ public class PlayerMovementController: MonoBehaviour
         {
             LoseVelocityAfterJumping();
         }
-        else if (jump && !isDoubleJumping && stats.GetAbilityFlag(AbilityName.DoubleJump))
-        {
-            DoubleJump();
-        }
 
         animator.SetFloat("speedY", rigidBody2D.velocity.y); // TODO move animator events to its own class
+    }
+    public void Dash(bool dash, float move)
+    {
+        if (currentDashCooldown <= 0 && canDash && dash && stats.GetAbilityFlag(AbilityName.Dash) && UseEffort(1)) //use effort for testing only
+        {
+            SetVariablesWhenDashing(move);
+            blockInputCoroutine = BlockInputForSeconds(0.25f);
+            dashVariableReverserCoroutine = ReverseDashVariablesAfterSeconds(0.25f);
+            StartCoroutine(blockInputCoroutine);
+            StartCoroutine(dashVariableReverserCoroutine);
+        }
     }
 
     private void GroundJump()
@@ -330,17 +334,6 @@ public class PlayerMovementController: MonoBehaviour
             rigidBody2D.AddForce(velocityVector, ForceMode2D.Impulse);
         }
     }
-    public void Dash(bool dash, float move)
-    {
-        if (currentDashCooldown <= 0 && canDash && dash && stats.GetAbilityFlag(AbilityName.Dash) && UseEffort(1)) //use effort for testing only
-        {
-            SetVariablesWhenDashing(move);
-            blockInputCoroutine = BlockInputForSeconds(0.25f);
-            dashVariableReverserCoroutine = ReverseDashVariablesAfterSeconds(0.25f);
-            StartCoroutine(blockInputCoroutine);
-            StartCoroutine(dashVariableReverserCoroutine);
-        }
-    }
 
     #endregion Movement
 
@@ -414,7 +407,7 @@ public class PlayerMovementController: MonoBehaviour
     
     private void CheckIfShouldStopDash()
     {
-        if (isWallTouching && isDashing)
+        if (isDashing && isWallTouching)
         {
             StopCoroutine(blockInputCoroutine);
             StopCoroutine(dashVariableReverserCoroutine);
@@ -444,6 +437,17 @@ public class PlayerMovementController: MonoBehaviour
     #endregion Checkers
 
     #region SETTING-VARIABLES
+    private void HandleSlipperySlopes(float move)
+    {
+        if (isOnSlope && move == 0f)
+        {
+            rigidBody2D.sharedMaterial = _allFriction;
+        }
+        else
+        {
+            rigidBody2D.sharedMaterial = _noFriction;
+        }
+    }
 
     internal void SetVariablesOnLoad(ref PlayerAbilityAndStats stats)
     {
@@ -487,8 +491,9 @@ public class PlayerMovementController: MonoBehaviour
         tempValue = rigidBody2D.gravityScale;
         rigidBody2D.gravityScale = 0f;
         velocityVector.Set(
-            PlayerConstants.instance.dashSpeed * ((Convert.ToInt32(move == 0 ? !facingLeft : move > 0) << 1) - 1),
+            PlayerConstants.instance.dashSpeed * ((Convert.ToInt32(move <0.01f && move>-0.01f ? !facingLeft : move > 0) << 1) - 1),
             0f);
+        rigidBody2D.sharedMaterial = _noFriction;
         rigidBody2D.velocity = velocityVector;
         animator.SetBool("dashing", true);
     }
@@ -497,7 +502,7 @@ public class PlayerMovementController: MonoBehaviour
     {
         if(isDashing && !isOnSlope)
         {
-            velocityVector.Set(rigidBody2D.velocity.x, 0);
+            velocityVector.Set(rigidBody2D.velocity.x, 0f);
             rigidBody2D.velocity = velocityVector;
         }
     }
@@ -507,6 +512,7 @@ public class PlayerMovementController: MonoBehaviour
         isDashing = false;
         rigidBody2D.gravityScale = tempValue;
         animator.SetBool("dashing", false);
+        rigidBody2D.sharedMaterial = _allFriction;
         canDash = isGrounded || isWallTouching;
         jumpTime = 0f; // set so you can double jump after a dash
     }
