@@ -15,6 +15,7 @@ namespace _2___Scripts.Global
         Wall = 12,
         Collision = 13,
         Ceiling = 14,
-        OneWayGround = 15
+        OneWayGround = 15,
+        Interactables = 17
     }
 }

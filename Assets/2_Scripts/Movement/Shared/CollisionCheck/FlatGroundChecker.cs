@@ -18,6 +18,9 @@ public class FlatGroundChecker : MonoBehaviour
     [SerializeField]
     private float wallCheckRay = 0.1f;
 
+    [SerializeField]
+    private float cornerCheckRay = 0.5f;
+
     public Vector2 slopeNormalPerpendicular;
 
     private Bounds boxBounds;
@@ -25,6 +28,8 @@ public class FlatGroundChecker : MonoBehaviour
     private Vector2 bottomRightColliderCorner;
     private RaycastHit2D hitBottomLeft;
     private RaycastHit2D hitBottomRight;
+    //private RaycastHit2D hitBottomLeftCornerCheck;
+    //private RaycastHit2D hitBottomRightCornerCheck;
     private float slopeDownAngle;
 
 
@@ -37,6 +42,10 @@ public class FlatGroundChecker : MonoBehaviour
         hitBottomRight = Physics2D.Raycast(bottomRightColliderCorner, Vector2.down, groundedCheckRay, whatIsGround);
         Debug.DrawRay(hitBottomLeft.point, hitBottomLeft.normal, Color.cyan);
         Debug.DrawRay(hitBottomRight.point, hitBottomRight.normal, Color.magenta);
+        //hitBottomLeftCornerCheck = Physics2D.Raycast(bottomLeftColliderCorner, Vector2.down, cornerCheckRay, whatIsGround);
+        //hitBottomRightCornerCheck = Physics2D.Raycast(bottomRightColliderCorner, Vector2.down, cornerCheckRay, whatIsGround);
+        //Debug.DrawRay(hitBottomLeftCornerCheck.point, hitBottomLeftCornerCheck.normal, Color.white);
+        //Debug.DrawRay(hitBottomRightCornerCheck.point, hitBottomRightCornerCheck.normal, Color.black);
     }
 
     public bool IsGrounded()
@@ -83,6 +92,15 @@ public class FlatGroundChecker : MonoBehaviour
         }
     }
 
+    //public bool CornerAhead()
+    //{
+    //    if (hitBottomRightCornerCheck && hitBottomLeftCornerCheck)
+    //    {
+    //        return CheckIfTwoAnglesAreWithinMarginOfError(CalculateSlope(hitBottomRightCornerCheck), CalculateSlope(hitBottomLeftCornerCheck));
+    //    }
+    //    return false;
+    //}
+
     private void VerticalSlopeCalculation()
     {
         if (hitBottomLeft && !hitBottomRight)
@@ -106,6 +124,7 @@ public class FlatGroundChecker : MonoBehaviour
             slopeDownAngle = 0f;
         }
     }
+
     private bool HorizontalSlopeCheck()
     {
         RaycastHit2D hitBottomLeft = Physics2D.Raycast(groundCheckMarker.position + new Vector3(0, 0.1f, 0), groundCheckMarker.transform.right, wallCheckRay, whatIsGround);
@@ -131,6 +150,16 @@ public class FlatGroundChecker : MonoBehaviour
         return Vector2.Angle(raycast.normal, Vector2.up);
     }
 
-
+    //private bool CheckIfTwoAnglesAreWithinMarginOfError(float angle1, float angle2, float margin = 0.01f)
+    //{
+    //    if (angle1 == angle2) return true;
+    //    else
+    //    {
+    //        float biggerAngle = angle1>angle2 ? angle1 : angle2;
+    //        float smallerAngle = angle1<=angle2 ? angle1 : angle2;
+    //        return smallerAngle + margin >= biggerAngle;
+    //    }
+    //    return false;
+    //}
 }
 

@@ -11,6 +11,11 @@ public class Savepoint : MonoBehaviour
     [SerializeField] private string _savepointCoordinates;
     public string SavepointCoordinates => _savepointCoordinates;
 
+    private void Awake()
+    {
+        gdm = GameDataManager.Instance;
+    }
+
     public void OnTriggerEnter2D(Collider2D collision)
     {
         if (OnSave != null && collision.CompareTag("Player"))

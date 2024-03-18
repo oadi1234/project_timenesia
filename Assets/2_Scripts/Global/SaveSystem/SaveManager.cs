@@ -42,6 +42,14 @@ public class SaveManager : MonoBehaviour
         Save(saveData);
     }
 
+    public void PersistObjectLoadingStrategy(string sceneName, string objectName)
+    {
+        if (saveData == null)
+            saveData = new SaveDataSchema();
+        saveData.alteredObjects.Add(sceneName + objectName, true);
+        Save(saveData);
+    }
+
     public SaveDataSchema Load(string filename = "save_00")
     {
         SaveDataSchema data = new SaveDataSchema();

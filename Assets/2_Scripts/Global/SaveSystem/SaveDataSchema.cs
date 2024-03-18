@@ -21,6 +21,10 @@ public class SaveDataSchema
     public Dictionary<AbilityName, bool> abilities = new Dictionary<AbilityName, bool>();
     #endregion
 
+    #region INACTIVE_OBJECTS
+    public Dictionary<string, bool> alteredObjects = new Dictionary<string, bool>(); //only objects which should be inactivated across save games should land here.
+    #endregion
+
     #region SPELLS
     // TODO fill out when spells are implemented... in some way.
     #endregion

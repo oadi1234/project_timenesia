@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using _2___Scripts.Global.Events;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 
 namespace _2___Scripts.Global
@@ -13,16 +15,18 @@ namespace _2___Scripts.Global
         }
 
         public SaveManager saveManager;
+        public PlayerAbilityAndStats stats;
+        public string LastSavePoint { get; private set; }
 
         public static GameDataManager Instance { get; private set; }
         public static event Action<IBaseEvent> OnCollected;
-    
+        /* objects to set inactive or change their state on scene load if they were destroyed/collected
+         * set as 'key - value' in form of 'scene name - LoadObjectSpecification' */
+
         private TextMeshProUGUI CoinText;
         private string fileName = "save_00"; //this should be set after choosing from main menu.
 
-        public PlayerAbilityAndStats stats;
-        public string LastSavePoint  { get; private set; }
-	
+
         private void Awake()
         {
             if (Instance == null)
@@ -37,21 +41,38 @@ namespace _2___Scripts.Global
                 stats = ScriptableObject.CreateInstance<PlayerAbilityAndStats>();
             GameObject.Find("Player").GetComponent<PlayerMovementController>().SetVariablesOnLoad(ref stats);
             CoinText = GameObject.Find("CoinCounter").GetComponent<TextMeshProUGUI>();
-            DontDestroyOnLoad (gameObject);
+            DontDestroyOnLoad (gameObject); // this line might be deleted - game data manager is part of persistent scene now anyway.
             OnPlayerEnteredEvent.OnPlayerEntered += OnPlayer_Entered;
             Loadpoint.OnLoad += Load;
-            AbilityUnlocker.OnAbilityUnlocked += UnlockAbility;
         }
     
         private void OnPlayer_Entered(IOnPlayerEnteredEvent obj)
         {
-            switch (obj.EventName)
+            switch (obj.eventType)
             {
-                case "CoinCollected":
-                    GainCoins(obj.NumericData);
+                case IOnPlayerEnteredEvent.EventType.CoinCollected:
+                    GainCoins(obj.numericData);
                     obj.Remove();
-                    // Debug.Log("COINY: " + Coins);
+                    SceneDataHolder.instance.AddData(obj.sceneName, obj.objectName);
                     CoinText.text = stats.Coins.ToString();
+                    break;
+                case IOnPlayerEnteredEvent.EventType.DashCollected:
+                    obj.Remove();
+                    stats.UnlockAbility(AbilityName.Dash);
+                    SceneDataHolder.instance.AddData(obj.sceneName, obj.objectName);
+                    saveManager.PersistObjectLoadingStrategy(obj.sceneName, obj.objectName);
+                    break;
+                case IOnPlayerEnteredEvent.EventType.DoubleJumpCollected:
+                    obj.Remove();
+                    stats.UnlockAbility(AbilityName.DoubleJump);
+                    SceneDataHolder.instance.AddData(obj.sceneName, obj.objectName);
+                    saveManager.PersistObjectLoadingStrategy(obj.sceneName, obj.objectName);
+                    break;
+                case IOnPlayerEnteredEvent.EventType.WallJumpCollected:
+                    obj.Remove();
+                    stats.UnlockAbility(AbilityName.WallJump);
+                    SceneDataHolder.instance.AddData(obj.sceneName, obj.objectName);
+                    saveManager.PersistObjectLoadingStrategy(obj.sceneName, obj.objectName);
                     break;
             }
         }
@@ -69,6 +90,7 @@ namespace _2___Scripts.Global
             AssignLoadDataToAbilities(saveData);
             AssignLoadDataToCurrencies(saveData);
             AssignLoadDataToStats(saveData);
+            AssignLoadDataToObjectLoadingStrategy(saveData);
 
             LastSavePoint = saveData.SavePoint;
         }
@@ -91,6 +113,11 @@ namespace _2___Scripts.Global
         {
             stats.abilities = saveData.abilities;
         }
+
+        private void AssignLoadDataToObjectLoadingStrategy(SaveDataSchema saveData)
+        {
+            SceneDataHolder.instance.SetLoadStrategyOnGameLoad(saveData.alteredObjects);
+        }
         #endregion
 
         public bool TakeDamage(int amount)
@@ -107,10 +134,5 @@ namespace _2___Scripts.Global
         }
 
         public void GainCoins(int coins = 1) => stats.Coins += coins;
-
-        public void UnlockAbility(AbilityName abilityName)
-        {
-            stats.UnlockAbility(abilityName);
-        }
     }
 }

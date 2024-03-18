@@ -19,7 +19,7 @@ public class Collector : MonoBehaviour, IBaseEvent
 
     private void OnPlayer_Entered(IOnPlayerEnteredEvent obj)
     {
-        if (obj.EventName.Equals("KeyCollected"))
+        if (obj.eventType.Equals("KeyCollected"))
         {
             obj.Remove();
             counter--;

@@ -9,6 +9,8 @@ public class Loadpoint : MonoBehaviour
     [SerializeField] private string _loadpointCoordinates;
     public string LoadpointCoordinates => _loadpointCoordinates;
 
+
+
     public void OnTriggerEnter2D(Collider2D collision)
     {
         if (OnLoad != null && collision.CompareTag("Player"))
