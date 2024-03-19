@@ -1,4 +1,4 @@
-public enum EffortElement
+public enum EffortType
 {
     Empty,
     Raw,

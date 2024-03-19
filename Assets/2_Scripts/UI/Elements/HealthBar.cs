@@ -7,53 +7,36 @@ namespace _2___Scripts.UI
     public class HealthBar : MonoBehaviour
     {
         [SerializeField]
-        private Image fullBead;
+        private GameObject healthPoint;
 
         [SerializeField]
-        private Image emptyBead;
+        private float scale = 1f;
 
         [SerializeField]
+        private RectTransform healthBar;
+
         private int maxHealth = 0;
-
-        [SerializeField]
         private int currentHealth = 0;
+        private int oldMaxHealth = 0;
+        private float positionX = 0f;
+        private float positionY = 0f;
 
-        [SerializeField]
-        private GameObject canvas;
+        private List<HealthType> healthType;
+        private List<GameObject> renderedHealth;
 
-        [SerializeField]
-        private float scale = 2f;
-
-        [SerializeField]
-        private Transform healthBar;
-
-        private int oldMaxHealth;
-        private float canvasWidth;
-        private float canvasHeight;
-
-        private List<Image> renderedImages;
-
-        private void Awake()
+        public void Initialize()
         {
-            renderedImages = new List<Image>();
-            canvasWidth = canvas.GetComponent<RectTransform>().rect.width;
-            canvasHeight = canvas.GetComponent<RectTransform>().rect.height;
-
-            oldMaxHealth = maxHealth;
+            healthType = new();
+            renderedHealth = new();
         }
 
-        // Start is called before the first frame update
-        void Start()
+        public void SetCurrentHealth(int health)
         {
-        }
-
-        public void SetHealth(int health)
-        {
-            if(health >= maxHealth)
+            if (health >= maxHealth)
             {
                 for (int i = currentHealth; i < maxHealth; i++)
                 {
-                    renderedImages[i].sprite = fullBead.sprite;
+                    SetHealthAnimation(HealthType.Health, i);
                 }
                 currentHealth = maxHealth;
             }
@@ -61,45 +44,75 @@ namespace _2___Scripts.UI
             {
                 for (int i = maxHealth -1; i >= health; i--)
                 {
-                    renderedImages[i].sprite = emptyBead.sprite;
+                    SetHealthAnimation(HealthType.Empty, i);
                 }
                 currentHealth = health;
             }
         }
-
-        public void SetMaxHealth(int health)
+        public void SetHealthAnimation(HealthType type, int index)
         {
-            maxHealth = health;
+            Animator animator = renderedHealth[index].GetComponent<Animator>();
+            SetCurrentHealthToFalse(animator, index);
+            SwitchToBooleanBasedOnType(animator, true, type);
+
+            healthType[index] = type;
+        }
+
+        private void SwitchToBooleanBasedOnType(Animator animator, bool boolean, HealthType type)
+        {
+            switch (type)
+            {
+                case HealthType.Empty:
+                    animator.SetBool("empty", boolean);
+                    break;
+                case HealthType.Health:
+                    animator.SetBool("health", boolean);
+                    break;
+                case HealthType.Shield:
+                    animator.SetBool("shield", boolean);
+                    break;
+            }
+        }
+
+        private void SetCurrentHealthToFalse(Animator animator, int index)
+        {
+            HealthType element = healthType[index];
+            SwitchToBooleanBasedOnType(animator, false, element);
+        }
+
+        public void SetMaxHealth(int newMaxHealth)
+        {
+            maxHealth = newMaxHealth;
 
             if(oldMaxHealth < maxHealth)
             {
                 for(int i = oldMaxHealth; i<maxHealth; i++)
                 {
-                    GenerateAndAddNewImage(i);
+                    GenerateNewPoint(i);
                 }
             }
-            //this really shouldn't occur naturally too often, or at all. For cheating it might be good to have though.
+            // Debug only.
             else if (oldMaxHealth > maxHealth)
             {
                 for (int i = oldMaxHealth-1; i >= maxHealth; i--)
                 {
-                    Destroy(renderedImages[i].gameObject);
-                    renderedImages.RemoveAt(i);
+                    Destroy(renderedHealth[i].gameObject);
+                    renderedHealth.RemoveAt(i);
                 }
             }
             oldMaxHealth = maxHealth;
-            SetHealth(health);
+            SetCurrentHealth(newMaxHealth);
         }
 
-        private void GenerateAndAddNewImage(int i)
+        private void GenerateNewPoint(int i)
         {
-            GameObject imageObject = new GameObject("HealthBead" + i);
-            RectTransform trans = imageObject.AddComponent<RectTransform>();
-            trans.transform.SetParent(canvas.transform);
+            healthType.Add(HealthType.Empty);
+            GameObject imageObject = Instantiate(healthPoint);
+            imageObject.name = "HealthBead" + i;
+            RectTransform trans = imageObject.GetComponent<RectTransform>();
+            imageObject.transform.SetParent(healthBar);
             trans.localScale = Vector2.one * scale;
-            float positionX = -(canvasWidth / 2) + 200f;
-            float positionY = (canvasHeight / 2) - 100f;
-            if (i % 2 == 0)
+            if (i % 2 != 0)
             {
                 trans.anchoredPosition = new Vector3(positionX + (i * 20 * scale), positionY, -10);
             }
@@ -108,11 +121,9 @@ namespace _2___Scripts.UI
                 trans.anchoredPosition = new Vector3(positionX + (i * 20 * scale), positionY - (10 * scale), -10);
             }
             trans.sizeDelta = new Vector2(42, 42);
-
-            Image image = imageObject.AddComponent<Image>();
-            image.sprite = fullBead.sprite;
             imageObject.transform.SetParent(healthBar);
-            renderedImages.Add(image);
+
+            renderedHealth.Add(imageObject);
         }
     }
 }

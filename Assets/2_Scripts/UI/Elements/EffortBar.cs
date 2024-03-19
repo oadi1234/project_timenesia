@@ -12,13 +12,10 @@ namespace _2___Scripts.UI
         private GameObject backgroundPoint;
 
         [SerializeField]
-        private GameObject canvas;
-
-        [SerializeField]
         private int maxMana = 4; //default 4
 
         [SerializeField]
-        private int currentMana =0;
+        private int currentEffort =0;
 
         [SerializeField]
         private int spellCapacity = 0; //default 2
@@ -29,27 +26,22 @@ namespace _2___Scripts.UI
         [SerializeField]
         private RectTransform manaBar;
 
-
-        private float exhaustionTime; //some spells incur it, reducing mana regen
-        private List<EffortElement> currentSpell;
-        private int currentSpellCost;
+        private List<EffortType> effortType;
         private int oldSpellCapacity;
-        private int oldMaxMana;
+        private int oldMaxEffort;
+        private float positionX = 0f;
+        private float positionY = 0f;   
         private List<GameObject> renderedMana;
         private List<GameObject> renderedBackground;
-        private float canvasWidth;
-        private float canvasHeight;
 
         public void Initialize()
         {
             renderedMana = new List<GameObject>();
             renderedBackground = new List<GameObject>();
-            currentSpell = new List<EffortElement>();
-            canvasWidth = canvas.GetComponent<RectTransform>().rect.width;
-            canvasHeight = canvas.GetComponent<RectTransform>().rect.height;
-            currentMana = 0;
+            effortType = new List<EffortType>();
+            currentEffort = 0;
             oldSpellCapacity = 0;
-            oldMaxMana = 0;
+            oldMaxEffort = 0;
         }
 
         public void SetSpellCapacity(int capacity)
@@ -80,24 +72,24 @@ namespace _2___Scripts.UI
             }
         }
 
-        public void SetMaxMana(int mana, bool shouldRefill = true)
+        public void SetMaxEffort(int effort, bool shouldRefill = true)
         {
-            maxMana = mana;
+            maxMana = effort;
 
-            if(maxMana > oldMaxMana)
+            if(maxMana > oldMaxEffort)
             {
-                for (int i = oldMaxMana; i < maxMana; i++)
+                for (int i = oldMaxEffort; i < maxMana; i++)
                 {
                     GenerateNewPoint(i);
                 }
             }
-            else if (oldMaxMana > maxMana)
+            else if (oldMaxEffort > maxMana)
             {
-                for (int i = oldMaxMana - 1; i >= maxMana; i--)
+                for (int i = oldMaxEffort - 1; i >= maxMana; i--)
                 {
                     Destroy(renderedMana[i]);
                     renderedMana.RemoveAt(i);
-                    currentSpell.RemoveAt(i);
+                    effortType.RemoveAt(i);
                     if(i+1<spellCapacity)
                     {
                         //lets just keep it here so I don't forget and hope it just doesn't happen.
@@ -105,84 +97,83 @@ namespace _2___Scripts.UI
                 }
             }
 
-            oldMaxMana = maxMana;
+            oldMaxEffort = maxMana;
             if(shouldRefill)
-                SetCurrentMana(mana);
+                SetCurrentMana(effort);
         }
 
         public void SetCurrentMana(int mana)
         {
             if (mana >= maxMana)
             {
-                for(int i = currentMana; i < maxMana; i++)
+                for(int i = currentEffort; i < maxMana; i++)
                 {
-                    SetElement(EffortElement.Raw, i);
+                    SetEffortAnimation(EffortType.Raw, i);
                 }
-                currentMana = maxMana;
+                currentEffort = maxMana;
             }
-            else if (mana > currentMana)
+            else if (mana > currentEffort)
             {
-                for(int i = currentMana; i < mana; i++)
+                for(int i = currentEffort; i < mana; i++)
                 {
-                    SetElement(EffortElement.Raw, i);
+                    SetEffortAnimation(EffortType.Raw, i);
                 }
-                currentMana = mana;
+                currentEffort = mana;
             }
             else
             {
                 for (int i = maxMana - 1; i >= mana; i--)
                 {
-                    SetElement(EffortElement.Empty, i);
+                    SetEffortAnimation(EffortType.Empty, i);
                 }
-                currentMana = mana;
+                currentEffort = mana;
             }
         }
 
-        public void SetElement(EffortElement element, int index)
+        public void SetEffortAnimation(EffortType element, int index)
         {
             Animator animator = renderedMana[index].GetComponent<Animator>();
             SetCurrentElementToFalse(animator, index);
             SwitchToBooleanBasedOnElement(animator, true, element);
 
-            currentSpell[index] = element;
-
+            effortType[index] = element;
         }
 
         internal void CleanManaSources()
         {
-            for (int i = 0; i < currentMana; i++)
+            for (int i = 0; i < currentEffort; i++)
             {
-                if(currentSpell[i] != EffortElement.Raw)
-                    SetElement(EffortElement.Raw, i);
+                if(effortType[i] != EffortType.Raw)
+                    SetEffortAnimation(EffortType.Raw, i);
             }
         }
 
         private void SetCurrentElementToFalse(Animator animator, int index)
         {
-            EffortElement element = currentSpell[index];
+            EffortType element = effortType[index];
             SwitchToBooleanBasedOnElement(animator, false, element);
         }
 
-        private void SwitchToBooleanBasedOnElement(Animator animator, bool boolean, EffortElement element)
+        private void SwitchToBooleanBasedOnElement(Animator animator, bool boolean, EffortType element)
         {
             switch (element)
             {
-                case EffortElement.Empty:
+                case EffortType.Empty:
                     animator.SetBool("empty", boolean);
                     break;
-                case EffortElement.Raw:
+                case EffortType.Raw:
                     animator.SetBool("full", boolean);
                     break;
-                case EffortElement.Fire:
+                case EffortType.Fire:
                     animator.SetBool("fire", boolean);
                     break;
-                case EffortElement.Cold:
+                case EffortType.Cold:
                     animator.SetBool("cold", boolean);
                     break;
-                case EffortElement.Force:
+                case EffortType.Force:
                     animator.SetBool("force", boolean);
                     break;
-                case EffortElement.Life:
+                case EffortType.Life:
                     animator.SetBool("life", boolean);
                     break;
             }
@@ -195,8 +186,6 @@ namespace _2___Scripts.UI
             RectTransform trans = imageObject.GetComponent<RectTransform>();
             imageObject.transform.SetParent(manaBar);
             trans.localScale = Vector2.one * scale;
-            float positionX = -(canvasWidth / 2) + 40f;
-            float positionY = (canvasHeight / 2) - 80f;
             trans.anchoredPosition = new Vector3(positionX / 2 - 30 + (i * 26 * scale), positionY, -10);
             trans.sizeDelta = new Vector2(28, 28);
             renderedMana.Add(imageObject);
@@ -204,31 +193,23 @@ namespace _2___Scripts.UI
 
         private void GenerateNewPoint(int i)
         {
-            currentSpell.Add(EffortElement.Empty);
+            effortType.Add(EffortType.Empty);
             GameObject imageObject = Instantiate(manaPoint);
             imageObject.name = "EffortPoint" + i;
             RectTransform trans = imageObject.GetComponent<RectTransform>();
             imageObject.transform.SetParent(manaBar);
             trans.localScale = Vector2.one * scale;
-            float positionX = -(canvasWidth / 2) + 40f;
-            float positionY = (canvasHeight / 2) - 80f;
             trans.anchoredPosition = new Vector3(positionX/2 - 30 + (i * 26 * scale), positionY, -10);
-        
-        
-        
-        
-        
+            Debug.Log(trans.anchoredPosition);
+
             trans.sizeDelta = new Vector2(28, 28);
-        
-        
-        
         
             renderedMana.Add(imageObject);
         }
 
-        public EffortElement GetEffortElementAt(int index)
+        public EffortType GetEffortElementAt(int index)
         {
-            return currentSpell[index];
+            return effortType[index];
         }
 
     }

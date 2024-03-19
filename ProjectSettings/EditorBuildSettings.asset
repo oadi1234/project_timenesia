@@ -15,7 +15,7 @@ EditorBuildSettings:
     path: Assets/1_Scenes/Old/Area2.unity
     guid: 945e47fcfe6411940931d16999fd6b10
   - enabled: 0
-    path: Assets/1_Scenes/01 - RUINS.unity
+    path: Assets/1_Scenes/Old/01 - RUINS.unity
     guid: a0c022986987e104e9326547d2e4b249
   - enabled: 0
     path: Assets/1_Scenes/SampleScene.unity

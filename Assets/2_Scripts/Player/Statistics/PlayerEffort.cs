@@ -14,7 +14,7 @@ namespace _2___Scripts.Player
         public float regenInterval = 0.8f; // TODO set this depending on the chosen difficulty, or allow concentrations to change it. Might get moved to PlayerAbilityAndStats or something like it.
         public int effortPerInterval = 1;
         public EffortBar effortBar;
-        public EffortElement[] castCombination;
+        public EffortType[] castCombination;
         // private List<Spell> preparedSpells;
         private List<BaseSpell> preparedSpells;
         private int lastPreparedSpellManaCost = -1;
@@ -26,12 +26,12 @@ namespace _2___Scripts.Player
         void Start()
         {
             effortBar.Initialize();
-            effortBar.SetMaxMana(maxEffort, false);
+            effortBar.SetMaxEffort(maxEffort, false);
             effortBar.SetSpellCapacity(spellCapacity);
-            castCombination = new EffortElement[maxEffort];
+            castCombination = new EffortType[maxEffort];
             for (int i = 0; i < castCombination.Length; i++)
             {
-                castCombination[i] = EffortElement.Empty;
+                castCombination[i] = EffortType.Empty;
             }
             currentCastCombinationIndex = 0;
             // preparedSpells = new List<Spell> { new Spell("Fireball", new List<EffortElement> { EffortElement.Fire, EffortElement.Fire }) };
@@ -101,7 +101,7 @@ namespace _2___Scripts.Player
         {
             for(int i = 0; i < currentCastCombinationIndex; i++)
             {
-                castCombination[i] = EffortElement.Empty;
+                castCombination[i] = EffortType.Empty;
             }
             currentCastCombinationIndex = 0;
         }
@@ -122,25 +122,25 @@ namespace _2___Scripts.Player
 
         private void FocusCasting()
         {
-            if (currentCastCombinationIndex < maxEffort && effortBar.GetEffortElementAt(currentCastCombinationIndex) == EffortElement.Raw)
+            if (currentCastCombinationIndex < maxEffort && effortBar.GetEffortElementAt(currentCastCombinationIndex) == EffortType.Raw)
             {
                 if (Input.GetKeyDown(KeyCode.O))
                 {
-                    AddNewSourceWhileFocusing(EffortElement.Cold);
+                    AddNewSourceWhileFocusing(EffortType.Cold);
                 }
                 if (Input.GetKeyDown(KeyCode.P))
                 {
-                    AddNewSourceWhileFocusing(EffortElement.Fire);
+                    AddNewSourceWhileFocusing(EffortType.Fire);
                 }
             }
         }
 
-        private void AddNewSourceWhileFocusing(EffortElement source)
+        private void AddNewSourceWhileFocusing(EffortType source)
         {
             if (currentCastCombinationIndex < castCombination.Length)
             {
                 castCombination[currentCastCombinationIndex] = source;
-                effortBar.SetElement(source, currentCastCombinationIndex);
+                effortBar.SetEffortAnimation(source, currentCastCombinationIndex);
                 currentCastCombinationIndex++;
             }
             //    int index = 0;
