@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/**
+ * TODO set as the script for the actual main menu.
+ */
 public class MainMenu : MonoBehaviour
 {
     public GameObject Main_Menu;

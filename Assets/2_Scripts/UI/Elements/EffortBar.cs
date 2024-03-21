@@ -200,7 +200,6 @@ namespace _2___Scripts.UI
             imageObject.transform.SetParent(manaBar);
             trans.localScale = Vector2.one * scale;
             trans.anchoredPosition = new Vector3(positionX/2 - 30 + (i * 26 * scale), positionY, -10);
-            Debug.Log(trans.anchoredPosition);
 
             trans.sizeDelta = new Vector2(28, 28);
         

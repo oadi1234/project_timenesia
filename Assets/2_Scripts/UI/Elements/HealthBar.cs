@@ -112,14 +112,15 @@ namespace _2___Scripts.UI
             RectTransform trans = imageObject.GetComponent<RectTransform>();
             imageObject.transform.SetParent(healthBar);
             trans.localScale = Vector2.one * scale;
-            if (i % 2 != 0)
-            {
-                trans.anchoredPosition = new Vector3(positionX + (i * 20 * scale), positionY, -10);
-            }
-            else
-            {
-                trans.anchoredPosition = new Vector3(positionX + (i * 20 * scale), positionY - (10 * scale), -10);
-            }
+            trans.anchoredPosition = new Vector3(positionX + (i * 20 * scale), positionY, -10);
+            //if (i % 2 != 0)
+            //{
+            //    trans.anchoredPosition = new Vector3(positionX + (i * 20 * scale), positionY, -10);
+            //}
+            //else
+            //{
+            //    trans.anchoredPosition = new Vector3(positionX + (i * 20 * scale), positionY - (10 * scale), -10);
+            //}
             trans.sizeDelta = new Vector2(42, 42);
             imageObject.transform.SetParent(healthBar);
 
