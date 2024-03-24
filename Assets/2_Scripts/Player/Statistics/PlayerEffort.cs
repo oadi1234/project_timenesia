@@ -55,26 +55,26 @@ namespace _2___Scripts.Player
                 CastSpell();
             }
 
-            else
-            {
-                if (Input.GetKeyDown(KeyCode.H))
-                {
-                    CastSpell(0);
-                }
-                if (Input.GetKeyDown(KeyCode.J))
-                {
-                    CastSpell(1);
-                }
-                if (Input.GetKeyDown(KeyCode.K))
-                {
-                    UseEffort(3);
-                }
+            //else
+            //{
+            //    if (Input.GetKeyDown(KeyCode.H))
+            //    {
+            //        CastSpell(0);
+            //    }
+            //    if (Input.GetKeyDown(KeyCode.J))
+            //    {
+            //        CastSpell(1);
+            //    }
+            //    if (Input.GetKeyDown(KeyCode.K))
+            //    {
+            //        UseEffort(3);
+            //    }
 
-                if (Input.GetKeyUp(KeyCode.H))
-                {
-                    UseEffort(lastPreparedSpellManaCost);
-                }
-            }
+            //    if (Input.GetKeyUp(KeyCode.H))
+            //    {
+            //        UseEffort(lastPreparedSpellManaCost);
+            //    }
+            //}
         }
 
         private void CastSpell(int indexOfSpell)

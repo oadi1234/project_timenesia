@@ -7,13 +7,14 @@ using UnityEngine.UI;
 public class FadeController : MonoBehaviour
 {
     private CanvasGroup overlay { get {  return GetComponent<CanvasGroup>(); } }
-    private Image fadeColour { get { return GetComponent<Image>(); } set { fadeColour = value; } } //in case we want to edit colour to which fade is changed. Might be cool to have.
+    public Image fadeColour { get { return GetComponent<Image>(); } set { fadeColour = value; } } //in case we want to edit colour to which fade is changed. Might be cool to have.
     public float fadeoutTime = 0.25f;
     private float elapsedTime = 0.25f;
 
     private void Awake()
     {
         elapsedTime = fadeoutTime;
+        overlay.alpha = 0f;
     }
 
     public IEnumerator DoFadeOut()
@@ -34,5 +35,10 @@ public class FadeController : MonoBehaviour
             overlay.alpha = Mathf.Clamp01(1.0f - (elapsedTime / fadeoutTime));
             yield return null;
         }
+    }
+
+    public void SetFadeTimer(float time = 0)
+    {
+        fadeoutTime = time;
     }
 }

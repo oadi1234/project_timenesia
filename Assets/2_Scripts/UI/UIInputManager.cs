@@ -8,22 +8,17 @@ using UnityEngine;
 public class UIInputManager : MonoBehaviour
 {
 
-    public IngameMenu menu;
-    //public GameObject map;
-    //public GameObject journal;
-    //public GameObject inventory;
-    //private bool _isMainMenuActive => mainMenu.activeSelf;
-    // Start is called before the first frame update
+    public MenuManager menuManager;
 
 
     void Update()
     {
         if (Input.GetButtonDown("Cancel")) // TODO adjust for pad
         {
-            menu.EscCommand();
+            menuManager.EscCommand();
         }
         else if (Input.GetButtonDown("Inventory")) {
-            menu.OpenInventory();
+            menuManager.ToggleInventory();
         }
         //else if (!_isMainMenuActive)
         //{

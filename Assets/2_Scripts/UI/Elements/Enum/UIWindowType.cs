@@ -7,10 +7,7 @@ public enum UIWindowType
     None,
     ExitPanel,
     MainMenuPanel,
-    Inventory,
-    Spells,
-    Map,
-    Bestiary,
+    PlayerMenu,
     Quickmap,
     InGameMenu
 }

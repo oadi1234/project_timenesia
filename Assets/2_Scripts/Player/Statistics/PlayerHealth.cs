@@ -43,18 +43,18 @@ namespace _2___Scripts.Player
         // Update is called once per frame
         void Update()
         {
-            if(Input.GetKeyDown(KeyCode.U))
-            {
-                TakeDamage(1);
-            }
-            if(Input.GetKeyDown(KeyCode.I))
-            {
-                IncreaseHealth(1);
-            }
-            if(Input.GetKeyDown(KeyCode.K))
-            {
-                IncreaseHealth(-1);
-            }
+            //if(Input.GetKeyDown(KeyCode.U))
+            //{
+            //    TakeDamage(1);
+            //}
+            //if(Input.GetKeyDown(KeyCode.I))
+            //{
+            //    IncreaseHealth(1);
+            //}
+            //if(Input.GetKeyDown(KeyCode.K))
+            //{
+            //    IncreaseHealth(-1);
+            //}
         }
 
         private void FixedUpdate()

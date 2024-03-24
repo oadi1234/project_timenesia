@@ -1,15 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class IngameMenu : MonoBehaviour
+public class MenuManager : MonoBehaviour
 {
-    public MenuPanel menuPanel;
     public FadeController dimValueSetter;
     public FadeController backgroundDimValueSetter;
-    public FadeController menuPanelFade;
-    public FadeController exitConfirmationPanelFade;
-    public FadeController mainMenuConfirmationPanelFade;
+    public UIPanel menuPanel;
+    public UIPanel mainMenuConfirmationPanel;
+    public UIPanel exitConfirmationPanel;
+    public PlayerUIPanel playerMenuPanel;
 
     public bool isMenuActive { get { return menuPanel.gameObject.activeSelf; } }
     private bool canOpenInventory = true;
@@ -18,7 +19,8 @@ public class IngameMenu : MonoBehaviour
     private IEnumerator bgFadeInCoroutine;
     private IEnumerator bgFadeOutCoroutine;
     private UIWindowType currentlyOpenMenu = UIWindowType.None;
-    private UIWindowType lastMenuOpened = UIWindowType.Inventory; //QoL for game pad users - "inventory key" will open the last browsed menu.
+    private Color32 foregroundFadeColour = new Color32(55, 43, 21, 191); // TODO placeholders for now, but could be cool to make these change depending on the in game location.
+    private Color32 backgroundFadeColour = new Color32(107, 81, 42, 191);
     //public GameObject OptionsMenu;
 
     private void Awake()
@@ -34,23 +36,18 @@ public class IngameMenu : MonoBehaviour
         switch(currentlyOpenMenu)
         {
             case UIWindowType.None:
-                canOpenInventory = false;
-                OpenMenu();
+                OpenInGameMenu();
                 break;
             case UIWindowType.ExitPanel:
                 CloseExitGameConfirmationMenu();
                 break;
             case UIWindowType.InGameMenu:
-                canOpenInventory = true;
-                CloseMenu();
+                CloseInGameMenu();
                 break;
             case UIWindowType.MainMenuPanel:
                 CloseMainMenuConfirmationMenu();
                 break;
-            case UIWindowType.Inventory:
-            case UIWindowType.Map:
-            case UIWindowType.Spells:
-            case UIWindowType.Bestiary:
+            case UIWindowType.PlayerMenu:
                 ClosePlayerMenu();
                 break;
             default:
@@ -58,18 +55,20 @@ public class IngameMenu : MonoBehaviour
         }
     }
 
-    public void CloseMenu()
+    public void CloseInGameMenu()
     {
         currentlyOpenMenu = UIWindowType.None;
         menuPanel.ToggleActive();
         DoFadeOut();
+        canOpenInventory = true;
     }
 
-    public void OpenMenu()
+    public void OpenInGameMenu()
     {
         currentlyOpenMenu = UIWindowType.InGameMenu;
         menuPanel.ToggleActive();
         DoFadeIn();
+        canOpenInventory = false;
     }
 
     public void OpenOptionsSubmenu()
@@ -89,38 +88,33 @@ public class IngameMenu : MonoBehaviour
 
     public void OpenExitGameConfirmationMenu()
     {
-        //Fade buttons out
         currentlyOpenMenu = UIWindowType.ExitPanel;
-        FadeOutPanelAndDisableIt(menuPanelFade.DoFadeOut(), menuPanel.gameObject);
-        FadeInPanelAndEnableIt(exitConfirmationPanelFade.DoFadeIn(), exitConfirmationPanelFade.gameObject);
-        //Fade in exit confirmation after buttons are faded out
+        exitConfirmationPanel.ToggleActive();
+        menuPanel.ToggleActive();
+        menuPanel.SelectButton(0);
     }
 
     public void CloseExitGameConfirmationMenu()
     {
         currentlyOpenMenu = UIWindowType.InGameMenu;
-        FadeOutPanelAndDisableIt(exitConfirmationPanelFade.DoFadeOut(), exitConfirmationPanelFade.gameObject);
-        FadeInPanelAndEnableIt(menuPanelFade.DoFadeIn(), menuPanel.gameObject);
-        //fade out exit confirmation
-        //fade in menu buttons after exit confirmation is faded out
+        exitConfirmationPanel.ToggleActive();
+        menuPanel.ToggleActive();
+        menuPanel.SelectButton(0);
     }
 
     public void OpenMainMenuConfirmationMenu()
     {
-        //Fade buttons out
         currentlyOpenMenu = UIWindowType.MainMenuPanel;
-        FadeOutPanelAndDisableIt(menuPanelFade.DoFadeOut(), menuPanel.gameObject);
-        FadeInPanelAndEnableIt(mainMenuConfirmationPanelFade.DoFadeIn(), mainMenuConfirmationPanelFade.gameObject);
-        //Fade in exit confirmation after buttons are faded out
+        mainMenuConfirmationPanel.ToggleActive();
+        menuPanel.ToggleActive();
     }
 
     public void CloseMainMenuConfirmationMenu()
     {
         currentlyOpenMenu = UIWindowType.InGameMenu;
-        FadeOutPanelAndDisableIt(mainMenuConfirmationPanelFade.DoFadeOut(), mainMenuConfirmationPanelFade.gameObject);
-        FadeInPanelAndEnableIt(menuPanelFade.DoFadeIn(), menuPanel.gameObject);
-        //fade out exit confirmation
-        //fade in menu buttons after exit confirmation is faded out
+        mainMenuConfirmationPanel.ToggleActive();
+        menuPanel.ToggleActive();
+        menuPanel.SelectButton(0);
     }
 
     public void ExitGame()
@@ -130,21 +124,37 @@ public class IngameMenu : MonoBehaviour
         Debug.Log("Application.Quit() call is ignored in editor.");
     }
 
-    public void OpenInventory()
+    public void ToggleInventory()
     {
         if(canOpenInventory) 
         {
-            
+            OpenPlayerMenu();
+        }
+        else
+        {
+            ClosePlayerMenu();
         }
     }
 
-    public void ClosePlayerMenu()
+    private void OpenPlayerMenu()
     {
+        currentlyOpenMenu = UIWindowType.PlayerMenu;
+        playerMenuPanel.Open();
+        playerMenuPanel.OpenPlayerMenuUI();
+        canOpenInventory = false;
+    }
 
+    private void ClosePlayerMenu()
+    {
+        currentlyOpenMenu = UIWindowType.None;
+        playerMenuPanel.ClosePlayerMenuUI();
+        canOpenInventory = true;
     }
 
     private void DoFadeIn()
     {
+        dimValueSetter.fadeColour.color = foregroundFadeColour;
+        backgroundDimValueSetter.fadeColour.color = backgroundFadeColour;
         fadeInCoroutine = dimValueSetter.DoFadeIn();
         bgFadeInCoroutine = backgroundDimValueSetter.DoFadeIn();
         StopCoroutine(fadeOutCoroutine);
@@ -161,17 +171,5 @@ public class IngameMenu : MonoBehaviour
         StopCoroutine(bgFadeInCoroutine);
         StartCoroutine(fadeOutCoroutine);
         StartCoroutine(bgFadeOutCoroutine);
-    }
-
-    private void FadeOutPanelAndDisableIt(IEnumerator coroutine, GameObject objectToDisable)
-    {
-        StartCoroutine(coroutine);
-        objectToDisable.SetActive(false);
-
-    }
-    private void FadeInPanelAndEnableIt(IEnumerator coroutine, GameObject objectToEnable)
-    {
-        objectToEnable.SetActive(true);
-        StartCoroutine(coroutine);
     }
 }
