@@ -130,7 +130,7 @@ public class MenuManager : MonoBehaviour
         {
             OpenPlayerMenu();
         }
-        else
+        else if (currentlyOpenMenu==UIWindowType.PlayerMenu)
         {
             ClosePlayerMenu();
         }
