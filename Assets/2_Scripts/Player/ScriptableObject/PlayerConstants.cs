@@ -7,7 +7,7 @@ using UnityEngine;
 public class PlayerConstants : ScriptableObject
 {
     static PlayerConstants _instance;
-    public static PlayerConstants instance
+    public static PlayerConstants Instance
     {
         get
         {

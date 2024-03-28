@@ -7,13 +7,15 @@ public class UIPanel : MonoBehaviour
 {
     private Button[] buttons;
     private FadeController fadeController;
-    private bool isActive = false;
-    private int buttonIndexOnOpen = 0;
+    public bool isActiveAtStart = false;
+    private bool isActive;
+    public int buttonIndexOnOpen = 0;
 
     void Start()
     {
         buttons = GetComponentsInChildren<Button>();
-        gameObject.SetActive(false);
+        gameObject.SetActive(isActiveAtStart);
+        isActive = isActiveAtStart;
         fadeController = GetComponent<FadeController>();
     }
 
@@ -65,8 +67,10 @@ public class UIPanel : MonoBehaviour
     {
         StartCoroutine(fadeController.DoFadeIn());
         yield return StartCoroutine(FadeInButtons());
-        if(buttons.Length > buttonIndexOnOpen)
+        if (buttonIndexOnOpen >= 0 && buttons.Length > buttonIndexOnOpen)
+        {
             buttons[buttonIndexOnOpen].Select();
+        }
     }
 
     private IEnumerator Deactivate()

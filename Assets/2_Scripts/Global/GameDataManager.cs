@@ -25,6 +25,7 @@ namespace _2___Scripts.Global
 
         private TextMeshProUGUI CoinText;
         private string fileName = "save_00"; //this should be set after choosing from main menu.
+        public static event Action<AbilityName> OnAbilityLoad;
 
 
         private void Awake()
@@ -43,7 +44,7 @@ namespace _2___Scripts.Global
             CoinText = GameObject.Find("CoinCounter").GetComponent<TextMeshProUGUI>();
             DontDestroyOnLoad (gameObject); // this line might be deleted - game data manager is part of persistent scene now anyway.
             OnPlayerEnteredEvent.OnPlayerEntered += OnPlayer_Entered;
-            Loadpoint.OnLoad += Load;
+            Loadpoint.OnLoad += Load; // TODO remove, there won't really be something like a "load point". On load behaviour tied to events is a good idea though.
         }
     
         private void OnPlayer_Entered(IOnPlayerEnteredEvent obj)
@@ -112,6 +113,13 @@ namespace _2___Scripts.Global
         private void AssignLoadDataToAbilities(SaveDataSchema saveData)
         {
             stats.abilities = saveData.abilities;
+            foreach (var ability in stats.abilities)
+            {
+                if(ability.Value)
+                {
+                    OnAbilityLoad(ability.Key); // TODO in the future all loading and saving should be moved to coroutines to avoid stuttering on both. It will also make it easier to control if we loaded everything.
+                }
+            }
         }
 
         private void AssignLoadDataToObjectLoadingStrategy(SaveDataSchema saveData)

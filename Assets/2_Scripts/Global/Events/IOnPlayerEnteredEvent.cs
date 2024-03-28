@@ -15,6 +15,7 @@ namespace _2___Scripts.Global.Events
 
         public enum EventType
         {
+            None,
             CoinCollected,
             DoubleJumpCollected,
             DashCollected,

@@ -6,12 +6,12 @@ using UnityEngine.UI;
 public class PlayerUIPanel : UIPanel
 {
     public UIPanel PlayerMenuTabs;
-    public UIPanel Inventory, Spells, Map, Journal;
+    public UIPanel Inventory, Spells, Map, Journal, Tooltip;
     public FadeController PlayerMenuFadeController;
     private IEnumerator fadeInCoroutine;
     private IEnumerator fadeOutCoroutine;
 
-    private UIPlayerTabType currentlyOpenTab = UIPlayerTabType.Inventory; //by default inventory is opened first, but the object remembers the last menu browsed for convenience.
+    public UIPlayerTabType currentlyOpenTab = UIPlayerTabType.Inventory; //by default inventory is opened first, but the object remembers the last menu browsed for convenience.
     private void Awake()
     {
         fadeOutCoroutine = PlayerMenuFadeController.DoFadeOut();
@@ -20,6 +20,7 @@ public class PlayerUIPanel : UIPanel
     public void OpenPlayerMenuUI()
     {
         DoBackgroundFadeIn();
+        Tooltip.Open();
         PlayerMenuTabs.Open();
         switch (currentlyOpenTab)
         {
@@ -42,6 +43,7 @@ public class PlayerUIPanel : UIPanel
     {
         DoBackgroundFadeOut();
         CloseCurrentlyOpenTab();
+        Tooltip.Close();
         StartCoroutine(CloseCoroutine());
     }
 
@@ -51,6 +53,7 @@ public class PlayerUIPanel : UIPanel
         {
             CloseCurrentlyOpenTab();
             currentlyOpenTab = UIPlayerTabType.Inventory;
+            PlayerMenuTabs.SelectButton((int)UIPlayerTabType.Inventory);
             Inventory.Open();
         }
     }
@@ -61,6 +64,7 @@ public class PlayerUIPanel : UIPanel
         {
             CloseCurrentlyOpenTab();
             currentlyOpenTab = UIPlayerTabType.Spells;
+            PlayerMenuTabs.SelectButton((int)UIPlayerTabType.Spells);
             Spells.Open();
         }
     }
@@ -71,6 +75,7 @@ public class PlayerUIPanel : UIPanel
         {
             CloseCurrentlyOpenTab();
             currentlyOpenTab = UIPlayerTabType.Map;
+            PlayerMenuTabs.SelectButton((int)UIPlayerTabType.Map);
             Map.Open();
         }
     }
@@ -81,6 +86,7 @@ public class PlayerUIPanel : UIPanel
         {
             CloseCurrentlyOpenTab();
             currentlyOpenTab = UIPlayerTabType.Journal;
+            PlayerMenuTabs.SelectButton((int)UIPlayerTabType.Journal);
             Journal.Open();
         }
     }
