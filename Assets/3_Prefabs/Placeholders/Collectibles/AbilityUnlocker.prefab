@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 7126009730833026704}
   - component: {fileID: 3907470861688541376}
   - component: {fileID: 1072245461198196178}
-  - component: {fileID: 388175943792469770}
+  - component: {fileID: 7824073097203945038}
+  - component: {fileID: 7365390014920434326}
   m_Layer: 17
   m_Name: AbilityUnlocker
   m_TagString: Untagged
@@ -28,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 8134309259508562269}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -67.32105, y: -15.671386, z: 0}
+  m_LocalPosition: {x: 2.94, y: -12.38, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -131,7 +132,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &388175943792469770
+--- !u!114 &7824073097203945038
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -140,7 +141,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 8134309259508562269}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c38dbba8bc10f9418083e7b959b37eb, type: 3}
+  m_Script: {fileID: 11500000, guid: d14ddbb1aba4b3e44a80e490d6b93fc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  abilityName: 5
+  _eventType: 1
+  _numericData: 0
+--- !u!114 &7365390014920434326
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8134309259508562269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 329be42a617890e44861c1843694bac5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -63,6 +63,7 @@ public class PlayerInputManager : MonoBehaviour
             {
                 //time.fixeddeltatime below is used to adjust movement for occasional lag, if it ever happens. It might be unnecessary.
                 //on normal run xInput*fixedDeltaTime is 0.02, so I multiply it by 50 to normalize it to 1. Makes movement speed easier to set in constants.
+                // TODO: This will most likely require adjustment if a time slow effects are implemented.
                 playerMovementController.Move(_xInput * Time.fixedDeltaTime * 50);
                 playerMovementController.Jump(_jumpPressed, _jumpKeyHold);
                 playerMovementController.Dash(_dashPressed, _xInput);

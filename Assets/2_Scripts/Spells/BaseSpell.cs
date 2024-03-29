@@ -4,7 +4,7 @@ namespace Spells
 {
     public class BaseSpell
     {
-        public EffortElement[] EffortElements;
+        public EffortType[] EffortElements;
         public int CostMana => 0;//EffortElements.Length;
         public string Name { get; }
         public int AnimationTimeMilisec { get; }

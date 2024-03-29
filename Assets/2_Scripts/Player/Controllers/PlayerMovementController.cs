@@ -71,11 +71,11 @@ public class PlayerMovementController: MonoBehaviour
         playerHealth = GetComponent<PlayerHealth>();
         effort = GetComponent<PlayerEffort>();
         velocityVector = new Vector2();
-        tempValue = PlayerConstants.instance.moveSpeed;
+        tempValue = PlayerConstants.Instance.moveSpeed;
         hurtTime = 0f;
         startingPosition = rigidBody2D.position;
-        currentCoyoteTime = PlayerConstants.instance.coyoteTime;
-        currentKnockbackTime = PlayerConstants.instance.knockbackTime;
+        currentCoyoteTime = PlayerConstants.Instance.coyoteTime;
+        currentKnockbackTime = PlayerConstants.Instance.knockbackTime;
         //GameDataManager.Instance.LoadFromSave(new SaveDataSchema{Coins = 10, CurrentHealth = 2, MaxHealth = 4, 
         //    MaxMana = 8, MaxConcentrationSlots = 2, SavePoint = "lol"});
     }
@@ -133,34 +133,34 @@ public class PlayerMovementController: MonoBehaviour
         if (!isJumping && isGrounded && !isOnSlope)
         {
             velocityVector.Set(
-                move * PlayerConstants.instance.moveSpeed, 0f);
+                move * PlayerConstants.Instance.moveSpeed, 0f);
         }
         else if (!isJumping && isOnSlope && !isWallTouching)
         {
             velocityVector.Set(
-                move * PlayerConstants.instance.moveSpeed,
-                flatGroundChecker.slopeNormalPerpendicular.y * -move * PlayerConstants.instance.moveSpeed);
+                move * PlayerConstants.Instance.moveSpeed,
+                flatGroundChecker.slopeNormalPerpendicular.y * -move * PlayerConstants.Instance.moveSpeed);
         }
         else if (!isJumping && isOnSlope && isWallTouching)
         {
             velocityVector.Set(
-                move * PlayerConstants.instance.moveSpeed, 0f);
+                move * PlayerConstants.Instance.moveSpeed, 0f);
         }
 
         else if (!isGrounded)
         {
             if (isWallSliding)
-                velocityVector.Set(move * PlayerConstants.instance.moveSpeed, PlayerConstants.instance.wallSlideSpeed);
+                velocityVector.Set(move * PlayerConstants.Instance.moveSpeed, PlayerConstants.Instance.wallSlideSpeed);
             else if (isWallJumping && facingLeft)
             {
-                velocityVector.Set(Mathf.Min(move * PlayerConstants.instance.moveSpeed, rigidBody2D.velocity.x), rigidBody2D.velocity.y);
+                velocityVector.Set(Mathf.Min(move * PlayerConstants.Instance.moveSpeed, rigidBody2D.velocity.x), rigidBody2D.velocity.y);
             }
             else if (isWallJumping && !facingLeft)
             {
-                velocityVector.Set(Mathf.Max(move * PlayerConstants.instance.moveSpeed, rigidBody2D.velocity.x), rigidBody2D.velocity.y);
+                velocityVector.Set(Mathf.Max(move * PlayerConstants.Instance.moveSpeed, rigidBody2D.velocity.x), rigidBody2D.velocity.y);
             }
             else
-                velocityVector.Set(move * PlayerConstants.instance.moveSpeed, rigidBody2D.velocity.y);
+                velocityVector.Set(move * PlayerConstants.Instance.moveSpeed, rigidBody2D.velocity.y);
         }
 
         rigidBody2D.velocity = velocityVector;
@@ -192,13 +192,13 @@ public class PlayerMovementController: MonoBehaviour
         brakeSpeedX = 0;
         brakeSpeedY = 0;
         // Speed when falling/ascending. Most likely not ideal but it works.
-        if (Math.Abs(rigidBody2D.velocity.y) > PlayerConstants.instance.maxVerticalSpeed)
+        if (Math.Abs(rigidBody2D.velocity.y) > PlayerConstants.Instance.maxVerticalSpeed)
         {
-            brakeSpeedY = Math.Abs(rigidBody2D.velocity.y) - PlayerConstants.instance.maxVerticalSpeed + brakeVector.y/16;
+            brakeSpeedY = Math.Abs(rigidBody2D.velocity.y) - PlayerConstants.Instance.maxVerticalSpeed + brakeVector.y/16;
         }
-        if (Math.Abs(rigidBody2D.velocity.x) > PlayerConstants.instance.maxHorizontalSpeed)
+        if (Math.Abs(rigidBody2D.velocity.x) > PlayerConstants.Instance.maxHorizontalSpeed)
         {
-            brakeSpeedX = Math.Abs(rigidBody2D.velocity.x) - PlayerConstants.instance.maxHorizontalSpeed + brakeVector.x/16;
+            brakeSpeedX = Math.Abs(rigidBody2D.velocity.x) - PlayerConstants.Instance.maxHorizontalSpeed + brakeVector.x/16;
 
         }
         brakeVector.Set(rigidBody2D.velocity.x * brakeSpeedX/2, rigidBody2D.velocity.y * brakeSpeedY/2);
@@ -219,11 +219,11 @@ public class PlayerMovementController: MonoBehaviour
         {
             DoubleJump();
         }
-        else if ((isJumping || isDoubleJumping) && keyHeld && rigidBody2D.velocity.y > 0 && jumpTime < PlayerConstants.instance.maxJumpTime)
+        else if ((isJumping || isDoubleJumping) && keyHeld && rigidBody2D.velocity.y > 0 && jumpTime < PlayerConstants.Instance.maxJumpTime)
         {
             KeyHoldAscendWhileJumping();
         }
-        else if ((isJumping || isDoubleJumping) && (!keyHeld || jumpTime >= PlayerConstants.instance.maxJumpTime) && rigidBody2D.velocity.y > 0 && !isDashing) 
+        else if ((isJumping || isDoubleJumping) && (!keyHeld || jumpTime >= PlayerConstants.Instance.maxJumpTime) && rigidBody2D.velocity.y > 0 && !isDashing) 
         {
             LoseVelocityAfterJumping();
         }
@@ -244,14 +244,14 @@ public class PlayerMovementController: MonoBehaviour
 
     private void GroundJump()
     {
-        timeAfterJumpPressed = PlayerConstants.instance.jumpGroundCheckCooldown; //a cooldown made to avoid setting values on being grounded a short while after jumping.
+        timeAfterJumpPressed = PlayerConstants.Instance.jumpGroundCheckCooldown; //a cooldown made to avoid setting values on being grounded a short while after jumping.
         isJumping = true;
         isGrounded = false;
         if (!flatGroundChecker.IsGrounded()) //coyote time case, otherwise player just awkwardly floats for a second
         {
             MidAirJumpVerticalSpeedReset();
         }
-        rigidBody2D.AddForce(transform.up * PlayerConstants.instance.initialJumpForce, ForceMode2D.Impulse);
+        rigidBody2D.AddForce(transform.up * PlayerConstants.Instance.initialJumpForce, ForceMode2D.Impulse);
         animator.SetTrigger(groundJumpTrigger);
     }
 
@@ -259,8 +259,8 @@ public class PlayerMovementController: MonoBehaviour
     {
         SetVariablesWhenWallJumping();
         rigidBody2D.AddForce((transform.up + (wallChecker.IsLeftTouching() ? 
-            transform.right * PlayerConstants.instance.postWallJumpSpeedModifier : 
-            -transform.right * PlayerConstants.instance.postWallJumpSpeedModifier)) * PlayerConstants.instance.initialJumpForce, ForceMode2D.Impulse);
+            transform.right * PlayerConstants.Instance.postWallJumpSpeedModifier : 
+            -transform.right * PlayerConstants.Instance.postWallJumpSpeedModifier)) * PlayerConstants.Instance.initialJumpForce, ForceMode2D.Impulse);
         CheckFlipWhenWallJump();
         StartCoroutine(ReverseAfterWallJumpAfterSeconds(0.15f));
     }
@@ -271,14 +271,14 @@ public class PlayerMovementController: MonoBehaviour
         isDoubleJumping = true;
         MidAirJumpVerticalSpeedReset();
         jumpTime = 0;
-        rigidBody2D.AddForce(transform.up * PlayerConstants.instance.initialJumpForce, ForceMode2D.Impulse);
+        rigidBody2D.AddForce(transform.up * PlayerConstants.Instance.initialJumpForce, ForceMode2D.Impulse);
         animator.SetTrigger(doubleJumpTrigger);
     }
 
     private void KeyHoldAscendWhileJumping()
     {
-        jumpTime += Time.fixedDeltaTime + Time.fixedDeltaTime * Convert.ToInt32(isWallJumping) * PlayerConstants.instance.wallJumpPersistenceModifier + Time.fixedDeltaTime * Convert.ToInt32(isDoubleJumping) * PlayerConstants.instance.doubleJumpPersistenceModifier;
-        velocityVector.Set(rigidBody2D.velocity.x, PlayerConstants.instance.jumpVerticalSpeed);
+        jumpTime += Time.fixedDeltaTime + Time.fixedDeltaTime * Convert.ToInt32(isWallJumping) * PlayerConstants.Instance.wallJumpPersistenceModifier + Time.fixedDeltaTime * Convert.ToInt32(isDoubleJumping) * PlayerConstants.Instance.doubleJumpPersistenceModifier;
+        velocityVector.Set(rigidBody2D.velocity.x, PlayerConstants.Instance.jumpVerticalSpeed);
         rigidBody2D.velocity = velocityVector;
     }
 
@@ -422,7 +422,7 @@ public class PlayerMovementController: MonoBehaviour
         return isWallTouching &&
             !isWallJumping &&
             rigidBody2D.velocity.y <= 0 &&
-            (jumpTime <= 0f || jumpTime > PlayerConstants.instance.minJumpTimeBeforeWallSlidingEnabled) &&
+            (jumpTime <= 0f || jumpTime > PlayerConstants.Instance.minJumpTimeBeforeWallSlidingEnabled) &&
             stats.GetAbilityFlag(AbilityName.WallJump);
     }
 
@@ -471,7 +471,7 @@ public class PlayerMovementController: MonoBehaviour
     {
         isJumping = false;
         jumpTime = 0f;
-        currentCoyoteTime = PlayerConstants.instance.coyoteTime;
+        currentCoyoteTime = PlayerConstants.Instance.coyoteTime;
         canDash = true;
     }
     private void SetVariablesWhenWallJumping()
@@ -486,12 +486,12 @@ public class PlayerMovementController: MonoBehaviour
     }
     private void SetVariablesWhenDashing(float move)
     {
-        currentDashCooldown = PlayerConstants.instance.dashCooldown;
+        currentDashCooldown = PlayerConstants.Instance.dashCooldown;
         isDashing = true;
         tempValue = rigidBody2D.gravityScale;
         rigidBody2D.gravityScale = 0f;
         velocityVector.Set(
-            PlayerConstants.instance.dashSpeed * ((Convert.ToInt32(move <0.01f && move>-0.01f ? !facingLeft : move > 0) << 1) - 1),
+            PlayerConstants.Instance.dashSpeed * ((Convert.ToInt32(move <0.01f && move>-0.01f ? !facingLeft : move > 0) << 1) - 1),
             0f);
         rigidBody2D.sharedMaterial = _noFriction;
         rigidBody2D.velocity = velocityVector;

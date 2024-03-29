@@ -8,8 +8,8 @@ namespace _2___Scripts.Player
 {
     public class PlayerHealth : MonoBehaviour
     {
-        public int maxHealth;
-        public int currentHealth;
+        public int maxHealth = 3;
+        public int currentHealth = 3;
 
         public float iFrame = 0f;
 
@@ -31,8 +31,9 @@ namespace _2___Scripts.Player
         {
             // var s = SaveManager.Instance.Load();
             currentHealth = maxHealth;
-            // currentHealth = s.CurrentHealth;
-            healthBar.SetMaxHealth(currentHealth);
+            healthBar.Initialize();
+            healthBar.SetMaxHealth(maxHealth);
+            healthBar.SetCurrentHealth(currentHealth);
         }
         public void Restart()
         {
@@ -42,18 +43,18 @@ namespace _2___Scripts.Player
         // Update is called once per frame
         void Update()
         {
-            if(Input.GetKeyDown(KeyCode.U))
-            {
-                TakeDamage(1);
-            }
-            if(Input.GetKeyDown(KeyCode.I))
-            {
-                IncreaseHealth(1);
-            }
-            if(Input.GetKeyDown(KeyCode.K))
-            {
-                IncreaseHealth(-1);
-            }
+            //if(Input.GetKeyDown(KeyCode.U))
+            //{
+            //    TakeDamage(1);
+            //}
+            //if(Input.GetKeyDown(KeyCode.I))
+            //{
+            //    IncreaseHealth(1);
+            //}
+            //if(Input.GetKeyDown(KeyCode.K))
+            //{
+            //    IncreaseHealth(-1);
+            //}
         }
 
         private void FixedUpdate()
@@ -86,7 +87,7 @@ namespace _2___Scripts.Player
                     currentHealth = 0;
                     //Destroy(gameObject);
                 }
-                healthBar.SetHealth(currentHealth);
+                healthBar.SetCurrentHealth(currentHealth);
                 this.iFrame = iFrame;
             }
         }

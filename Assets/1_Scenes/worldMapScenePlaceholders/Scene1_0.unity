@@ -24355,6 +24355,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7824073097203945038, guid: 25f84b1daade44f449f68efb8da575b3, type: 3}
+      propertyPath: _eventType
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 8134309259508562269, guid: 25f84b1daade44f449f68efb8da575b3, type: 3}
       propertyPath: m_Name
       value: AbilityUnlocker
@@ -24363,45 +24367,8 @@ PrefabInstance:
     - {fileID: 388175943792469770, guid: 25f84b1daade44f449f68efb8da575b3, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8134309259508562269, guid: 25f84b1daade44f449f68efb8da575b3, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1462444390}
-    - targetCorrespondingSourceObject: {fileID: 8134309259508562269, guid: 25f84b1daade44f449f68efb8da575b3, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1462444391}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 25f84b1daade44f449f68efb8da575b3, type: 3}
---- !u!1 &1462444389 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8134309259508562269, guid: 25f84b1daade44f449f68efb8da575b3, type: 3}
-  m_PrefabInstance: {fileID: 1462444388}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1462444390
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1462444389}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d14ddbb1aba4b3e44a80e490d6b93fc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _eventType: 2
-  _numericData: 0
---- !u!114 &1462444391
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1462444389}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 329be42a617890e44861c1843694bac5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1697405569
 PrefabInstance:
   m_ObjectHideFlags: 0
