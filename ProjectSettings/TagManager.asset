@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Walls
+  - LoadingArea
   layers:
   - Default
   - TransparentFX
@@ -12,7 +13,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - Spell
   - PlayerIFrame
   - Player
   - HurtSource
@@ -23,7 +24,7 @@ TagManager:
   - Ceiling
   - OneWayGround
   - 
-  - 
+  - Interactables
   - 
   - 
   - 
