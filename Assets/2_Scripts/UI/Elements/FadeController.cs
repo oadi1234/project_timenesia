@@ -12,11 +12,12 @@ public class FadeController : MonoBehaviour
     private float elapsedTime = 0.25f;
     public float targetAlphaMin = 0f;
     public float targetAlphaMax = 1f;
+    public float alphaAtStart = 0f;
 
     private void Awake()
     {
         elapsedTime = fadeoutTime;
-        overlay.alpha = targetAlphaMin;
+        overlay.alpha = alphaAtStart;
     }
 
     public IEnumerator DoFadeOut()
