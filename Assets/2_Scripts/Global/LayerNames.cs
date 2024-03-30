@@ -16,6 +16,8 @@ namespace _2___Scripts.Global
         Collision = 13,
         Ceiling = 14,
         OneWayGround = 15,
-        Interactables = 17
+        Interactables = 17,
+        Hazard = 18,
+        SafeGroundCheckpoint = 19
     }
 }

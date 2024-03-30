@@ -18,7 +18,7 @@ EditorBuildSettings:
     path: Assets/1_Scenes/Old/01 - RUINS.unity
     guid: a0c022986987e104e9326547d2e4b249
   - enabled: 0
-    path: Assets/1_Scenes/SampleScene.unity
+    path: Assets/1 - Scenes/SampleScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
     path: Assets/1_Scenes/worldMapScenePlaceholders/Scene0_0.unity
@@ -29,5 +29,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/1_Scenes/worldMapScenePlaceholders/Scene0_-1.unity
     guid: 23dbeb63e9428974fb93ddfacf5c02a7
+  - enabled: 1
+    path: Assets/1_Scenes/Testing scenes/New Scene.unity
+    guid: a10c320cdd6a7354da2711d3ef322a0b
   m_configObjects:
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: c3d33cdf9a4438645a1119f49acf7595, type: 2}
