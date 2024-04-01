@@ -3,6 +3,7 @@ using Assets.Scripts.Enemies.States;
 using System;
 using System.Collections;
 using _2___Scripts.Enemies.Attacks;
+using _2_Scripts.Global.FSM;
 using UnityEngine;
 
 namespace Assets.Scripts.Enemies

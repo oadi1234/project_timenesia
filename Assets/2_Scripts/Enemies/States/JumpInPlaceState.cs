@@ -1,20 +1,19 @@
-﻿using System;
-using _2_Scripts.Global.FSM;
+﻿using _2_Scripts.Global.FSM;
+using Assets.Scripts.Enemies;
 using UnityEngine;
 
-namespace Assets.Scripts.Enemies.States
+namespace _2_Scripts.Enemies.States
 {
-    internal class PatrolingState_Fungy : IState
+    internal class JumpInPlaceState : IState
     {
-        private Fungy _fungy;
+        private EnemyBase _enemy;
         [SerializeField] private float movingSpeed = 3f;
         private float _timeInterval = 0.5f;
         private float _currentTimeInterval = 0f;
 
-
-        public PatrolingState_Fungy(Fungy fungy)
+        public JumpInPlaceState(EnemyBase enemy)
         {
-            _fungy = fungy;
+            _enemy = enemy;
         }
         public void OnEnter()
         {
@@ -26,7 +25,7 @@ namespace Assets.Scripts.Enemies.States
 
         public void OnLogic()
         {
-            // Debug.Log("Patrol grzyba: onLogic");
+            Debug.Log("JumpInPlace");
             Jump();
         }
 
@@ -35,7 +34,7 @@ namespace Assets.Scripts.Enemies.States
             if (_currentTimeInterval >= _timeInterval)
             {
                 _currentTimeInterval = 0;
-                _fungy.RigidBody.AddForce(new Vector2(0, 2), ForceMode2D.Impulse);
+                _enemy.RigidBody.AddForce(new Vector2(0, 20), ForceMode2D.Impulse);
             }
             else
                 _currentTimeInterval += Time.deltaTime;
