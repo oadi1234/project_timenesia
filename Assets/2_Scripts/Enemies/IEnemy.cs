@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Assets.Scripts.Enemies
+namespace _2_Scripts.Enemies
 {
     internal interface IEnemy
     {

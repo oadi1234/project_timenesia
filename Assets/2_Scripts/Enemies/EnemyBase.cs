@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace _2_Scripts.Enemies
 {
-    public abstract class EnemyBase : MonoBehaviour //TODO: remove MB and change Awake to ctor
+    public abstract class EnemyBase : MonoBehaviour
     {
         public Rigidbody2D RigidBody { get; private set; }
         public SpriteRenderer SpriteRenderer { get; private set; }

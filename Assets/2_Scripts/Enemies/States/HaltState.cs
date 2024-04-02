@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace _2_Scripts.Enemies.States
 {
-    public class HaltState : IState
+    public class HaltState : StateBase
     {
         private EnemyBase _enemy;
 
@@ -12,18 +12,9 @@ namespace _2_Scripts.Enemies.States
             _enemy = enemy;
         }
 
-        public void OnLogic()
-        {
-            Debug.Log("Halt");
-        }
-
-        public void OnEnter()
+        public override void OnEnter()
         {
             _enemy.SpriteRenderer.color = Color.white;
-        }
-
-        public void OnExit()
-        {
         }
     }
 }

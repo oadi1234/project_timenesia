@@ -5,7 +5,8 @@ namespace _2_Scripts.Enemies
 {
     public abstract class MovingEnemyBase : EnemyBase
     {
-        protected StateMachine MovingStateMachine;
+        protected StateMachine MovingStateMachine;       
+        protected void At(IState from, IState to, Func<bool> condition, StateMachine stateMachine) => stateMachine.AddTransition(from, to, condition);
 
         protected override void Awake()
         {
@@ -13,11 +14,10 @@ namespace _2_Scripts.Enemies
             MovingStateMachine = new StateMachine();
         }
 
-        protected void Update()
+        protected void FixedUpdate()
         {
             MovingStateMachine.OnLogic();
         }
 
-        protected void At(IState from, IState to, Func<bool> condition, StateMachine stateMachine) => stateMachine.AddTransition(from, to, condition);
     }
 }

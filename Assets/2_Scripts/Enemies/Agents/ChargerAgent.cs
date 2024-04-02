@@ -3,50 +3,48 @@ using _2___Scripts.Global;
 using _2_Scripts.Enemies.States;
 using UnityEngine;
 
-namespace _2_Scripts.Enemies
+namespace _2_Scripts.Enemies.Agents
 {
-    public class Sprinter : MovingEnemyBase
+    public class ChargerAgent : MovingEnemyBase
     {
-        private bool _playerSeen;
         private bool _playerSeenOnRight;
         private bool _chargeFinished;
+        private bool _playerSeen;
         private CircleCollider2D _sight;
 
         protected override void Awake()
         {
             base.Awake();
-            // var patrolingState = new JumpInPlaceState(this);
+            
+            LoadingChargeState.OnChargeFinished += LoadingChargeStateOnChargeFinished;
+            _sight = GetComponent<CircleCollider2D>();
+            
+            InitializeFsm();
+        }
+
+        private void InitializeFsm()
+        {
             var haltState = new HaltState(this);
             var chargeRight = new LoadingChargeState(this, 3f);
             var chargeLeft = new LoadingChargeState(this, -3f);
+            
             At(haltState, chargeLeft, PlayerSeenFromLeft(), MovingStateMachine);
             At(haltState, chargeRight, PlayerSeenFromRight(), MovingStateMachine);
+            
+            //below can be ass well written as:
+            // MovingStateMachine.AddAnyTransition(haltState, ChargeFinished());
             At(chargeRight, haltState, ChargeFinished(), MovingStateMachine);
             At(chargeLeft, haltState, ChargeFinished(), MovingStateMachine);
-            // MovingStateMachine.AddAnyTransition(haltState, PlayerNotSeen());
             
             MovingStateMachine.SetState(haltState);
-            
-            LoadingChargeState.chargeFinished += LoadingChargeStateOnchargeFinished;
-            _sight = GetComponent<CircleCollider2D>();
         }
 
-        private void LoadingChargeStateOnchargeFinished(bool c)
+        private void LoadingChargeStateOnChargeFinished()
         {
-            _chargeFinished = c;
+            _chargeFinished = true;
             _sight.enabled = true;
-
-            // _playerSeenOnRight = PlayerPosition.GetPlayerPosition().position.x - transform.position.x > 0;
+            _playerSeen = false;
         }
-
-        // new void Update()
-        // {
-        //     base.Update();
-        //     // Debug.Log(_playerSeen + "  " + _playerSeenOnRight);
-        // }
-        
-        
-
 
         private Func<bool> ChargeFinished()
         {
@@ -60,19 +58,9 @@ namespace _2_Scripts.Enemies
         }
         private Func<bool> PlayerSeenFromRight()
         {
-            return () => _playerSeen && _playerSeenOnRight && !_chargeFinished;
+            return () => _playerSeen &&_playerSeenOnRight && !_chargeFinished;
         }
 
-
-        private Func<bool> PlayerSeen()
-        {
-            return () => _playerSeen;
-        }
-
-        private Func<bool> PlayerNotSeen()
-        {
-            return () => !_playerSeen;
-        }
         private void OnTriggerEnter2D(Collider2D collision)
         {
             if (collision.gameObject.layer == (int)LayerNames.Player)
@@ -82,11 +70,6 @@ namespace _2_Scripts.Enemies
                 _playerSeen = true;
                 _playerSeenOnRight = collision.transform.position.x - transform.position.x > 0;
             }
-        }
-        private void OnTriggerExit2D(Collider2D collision)
-        {
-            if (collision.gameObject.layer == (int)LayerNames.Player)
-                _playerSeen = false;
         }
     }
 }

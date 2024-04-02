@@ -1,36 +1,36 @@
-﻿using System;
-using _2_Scripts.Global.FSM;
+using System;
 using UnityEngine;
 
-namespace _2_Scripts.Enemies.States
+namespace _2_Scripts.Enemies.Temp_CleanEnemy
 {
-    internal class LoadingChargeState : StateBase
+    public class ChargeState : IState
     {
+        // public IStateMachine StateMachine;
+        public CleanEnemyStateMachine CleanEnemyStateMachine;
+        
         private EnemyBase _enemy;
-        private float _timeInterval = 2f;
-        private float _currentTimeInterval = 0f;
         private float _xForce;
+        
+        private float _timeInterval = 2f;
+        private float _currentTimeInterval;
         private bool _chargeFinished;
         private readonly Color _redding = new (0, -0.01f, -0.01f, 0);
         public static event Action OnChargeFinished;
 
-        public LoadingChargeState(EnemyBase enemy, float xForce)
+        public ChargeState(EnemyBase enemy, float xForce, CleanEnemyStateMachine cleanEnemyStateMachine)
         {
             _enemy = enemy;
             _xForce = xForce;
+            CleanEnemyStateMachine = cleanEnemyStateMachine;
         }
-        public override void OnEnter()
+
+        public virtual void OnEnter()
         {
             _chargeFinished = false;
             _currentTimeInterval = 0;
         }
 
-        public override void OnExit()
-        {
-            _enemy.SpriteRenderer.color = Color.white;
-        }
-
-        public override void OnLogic()
+        public virtual void OnUpdate()
         {
             if (_currentTimeInterval >= _timeInterval)
             {
@@ -38,10 +38,15 @@ namespace _2_Scripts.Enemies.States
             }
             else
             {
-               LoadCharge();
+                LoadCharge();
             }
         }
-
+        public virtual void OnExit()
+        {
+            _enemy.SpriteRenderer.color = Color.white;
+            OnChargeFinished?.Invoke();
+        }
+        
         private void LoadCharge()
         {
             _enemy.SpriteRenderer.color += _redding;
@@ -50,12 +55,9 @@ namespace _2_Scripts.Enemies.States
 
         private void Charge()
         {
-            if (_chargeFinished) return;
-            _chargeFinished = true;
             _enemy.RigidBody.AddForce(new Vector2(_xForce, 0), ForceMode2D.Impulse);
             _enemy.SpriteRenderer.color = Color.black;
-            
-            OnChargeFinished?.Invoke();
+            CleanEnemyStateMachine.ChangeState(CleanEnemyStateMachine.HaltState);
         }
     }
 }

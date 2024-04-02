@@ -8,11 +8,11 @@ namespace _2_Scripts.Global.FSM
     {
         private IState _currentState;
 
-        private Dictionary<Type, List<Transition>> _transitions = new Dictionary<Type, List<Transition>>();
-        private List<Transition> _currentTransitions = new List<Transition>();
-        private List<Transition> _anyTransitions = new List<Transition>();
+        private Dictionary<Type, List<Transition>> _transitions = new();
+        private List<Transition> _currentTransitions = new();
+        private List<Transition> _anyTransitions = new();
 
-        private static List<Transition> EmptyTransitions = new List<Transition>(0);
+        private static readonly List<Transition> EmptyTransitions = new(0);
 
         public void OnLogic()
         {
@@ -21,8 +21,6 @@ namespace _2_Scripts.Global.FSM
                 SetState(transition.To);
 
             _currentState?.OnLogic();
-
-            Debug.Log(_currentState?.GetType());
         }
 
         public void SetState(IState state)
@@ -34,8 +32,7 @@ namespace _2_Scripts.Global.FSM
             _currentState = state;
 
             _transitions.TryGetValue(_currentState.GetType(), out _currentTransitions);
-            if (_currentTransitions == null)
-                _currentTransitions = EmptyTransitions;
+            _currentTransitions ??= EmptyTransitions;
 
             _currentState.OnEnter();
         }
