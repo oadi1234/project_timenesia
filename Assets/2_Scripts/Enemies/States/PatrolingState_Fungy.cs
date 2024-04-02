@@ -1,4 +1,5 @@
 ﻿using System;
+using _2_Scripts.Enemies;
 using _2_Scripts.Global.FSM;
 using UnityEngine;
 

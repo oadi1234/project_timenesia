@@ -1,7 +1,5 @@
 using System;
 using _2_Scripts.Global.FSM;
-using UnityEngine;
-using UnityEngine.AI;
 
 namespace _2_Scripts.Enemies
 {

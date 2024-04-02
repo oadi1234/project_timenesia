@@ -1,9 +1,7 @@
 using System;
 using _2___Scripts.Global;
 using _2_Scripts.Enemies.States;
-using _2_Scripts.Player;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 
 namespace _2_Scripts.Enemies
 {
@@ -12,7 +10,7 @@ namespace _2_Scripts.Enemies
         private bool _playerSeen;
         private bool _playerSeenOnRight;
         private bool _chargeFinished;
-        private CircleCollider2D sight;
+        private CircleCollider2D _sight;
 
         protected override void Awake()
         {
@@ -30,13 +28,13 @@ namespace _2_Scripts.Enemies
             MovingStateMachine.SetState(haltState);
             
             LoadingChargeState.chargeFinished += LoadingChargeStateOnchargeFinished;
-            sight = GetComponent<CircleCollider2D>();
+            _sight = GetComponent<CircleCollider2D>();
         }
 
         private void LoadingChargeStateOnchargeFinished(bool c)
         {
             _chargeFinished = c;
-            sight.enabled = true;
+            _sight.enabled = true;
 
             // _playerSeenOnRight = PlayerPosition.GetPlayerPosition().position.x - transform.position.x > 0;
         }
@@ -79,7 +77,7 @@ namespace _2_Scripts.Enemies
         {
             if (collision.gameObject.layer == (int)LayerNames.Player)
             {
-                sight.enabled = false;
+                _sight.enabled = false;
                 _chargeFinished = false;
                 _playerSeen = true;
                 _playerSeenOnRight = collision.transform.position.x - transform.position.x > 0;

@@ -22,7 +22,6 @@ public class SceneLoader : MonoBehaviour
         {
             loadedAreas[areaName] = true; //if trying to load the same area then fail above condition
             SceneManager.LoadSceneAsync(areaName, LoadSceneMode.Additive);
-
         }
     }
 
