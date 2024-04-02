@@ -11,6 +11,7 @@ namespace _2_Scripts.Enemies.Agents
         private bool _chargeFinished;
         private bool _playerSeen;
         private CircleCollider2D _sight;
+        private HaltState _haltState;
 
         protected override void Awake()
         {
@@ -24,26 +25,26 @@ namespace _2_Scripts.Enemies.Agents
 
         private void InitializeFsm()
         {
-            var haltState = new HaltState(this);
+            _haltState = new HaltState(this);
             var chargeRight = new LoadingChargeState(this, 3f);
             var chargeLeft = new LoadingChargeState(this, -3f);
             
-            At(haltState, chargeLeft, PlayerSeenFromLeft(), MovingStateMachine);
-            At(haltState, chargeRight, PlayerSeenFromRight(), MovingStateMachine);
+            At(_haltState, chargeLeft, PlayerSeenFromLeft(), MovingStateMachine);
+            At(_haltState, chargeRight, PlayerSeenFromRight(), MovingStateMachine);
             
             //below can be ass well written as:
             // MovingStateMachine.AddAnyTransition(haltState, ChargeFinished());
-            At(chargeRight, haltState, ChargeFinished(), MovingStateMachine);
-            At(chargeLeft, haltState, ChargeFinished(), MovingStateMachine);
+            At(chargeRight, _haltState, ChargeFinished(), MovingStateMachine);
+            At(chargeLeft, _haltState, ChargeFinished(), MovingStateMachine);
             
-            MovingStateMachine.SetState(haltState);
+            MovingStateMachine.SetState(_haltState);
         }
 
         private void LoadingChargeStateOnChargeFinished()
         {
             _chargeFinished = true;
             _sight.enabled = true;
-            _playerSeen = false;
+            MovingStateMachine.SetState(_haltState);
         }
 
         private Func<bool> ChargeFinished()
@@ -54,11 +55,11 @@ namespace _2_Scripts.Enemies.Agents
 
         private Func<bool> PlayerSeenFromLeft()
         {
-            return () => _playerSeen && !_playerSeenOnRight && !_chargeFinished;
+            return () => !_playerSeenOnRight && !_chargeFinished;
         }
         private Func<bool> PlayerSeenFromRight()
         {
-            return () => _playerSeen &&_playerSeenOnRight && !_chargeFinished;
+            return () => _playerSeenOnRight && !_chargeFinished;
         }
 
         private void OnTriggerEnter2D(Collider2D collision)
@@ -67,7 +68,6 @@ namespace _2_Scripts.Enemies.Agents
             {
                 _sight.enabled = false;
                 _chargeFinished = false;
-                _playerSeen = true;
                 _playerSeenOnRight = collision.transform.position.x - transform.position.x > 0;
             }
         }
