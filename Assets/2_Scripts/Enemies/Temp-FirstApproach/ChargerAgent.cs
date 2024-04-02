@@ -1,9 +1,8 @@
 using System;
 using _2___Scripts.Global;
-using _2_Scripts.Enemies.States;
 using UnityEngine;
 
-namespace _2_Scripts.Enemies.Agents
+namespace _2_Scripts.Enemies.Temp_FirstApproach
 {
     public class ChargerAgent : MovingEnemyBase
     {

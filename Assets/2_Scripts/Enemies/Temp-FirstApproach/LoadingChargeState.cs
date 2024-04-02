@@ -1,8 +1,7 @@
 ﻿using System;
-using _2_Scripts.Global.FSM;
 using UnityEngine;
 
-namespace _2_Scripts.Enemies.States
+namespace _2_Scripts.Enemies.Temp_FirstApproach
 {
     internal class LoadingChargeState : StateBase
     {
@@ -21,7 +20,6 @@ namespace _2_Scripts.Enemies.States
         }
         public override void OnEnter()
         {
-            _chargeFinished = false;
             _currentTimeInterval = 0;
         }
 
@@ -50,8 +48,6 @@ namespace _2_Scripts.Enemies.States
 
         private void Charge()
         {
-            if (_chargeFinished) return;
-            _chargeFinished = true;
             _enemy.RigidBody.AddForce(new Vector2(_xForce, 0), ForceMode2D.Impulse);
             _enemy.SpriteRenderer.color = Color.black;
             

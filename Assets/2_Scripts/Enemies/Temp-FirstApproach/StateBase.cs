@@ -1,4 +1,4 @@
-namespace _2_Scripts.Global.FSM
+namespace _2_Scripts.Enemies.Temp_FirstApproach
 {
     public abstract class StateBase : IState
     {

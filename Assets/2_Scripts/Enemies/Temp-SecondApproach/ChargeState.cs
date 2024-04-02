@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace _2_Scripts.Enemies.Temp_CleanEnemy
+namespace _2_Scripts.Enemies.Temp_SecondApproach
 {
     public class ChargeState : IState
     {
@@ -13,7 +13,6 @@ namespace _2_Scripts.Enemies.Temp_CleanEnemy
         
         private float _timeInterval = 2f;
         private float _currentTimeInterval;
-        private bool _chargeFinished;
         private readonly Color _redding = new (0, -0.01f, -0.01f, 0);
         public static event Action OnChargeFinished;
 
@@ -26,7 +25,6 @@ namespace _2_Scripts.Enemies.Temp_CleanEnemy
 
         public virtual void OnEnter()
         {
-            _chargeFinished = false;
             _currentTimeInterval = 0;
         }
 

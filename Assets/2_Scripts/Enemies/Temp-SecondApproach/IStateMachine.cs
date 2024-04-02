@@ -1,4 +1,4 @@
-namespace _2_Scripts.Enemies.Temp_CleanEnemy
+namespace _2_Scripts.Enemies.Temp_SecondApproach
 {
     public interface IStateMachine
     {

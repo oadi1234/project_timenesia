@@ -1,4 +1,5 @@
-﻿using _2_Scripts.Global.FSM;
+﻿using _2_Scripts.Enemies.Temp_FirstApproach;
+using _2_Scripts.Global.FSM;
 using Assets.Scripts.Enemies;
 using UnityEngine;
 

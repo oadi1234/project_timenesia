@@ -1,6 +1,7 @@
+using _2_Scripts.Enemies.Temp_SecondApproach;
 using UnityEngine;
 
-namespace _2_Scripts.Enemies.Temp_CleanEnemy
+namespace _2_Scripts.Enemies.Temp_SecondApproach
 {
     public class CleanEnemyStateMachine : IStateMachine
     {

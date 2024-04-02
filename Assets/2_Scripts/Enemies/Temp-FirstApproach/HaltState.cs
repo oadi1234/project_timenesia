@@ -1,7 +1,6 @@
-using _2_Scripts.Global.FSM;
 using UnityEngine;
 
-namespace _2_Scripts.Enemies.States
+namespace _2_Scripts.Enemies.Temp_FirstApproach
 {
     public class HaltState : StateBase
     {

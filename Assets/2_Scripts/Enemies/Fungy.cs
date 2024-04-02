@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using _2___Scripts.Enemies.Attacks;
+using _2_Scripts.Enemies.Temp_FirstApproach;
 using _2_Scripts.Global.FSM;
 using Assets.Scripts.Enemies.Attacks;
 using Assets.Scripts.Enemies.States;
