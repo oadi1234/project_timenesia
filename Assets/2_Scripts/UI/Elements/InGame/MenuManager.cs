@@ -73,7 +73,7 @@ public class MenuManager : MonoBehaviour
 
     public void OpenOptionsSubmenu()
     {
-        Debug.Log("Options Menu");
+        Debug.Log("Options Menu"); //TODO put options menu here when its done for the main menu.
     }
 
     public void CloseOptionsSubmenu()
@@ -91,7 +91,7 @@ public class MenuManager : MonoBehaviour
         currentlyOpenMenu = UIWindowType.ExitPanel;
         exitConfirmationPanel.ToggleActive();
         menuPanel.ToggleActive();
-        menuPanel.SelectButton(0);
+        exitConfirmationPanel.SelectButton(0);
     }
 
     public void CloseExitGameConfirmationMenu()
@@ -107,6 +107,7 @@ public class MenuManager : MonoBehaviour
         currentlyOpenMenu = UIWindowType.MainMenuPanel;
         mainMenuConfirmationPanel.ToggleActive();
         menuPanel.ToggleActive();
+        mainMenuConfirmationPanel.SelectButton(0);
     }
 
     public void CloseMainMenuConfirmationMenu()

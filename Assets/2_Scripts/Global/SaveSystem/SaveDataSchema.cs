@@ -6,11 +6,16 @@ using UnityEngine;
 [Serializable]
 public class SaveDataSchema
 {
+    #region LOCATION
+    public string sceneName { get; set; } //to which scene load the player.
+    public float savePointX { get; set; }
+    public float savePointY { get; set; }
+    public ZoneEnum zone { get; set; }
+    #endregion
 
     #region STATS
     public int MaxHealth { get; set; }
     public int MaxEffort { get; set; }
-    public string SavePoint { get; set; } //placeholder
     #endregion
 
     #region CURRENCIES

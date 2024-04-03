@@ -16,16 +16,15 @@ namespace _2___Scripts.Global
 
         public SaveManager saveManager;
         public PlayerAbilityAndStats stats;
-        public string LastSavePoint { get; private set; }
+        public SceneLoader sceneLoader;
 
         public static GameDataManager Instance { get; private set; }
         public static event Action<IBaseEvent> OnCollected;
-        /* objects to set inactive or change their state on scene load if they were destroyed/collected
-         * set as 'key - value' in form of 'scene name - LoadObjectSpecification' */
 
         private TextMeshProUGUI CoinText;
-        private string fileName = "save_00"; //this should be set after choosing from main menu.
         public static event Action<AbilityName> OnAbilityLoad;
+
+        public Vector2 LastSavePointPosition;
 
 
         private void Awake()
@@ -38,13 +37,21 @@ namespace _2___Scripts.Global
             {
                 Destroy(gameObject);
             }
-            if(!stats)
-                stats = ScriptableObject.CreateInstance<PlayerAbilityAndStats>();
-            GameObject.Find("Player").GetComponent<PlayerMovementController>().SetVariablesOnLoad(ref stats);
-            CoinText = GameObject.Find("CoinCounter").GetComponent<TextMeshProUGUI>();
-            DontDestroyOnLoad (gameObject); // this line might be deleted - game data manager is part of persistent scene now anyway.
+            //GameObject.Find("Player").GetComponent<PlayerMovementController>().SetVariablesOnLoad(ref stats); //move responsibility to load stats to player
+            //CoinText = GameObject.Find("CoinCounter").GetComponent<TextMeshProUGUI>(); // see above
+            stats = new PlayerAbilityAndStats();
+            LastSavePointPosition = Vector2.zero;
+            DontDestroyOnLoad (gameObject);
             OnPlayerEnteredEvent.OnPlayerEntered += OnPlayer_Entered;
-            Loadpoint.OnLoad += Load; // TODO remove, there won't really be something like a "load point". On load behaviour tied to events is a good idea though.
+            LoadButton.Load += Load;
+            StartAction.NewGame += SetGameStateForNewGame;
+        }
+
+        private void SetGameStateForNewGame()
+        {
+            PurgeStats();
+            SetStatsForNewGameStart();
+            sceneLoader.InitialLoad("Scene0_0");
         }
     
         private void OnPlayer_Entered(IOnPlayerEnteredEvent obj)
@@ -78,29 +85,34 @@ namespace _2___Scripts.Global
             }
         }
 
-        private void Load()
+        private void Load(string fileName)
         {
+            // TODO Start loading animation here
             var data = saveManager.Load(fileName);
-            LoadFromSave(data);
-            GameObject.Find("Player").GetComponent<PlayerMovementController>().SetVariablesOnLoad(ref stats);
+            sceneLoader.InitialLoad(data.sceneName);
+            AssignDataFromSave(data);
+            LastSavePointPosition = new Vector2(data.savePointX, data.savePointY);
+            // TODO end loading animation here
+            // TODO Start game entry animation, if one exists. Might be cool for simple and quick cinematics on game load.
+            //GameObject.Find("Player").GetComponent<PlayerMovementController>().SetVariablesOnLoad(ref stats); //move responsibility for data retrieval to Player
             Console.WriteLine("loaded");
         }
     
-        public void LoadFromSave(SaveDataSchema saveData)
+        public void AssignDataFromSave(SaveDataSchema saveData)
         {
             AssignLoadDataToAbilities(saveData);
             AssignLoadDataToCurrencies(saveData);
             AssignLoadDataToStats(saveData);
             AssignLoadDataToObjectLoadingStrategy(saveData);
 
-            LastSavePoint = saveData.SavePoint;
+            //LastSavePoint = saveData.SavePoint;
         }
 
         #region SAVE_DATA_ASSIGNMENT
         private void AssignLoadDataToStats(SaveDataSchema saveData)
         {
             stats.MaxHealth = stats.CurrentHealth = saveData.MaxHealth;
-            stats.CurrentEffort = stats.MaxEffort = saveData.MaxEffort;
+            stats.MaxEffort = saveData.MaxEffort;
             // TODO reload UI elements here
         }
 
@@ -142,5 +154,19 @@ namespace _2___Scripts.Global
         }
 
         public void GainCoins(int coins = 1) => stats.Coins += coins;
+
+        public void PurgeStats()
+        {
+            //Used mostly to clear save data when going to menu.
+            stats = new PlayerAbilityAndStats();
+        }
+
+        public void SetStatsForNewGameStart()
+        {
+            stats.MaxHealth = 3;
+            stats.MaxEffort = 2;
+            stats.SpellCapacity = 2;
+            LastSavePointPosition = new Vector2(0f, 0f); // this might need changing later. Still, (0, 0) is a good starting point I think.
+        }
     }
 }

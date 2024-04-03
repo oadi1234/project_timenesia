@@ -1,8 +1,7 @@
-using System.Collections;
+using _2___Scripts.Global;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using UnityEditor;
 using UnityEngine;
 
 public class SaveManager : MonoBehaviour
@@ -11,6 +10,10 @@ public class SaveManager : MonoBehaviour
 	
     private void Awake()
     {
+        if (!Directory.Exists(Application.persistentDataPath + "/saves"))
+        {
+            Directory.CreateDirectory(Application.persistentDataPath + "/saves");
+        }
         if (Instance == null)
         {
             Instance = this;
@@ -30,11 +33,12 @@ public class SaveManager : MonoBehaviour
         Savepoint.OnSave += Save;
     }
 
-    public void Save(string savepointCoordinates, PlayerAbilityAndStats stats)
+    public void Save(string savepointCoordinates)
     {
         if (saveData == null)
             saveData = new SaveDataSchema();
-        saveData.abilities = stats.abilities;
+        saveData.abilities = GameDataManager.Instance.stats.abilities;
+        saveData.zone = ZoneEnum.None; //TODO assign from save point.
 
         // AudioManager.PlaySound();
         //SoundManager.Instance.PlayOnce(GlobalAssets.Instance.SaveAudioClip); //disabled for testing.
@@ -100,6 +104,6 @@ public class SaveManager : MonoBehaviour
 
     private string GetPath(string s)
     {
-        return $"{Application.persistentDataPath}/{s}.dat";
+        return $"{Application.persistentDataPath}/saves/{s}.dat";
     }
 }

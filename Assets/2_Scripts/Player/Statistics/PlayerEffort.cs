@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using _2___Scripts.Global;
 using _2___Scripts.UI;
 using Spells;
 using UnityEngine;
@@ -7,9 +8,9 @@ namespace _2___Scripts.Player
 {
     public class PlayerEffort : MonoBehaviour
     {
-        public int maxEffort = 4; //temp starting values, make load from save later on.
-        public int currentEffort = 0;
-        public int spellCapacity = 2; //might get deleted.
+        private int maxEffort; //temp starting values, make load from save later on.
+        private int currentEffort;
+        private int spellCapacity; //might get deleted.
 
         public float regenInterval = 0.8f; // TODO set this depending on the chosen difficulty, or allow concentrations to change it. Might get moved to PlayerAbilityAndStats or something like it.
         public int effortPerInterval = 1;
@@ -25,15 +26,7 @@ namespace _2___Scripts.Player
 
         void Start()
         {
-            effortBar.Initialize();
-            effortBar.SetMaxEffort(maxEffort, false);
-            effortBar.SetSpellCapacity(spellCapacity);
-            castCombination = new EffortType[maxEffort];
-            for (int i = 0; i < castCombination.Length; i++)
-            {
-                castCombination[i] = EffortType.Empty;
-            }
-            currentCastCombinationIndex = 0;
+            Initialize();
             // preparedSpells = new List<Spell> { new Spell("Fireball", new List<EffortElement> { EffortElement.Fire, EffortElement.Fire }) };
             preparedSpells = new List<BaseSpell>
             {
@@ -77,7 +70,23 @@ namespace _2___Scripts.Player
             //}
         }
 
-        private void CastSpell(int indexOfSpell)
+        private void Initialize()
+        {
+            maxEffort = GameDataManager.Instance.stats.MaxEffort;
+            spellCapacity = GameDataManager.Instance.stats.SpellCapacity;
+            currentEffort = 0;
+            effortBar.Initialize();
+            effortBar.SetMaxEffort(maxEffort, false);
+            effortBar.SetSpellCapacity(spellCapacity);
+            castCombination = new EffortType[maxEffort];
+            for (int i = 0; i < castCombination.Length; i++)
+            {
+                castCombination[i] = EffortType.Empty;
+            }
+            currentCastCombinationIndex = 0;
+        }
+
+        private void CastSpell(int indexOfSpell) // TODO Move to a different class - player effort should only manage effort levels. Spellbook class might be better for casting spells.
         {
             var spell = preparedSpells[indexOfSpell];
             spell.CastHandler();
