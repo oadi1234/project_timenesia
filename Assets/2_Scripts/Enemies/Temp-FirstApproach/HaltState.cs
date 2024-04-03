@@ -4,16 +4,16 @@ namespace _2_Scripts.Enemies.Temp_FirstApproach
 {
     public class HaltState : StateBase
     {
-        private EnemyBase _enemy;
+        private DynamicEnemyBase _dynamicEnemy;
 
-        public HaltState(EnemyBase enemy)
+        public HaltState(DynamicEnemyBase dynamicEnemy)
         {
-            _enemy = enemy;
+            _dynamicEnemy = dynamicEnemy;
         }
 
         public override void OnEnter()
         {
-            _enemy.SpriteRenderer.color = Color.white;
+            _dynamicEnemy.SpriteRenderer.color = Color.white;
         }
     }
 }

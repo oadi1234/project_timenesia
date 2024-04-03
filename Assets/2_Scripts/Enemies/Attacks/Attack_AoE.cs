@@ -1,27 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using _2___Scripts.Enemies.Attacks;
-using _2___Scripts.Player;
+using _2___Scripts.Global;
+using _2_Scripts.Player;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace Assets.Scripts.Enemies.Attacks
+namespace _2_Scripts.Enemies.Attacks
 {
-    public class Attack_AoE : MonoBehaviour, IBaseAttack
+    public class AttackAoE : BaseAttack
     {
-        public static event Action<IBaseAttack> OnAttack;
-
         [SerializeField] private string attackName;
         public string AttackName => attackName;
-        public Hurt Params => gameObject.AddComponent<Hurt>(); /*TODO*/
+        public Hurt Params => null;//gameObject.AddComponent<Hurt>(); /*TODO*/
 
         public virtual void OnTriggerEnter2D(Collider2D collision)
         {
-            if (OnAttack != null && collision.CompareTag("Player"))
+            if (collision.gameObject.layer == (int) LayerNames.Player)
+            {
                 OnAttack(this);
+            }
         }
     }
 }

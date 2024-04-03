@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections;
 using _2___Scripts.Enemies.Attacks;
+using _2_Scripts.Enemies.Attacks;
 using _2_Scripts.Enemies.Temp_FirstApproach;
-using _2_Scripts.Global.FSM;
-using Assets.Scripts.Enemies.Attacks;
 using Assets.Scripts.Enemies.States;
 using UnityEngine;
 
@@ -37,7 +36,7 @@ namespace _2_Scripts.Enemies
             _rigidbody2D = GetComponent<Rigidbody2D>();
             _playerPosition = GameObject.Find("Player").GetComponent<Rigidbody2D>();
             _spriteRenderer = GetComponent<SpriteRenderer>();
-            Attack_AoE.OnAttack += Attack_AoE_OnAttackHit;
+            BaseAttack.Attack += Attack_AoE_OnAttackHit;
 
             var attackingState = new AttackState_Fungy(this);
             var patrolingState = new PatrolingState_Fungy(this);
@@ -54,7 +53,7 @@ namespace _2_Scripts.Enemies
 
         }
 
-        private void Attack_AoE_OnAttackHit(IBaseAttack obj)
+        private void Attack_AoE_OnAttackHit(BaseAttack obj)
         {
             _plum.SetActive(false);
         }

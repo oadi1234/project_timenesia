@@ -1,5 +1,4 @@
 ﻿using _2_Scripts.Enemies.Temp_FirstApproach;
-using _2_Scripts.Global.FSM;
 using Assets.Scripts.Enemies;
 using UnityEngine;
 
@@ -7,14 +6,14 @@ namespace _2_Scripts.Enemies.States
 {
     internal class JumpInPlaceState : IState
     {
-        private EnemyBase _enemy;
+        private DynamicEnemyBase _dynamicEnemy;
         [SerializeField] private float movingSpeed = 3f;
         private float _timeInterval = 0.5f;
         private float _currentTimeInterval = 0f;
 
-        public JumpInPlaceState(EnemyBase enemy)
+        public JumpInPlaceState(DynamicEnemyBase dynamicEnemy)
         {
-            _enemy = enemy;
+            _dynamicEnemy = dynamicEnemy;
         }
         public void OnEnter()
         {
@@ -35,7 +34,7 @@ namespace _2_Scripts.Enemies.States
             if (_currentTimeInterval >= _timeInterval)
             {
                 _currentTimeInterval = 0;
-                _enemy.RigidBody.AddForce(new Vector2(0, 20), ForceMode2D.Impulse);
+                _dynamicEnemy.RigidBody.AddForce(new Vector2(0, 20), ForceMode2D.Impulse);
             }
             else
                 _currentTimeInterval += Time.deltaTime;

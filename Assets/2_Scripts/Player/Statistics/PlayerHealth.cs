@@ -1,7 +1,8 @@
 using _2___Scripts.Enemies.Attacks;
 using _2___Scripts.Global;
 using _2___Scripts.UI;
-using Assets.Scripts.Enemies.Attacks;
+using _2_Scripts.Enemies.Attacks;
+using _2_Scripts.Player;
 using UnityEngine;
 
 namespace _2___Scripts.Player
@@ -19,10 +20,10 @@ namespace _2___Scripts.Player
         void Start()
         {
             Initialize();
-            Attack_AoE.OnAttack += Attack_AoE_OnAttackHit;
+            BaseAttack.Attack += OnBasicAttackHit;
         }
 
-        private void Attack_AoE_OnAttackHit(IBaseAttack obj)
+        private void OnBasicAttackHit(BaseAttack obj)
         {
             TakeDamage(obj.Params);
         }
@@ -74,7 +75,7 @@ namespace _2___Scripts.Player
         
         private void TakeDamage(Hurt hurt)
         {
-            TakeDamage(hurt.damageDealt, hurt.iFramesGiven);
+            TakeDamage(hurt.DamageDealt, hurt.IFramesGiven);
         }
 
         public void TakeDamage(int damage, float iFrame)

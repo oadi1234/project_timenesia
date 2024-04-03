@@ -4,20 +4,20 @@ namespace _2_Scripts.Enemies.Temp_SecondApproach
 {
     public class HaltState : IState
     {
-        private readonly EnemyBase _enemy;
-        public CleanEnemyStateMachine CleanEnemyStateMachine;
+        private readonly StaticEnemyBase _dynamicEnemy;
+        public StateMachine StateMachine;
 
-        public HaltState(CleanEnemyStateMachine cleanEnemyStateMachine, EnemyBase enemy)
+        public HaltState(StateMachine cleanEnemyStateMachine, StaticEnemyBase dynamicEnemy)
         {
-            CleanEnemyStateMachine = cleanEnemyStateMachine;
-            _enemy = enemy;
+            StateMachine = cleanEnemyStateMachine;
+            _dynamicEnemy = dynamicEnemy;
         }
 
         public void OnEnter()
         {
-            _enemy.SpriteRenderer.color = Color.cyan;
+            _dynamicEnemy.SpriteRenderer.color = Color.cyan;
         }
-        public void OnUpdate()
+        public void OnLogic()
         {
             // Debug.Log("Halt");
         }

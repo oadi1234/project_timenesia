@@ -1,7 +1,18 @@
 namespace _2_Scripts.Enemies.Temp_SecondApproach
 {
-    public interface IStateMachine
+    public abstract class StateMachine
     {
-        void ChangeState(IState newState);
+        public IState CurrentState { get; private set; }
+
+        public void ChangeState(IState newState)
+        {
+            CurrentState?.OnExit();
+            CurrentState = newState;
+            CurrentState.OnEnter();
+        }
+        public virtual void OnUpdate()
+        {
+            CurrentState?.OnLogic();
+        }
     }
 }

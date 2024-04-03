@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace _2_Scripts.Enemies.Temp_FirstApproach
 {
-    public class ChargerAgent : MovingEnemyBase
+    public class ChargerAgent : MovingDynamicEnemyBase
     {
         private bool _playerSeenOnRight;
         private bool _chargeFinished;
@@ -50,8 +50,6 @@ namespace _2_Scripts.Enemies.Temp_FirstApproach
         {
             return () => _chargeFinished;
         }
-
-
         private Func<bool> PlayerSeenFromLeft()
         {
             return () => !_playerSeenOnRight && !_chargeFinished;

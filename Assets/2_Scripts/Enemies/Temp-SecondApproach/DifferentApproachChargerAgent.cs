@@ -3,38 +3,39 @@ using UnityEngine;
 
 namespace _2_Scripts.Enemies.Temp_SecondApproach
 {
-    public class DifferentApproachChargerAgent : EnemyBase
+    public class DifferentApproachChargerAgent : DynamicEnemyBase
     {
         private bool _playerSeenOnRight;
         private bool _chargeFinished;
         private CleanEnemyStateMachine _stateMachine;
-        private CircleCollider2D _sight;
+        // private Collider2D _body;
+        private GameObject _sight;
 
         protected override void Awake()
         {
             base.Awake();
             _stateMachine = new CleanEnemyStateMachine(this);
-            _sight = GetComponent<CircleCollider2D>();
+            // _body = GetComponent<Collider2D>();
+            _sight = transform.Find("Sight").gameObject;
         }
-        
-        private void OnTriggerEnter2D(Collider2D collision)
-        {
-            if (collision.gameObject.layer == (int)LayerNames.Player)
+
+        public override void OnSight(Collider2D other)
+        { 
+            if (other.gameObject.layer == (int)LayerNames.Player)
             {
-                _sight.enabled = false;
+                SetSightEnabled(false);
                 _stateMachine.ChangeState(
-                    _playerSeenOnRight == collision.transform.position.x - transform.position.x < 0
+                    _playerSeenOnRight == other.transform.position.x - transform.position.x < 0
                         ? _stateMachine.RightChargeState
                         : _stateMachine.LeftChargeState);
             }
-            ChargeState.OnChargeFinished += LoadingChargeStateOnChargeFinished;
         }
 
-        private void LoadingChargeStateOnChargeFinished()
+        public override void SetSightEnabled(bool sightEnabled)
         {
-            _sight.enabled = true;
+            _sight.SetActive(sightEnabled);
         }
-
+        
         private void FixedUpdate()
         {
             _stateMachine.OnUpdate();

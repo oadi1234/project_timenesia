@@ -4,6 +4,6 @@ namespace _2_Scripts.Enemies.Temp_SecondApproach
     {
         void OnEnter();
         void OnExit();
-        void OnUpdate();
+        void OnLogic();
     }
 }

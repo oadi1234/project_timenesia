@@ -1,13 +1,13 @@
 using UnityEngine;
 
-namespace _2___Scripts.Player
+namespace _2_Scripts.Player
 {
-    public class Hurt : MonoBehaviour
+    public class Hurt
     {
-        public int damageDealt = 2;
-        public float iFramesGiven = 2f;
-        public bool forcesRespawnAtCheckpoint = false;
-        public float knockbackStrength = 10f;
-        public bool blocksMovement = false;
+        public int DamageDealt = 2;
+        public float IFramesGiven = 2f;
+        public bool ForcesRespawnAtCheckpoint = false;
+        public float KnockbackStrength = 10f;
+        public bool BlocksMovement = false;
     }
 }

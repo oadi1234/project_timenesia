@@ -1,9 +1,8 @@
 using System;
-using _2_Scripts.Global.FSM;
 
 namespace _2_Scripts.Enemies.Temp_FirstApproach
 {
-    public abstract class MovingEnemyBase : EnemyBase
+    public abstract class MovingDynamicEnemyBase : DynamicEnemyBase
     {
         protected StateMachine MovingStateMachine;       
         protected void At(IState from, IState to, Func<bool> condition, StateMachine stateMachine) => stateMachine.AddTransition(from, to, condition);
