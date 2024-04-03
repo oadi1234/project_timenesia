@@ -1,7 +1,5 @@
-using System.Collections;
 using _2___Scripts.Global;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace _2_Scripts.Enemies.Temp_Spitter
 {
@@ -27,13 +25,6 @@ namespace _2_Scripts.Enemies.Temp_Spitter
                 _stateMachine.ChangeState(_stateMachine.SpitProjectilesState);
             }
         }        
-        // private void OnTriggerExit2D(Collider2D collision)
-        // {
-        //     if (collision.gameObject.layer == (int)LayerNames.Player)
-        //     {
-        //         _stateMachine.ChangeState(_stateMachine.SpitProjectilesState);
-        //     }
-        // }
 
         public override void SetSightEnabled(bool sightEnabled)
         {

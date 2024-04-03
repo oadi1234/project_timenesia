@@ -15,6 +15,5 @@ namespace _2_Scripts.Enemies.Temp_Spitter
             
             ChangeState(HaltState);
         }
-        
     }
 }

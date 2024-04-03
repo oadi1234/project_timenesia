@@ -8,14 +8,12 @@ namespace _2_Scripts.Enemies.Temp_SecondApproach
         private bool _playerSeenOnRight;
         private bool _chargeFinished;
         private CleanEnemyStateMachine _stateMachine;
-        // private Collider2D _body;
         private GameObject _sight;
 
         protected override void Awake()
         {
             base.Awake();
             _stateMachine = new CleanEnemyStateMachine(this);
-            // _body = GetComponent<Collider2D>();
             _sight = transform.Find("Sight").gameObject;
         }
 
