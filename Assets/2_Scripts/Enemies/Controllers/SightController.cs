@@ -4,6 +4,7 @@ namespace _2_Scripts.Enemies.Controllers
 {
     public class SightController : MonoBehaviour
     {
+        
         private StaticEnemyBase _enemyBase;
         // Start is called before the first frame update
         void Start()
