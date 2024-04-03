@@ -23,6 +23,7 @@ namespace _2_Scripts.Enemies.Temp_Spitter
         public void OnEnter()
         {
             _enemy.SpriteRenderer.color = Color.red;
+            OnLogic();
         }
 
         public void OnExit()

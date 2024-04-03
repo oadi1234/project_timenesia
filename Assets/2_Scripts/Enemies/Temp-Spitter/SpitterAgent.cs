@@ -19,9 +19,9 @@ namespace _2_Scripts.Enemies.Temp_Spitter
             _stateMachine.ChangeState(_stateMachine.HaltState);
         }
         
-        private void OnTriggerEnter2D(Collider2D collision)
+        public override void OnSight(Collider2D other)
         {
-            if (collision.gameObject.layer == (int)LayerNames.Player)
+            if (other.gameObject.layer == (int)LayerNames.Player)
             {
                 SetSightEnabled(false);
                 _stateMachine.ChangeState(_stateMachine.SpitProjectilesState);
