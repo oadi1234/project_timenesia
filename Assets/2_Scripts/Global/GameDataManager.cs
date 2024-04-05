@@ -88,10 +88,10 @@ namespace _2___Scripts.Global
         private void Load(string fileName)
         {
             // TODO Start loading animation here
-            var data = saveManager.Load(fileName);
-            sceneLoader.InitialLoad(data.sceneName);
+            SaveDataSchema data = saveManager.Load(fileName);
+            sceneLoader.InitialLoad(data.previewStatsDataSchema.sceneName);
             AssignDataFromSave(data);
-            LastSavePointPosition = new Vector2(data.savePointX, data.savePointY);
+            LastSavePointPosition = new Vector2(data.previewStatsDataSchema.savePointX, data.previewStatsDataSchema.savePointY);
             // TODO end loading animation here
             // TODO Start game entry animation, if one exists. Might be cool for simple and quick cinematics on game load.
             //GameObject.Find("Player").GetComponent<PlayerMovementController>().SetVariablesOnLoad(ref stats); //move responsibility for data retrieval to Player
@@ -111,20 +111,20 @@ namespace _2___Scripts.Global
         #region SAVE_DATA_ASSIGNMENT
         private void AssignLoadDataToStats(SaveDataSchema saveData)
         {
-            stats.MaxHealth = stats.CurrentHealth = saveData.MaxHealth;
-            stats.MaxEffort = saveData.MaxEffort;
+            stats.MaxHealth = stats.CurrentHealth = saveData.previewStatsDataSchema.MaxHealth;
+            stats.MaxEffort = saveData.previewStatsDataSchema.MaxEffort;
             // TODO reload UI elements here
         }
 
         private void AssignLoadDataToCurrencies(SaveDataSchema saveData)
         {
-            stats.Coins = saveData.Coins;
+            stats.Coins = saveData.gameStateSaveDataSchema.Coins;
             CoinText.text = stats.Coins.ToString();
         }
 
         private void AssignLoadDataToAbilities(SaveDataSchema saveData)
         {
-            stats.abilities = saveData.abilities;
+            stats.abilities = saveData.gameStateSaveDataSchema.abilities;
             foreach (var ability in stats.abilities)
             {
                 if(ability.Value)
@@ -136,7 +136,7 @@ namespace _2___Scripts.Global
 
         private void AssignLoadDataToObjectLoadingStrategy(SaveDataSchema saveData)
         {
-            SceneDataHolder.instance.SetLoadStrategyOnGameLoad(saveData.alteredObjects);
+            SceneDataHolder.instance.SetLoadStrategyOnGameLoad(saveData.gameStateSaveDataSchema.alteredObjects);
         }
         #endregion
 

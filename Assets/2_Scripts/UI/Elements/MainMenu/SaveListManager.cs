@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class SaveListManager : MonoBehaviour
 {
-    public List<string> saveFileNameList = new List<string>();
+    public List<string> saveDirectoryNameList = new List<string>();
 
     public GameObject newGameListElement;
     public GameObject loadGameListElement;
     public RectTransform ScrollList;
 
     private List<GameObject> games = new List<GameObject>();
-    // Start is called before the first frame update
-    void Start()
+
+    private void Awake()
     {
-        
+        MainMenuManager.OnMenuPrepared += GeneratePrefabList;
     }
 
     // Update is called once per frame
@@ -25,6 +25,10 @@ public class SaveListManager : MonoBehaviour
 
     public void GeneratePrefabList()
     {
-
+        foreach (string directoryName in saveDirectoryNameList) 
+        {
+            PreviewStatsDataSchema schema = SaveManager.Instance.LoadData<PreviewStatsDataSchema>($"{directoryName}_{SaveManager.SavePreviewSuffix}", directoryName);
+            
+        }
     }
 }

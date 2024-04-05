@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class LoadButton : MonoBehaviour
 {
-    private SavePreview savePreview;
+    private PreviewStatsDataSchema savePreview;
     private HealthBar healthBar;
     private EffortBar effortBar;
     private TextMeshProUGUI text;
@@ -15,7 +15,7 @@ public class LoadButton : MonoBehaviour
 
     public static event Action<string> Load;
 
-    public LoadButton(SavePreview savePreview, string saveName)
+    public LoadButton(PreviewStatsDataSchema savePreview, string saveName)
     {
         this.savePreview = savePreview;
         this.saveName = saveName;

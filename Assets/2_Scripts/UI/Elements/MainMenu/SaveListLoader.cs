@@ -14,12 +14,17 @@ public class SaveListLoader : MonoBehaviour
 
     private IEnumerator LoadListThenDeleteScript()
     {
-        var info = new DirectoryInfo($"{Application.persistentDataPath}/saves/").GetFiles();
-        foreach ( var file in info)
+        var directoryInfo = new DirectoryInfo($"{Application.persistentDataPath}/saves/").GetDirectories();
+        foreach ( var directory in directoryInfo)
         {
-            if (file.Name.StartsWith("save_") && file.Name.EndsWith(".dat"))
-            { 
-                SaveListManager.saveFileNameList.Add(file.Name);
+            if (directory.Name.StartsWith("save_"))
+            {
+                //var fileInfoDirectory = directory.GetFiles();
+                //foreach ( var file in fileInfoDirectory)
+                //{
+                    //TODO: some sort of validation that all the correct files are inside the game save might be needed.
+                //}
+                SaveListManager.saveDirectoryNameList.Add(directory.Name);
             }
             yield return null;
         }

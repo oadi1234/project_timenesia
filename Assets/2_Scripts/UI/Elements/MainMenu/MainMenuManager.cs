@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,9 +18,12 @@ public class MainMenuManager : MonoBehaviour
 
     private UIMainMenuWindowType currentlyOpen = UIMainMenuWindowType.MainMenu;
 
+    public static event Action OnMenuPrepared;
+
     private void Awake()
     {
         menuPanel.SelectButton(0);
+        OnMenuPrepared();
     }
 
     public void StartButton()
@@ -27,7 +31,7 @@ public class MainMenuManager : MonoBehaviour
         //Do one of two things:
         // If the game has no saves created yet - create empty save and start the game
         // else open saved games panel.
-        if(SaveListManager.saveFileNameList.Count == 0)
+        if(SaveListManager.saveDirectoryNameList.Count == 0)
         {
             StartAction.StartNewGame();
         }

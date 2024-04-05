@@ -4,23 +4,19 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public class SaveDataSchema
+public class GameStateSaveDataSchema
 {
-    #region LOCATION
-    public string sceneName { get; set; } //to which scene load the player.
-    public float savePointX { get; set; }
-    public float savePointY { get; set; }
-    public ZoneEnum zone { get; set; }
-    #endregion
+    public GameStateSaveDataSchema() { }
+    public GameStateSaveDataSchema(GameStateSaveDataSchema gameState)
+    {
+        Coins = gameState.Coins;
+        gameVersion = gameState.gameVersion;
+        abilities = gameState.abilities;
+        alteredObjects = gameState.alteredObjects;
+    }
 
-    #region STATS
-    public int MaxHealth { get; set; }
-    public int MaxEffort { get; set; }
-    #endregion
-
-    #region CURRENCIES
     public int Coins { get; set; }
-    #endregion
+    public int gameVersion { get; set; }
 
     #region ABILITIES
     public Dictionary<AbilityName, bool> abilities = new Dictionary<AbilityName, bool>();
