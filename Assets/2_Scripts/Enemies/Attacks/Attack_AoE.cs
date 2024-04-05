@@ -1,5 +1,6 @@
 ﻿using System;
 using _2___Scripts.Global;
+using _2_Scripts.Global;
 using _2_Scripts.Player;
 using UnityEngine;
 
@@ -13,7 +14,7 @@ namespace _2_Scripts.Enemies.Attacks
 
         public virtual void OnTriggerEnter2D(Collider2D collision)
         {
-            if (collision.gameObject.layer == (int) LayerNames.Player)
+            if (collision.gameObject.layer == (int) Layers.Player)
             {
                 OnAttack(this);
             }

@@ -1,6 +1,6 @@
-namespace _2___Scripts.Global
+namespace _2_Scripts.Global
 {
-    public enum LayerNames
+    public enum Layers
     {
         Default = 0,
         TransparentFX = 1,

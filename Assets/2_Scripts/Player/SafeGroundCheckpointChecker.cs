@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using _2___Scripts.Global;
+using _2_Scripts.Global;
 using UnityEngine;
 
 public class SafeGroundCheckpointChecker : MonoBehaviour
@@ -21,13 +22,13 @@ public class SafeGroundCheckpointChecker : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.layer == (int) LayerNames.SafeGroundCheckpoint)
+        if (other.gameObject.layer == (int) Layers.SafeGroundCheckpoint)
         {
             var bounds = other.bounds;
             
             SafeGroundLocation = new Vector2(bounds.center.x, bounds.min.y + SafeSpotYOffset);
         }
-        else if (other.gameObject.layer == (int) LayerNames.Hazard)
+        else if (other.gameObject.layer == (int) Layers.Hazard)
             TeleportPlayerToLastSafeGround();
     }
 

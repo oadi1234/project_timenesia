@@ -1,4 +1,5 @@
 using _2___Scripts.Global;
+using _2_Scripts.Global;
 using UnityEngine;
 
 namespace _2_Scripts.Enemies.Temp_SecondApproach
@@ -19,7 +20,7 @@ namespace _2_Scripts.Enemies.Temp_SecondApproach
 
         public override void OnSight(Collider2D other)
         { 
-            if (other.gameObject.layer == (int)LayerNames.Player)
+            if (other.gameObject.layer == (int)Layers.Player)
             {
                 SetSightEnabled(false);
                 _stateMachine.ChangeState(

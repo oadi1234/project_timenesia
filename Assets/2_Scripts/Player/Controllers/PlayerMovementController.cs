@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using _2___Scripts.Global;
 using _2___Scripts.Player;
+using _2_Scripts.Player.ScriptableObjects;
 using UnityEngine;
 using UnityEngine.Events;
 

@@ -8,7 +8,7 @@ namespace _2_Scripts.Enemies.Temp_Spitter
 {
     public class SpitProjectilesState : IState
     {
-        private static StaticEnemyBase _enemy;
+        private readonly StaticEnemyBase _enemy;
         private readonly SpitterStateMachine _spitterStateMachine;
         private readonly GameObject _spit;
         // public static event Action OnSpitting;
@@ -38,9 +38,9 @@ namespace _2_Scripts.Enemies.Temp_Spitter
         
         private IEnumerator Spitting(float seconds)
         {
-            for (int i = 0; i < 12; i++)
+            for (int i = 0; i < 15; i++)
             {
-                yield return new WaitForSeconds(0.3f);
+                yield return new WaitForSeconds(0.4f);
                 InstantiateProjectile();
             }
             
@@ -51,7 +51,6 @@ namespace _2_Scripts.Enemies.Temp_Spitter
 
         private void InstantiateProjectile()
         {
-            Debug.Log("Instant - state");
             (_enemy as IEnemyWithInstantiate)?.InstantiateObject(_spit);
         }
     }

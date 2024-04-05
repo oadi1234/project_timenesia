@@ -2,6 +2,7 @@ using _2___Scripts.Enemies.Attacks;
 using _2___Scripts.Global;
 using _2___Scripts.UI;
 using _2_Scripts.Enemies.Attacks;
+using _2_Scripts.Global;
 using _2_Scripts.Player;
 using UnityEngine;
 
@@ -62,10 +63,10 @@ namespace _2___Scripts.Player
         {
             if (iFrame > 0)
             {
-                gameObject.layer = (int) LayerNames.PlayerIFrame;
+                gameObject.layer = (int) Layers.PlayerIFrame;
                 iFrame -= Time.fixedDeltaTime;
             }
-            else gameObject.layer = (int) LayerNames.Player;
+            else gameObject.layer = (int) Layers.Player;
         }
 
         public void TakeDamage(int damage)

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using _2___Scripts.Global;
+using _2_Scripts.Global;
 using UnityEngine;
 
 public class PlayerSpellController : MonoBehaviour
@@ -11,12 +12,12 @@ public class PlayerSpellController : MonoBehaviour
     {
         switch (col.gameObject.layer)
         {
-            case (int)LayerNames.Enemy:
+            case (int)Layers.Enemy:
                 Destroy(col.gameObject);
                 if (!PassThrough)
                     Destroy(gameObject);
                 break;
-            case (int)LayerNames.Wall:
+            case (int)Layers.Wall:
                 Destroy(gameObject);
                 break;
         }

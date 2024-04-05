@@ -1,5 +1,6 @@
 using System;
 using _2___Scripts.Global;
+using _2_Scripts.Global;
 using UnityEngine;
 
 namespace _2_Scripts.Enemies.Temp_FirstApproach
@@ -61,7 +62,7 @@ namespace _2_Scripts.Enemies.Temp_FirstApproach
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
-            if (collision.gameObject.layer == (int)LayerNames.Player)
+            if (collision.gameObject.layer == (int)Layers.Player)
             {
                 _sight.enabled = false;
                 _chargeFinished = false;
