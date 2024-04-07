@@ -3,16 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StartAction : MonoBehaviour
+public class StartButton : MonoBehaviour
 {
-
-    public static event Action NewGame;
+    public string directoryName {  get; set; }
+    public static event Action<string> NewGame;
 
     public void Click()
     {
         if (NewGame != null)
         {
-            NewGame();
+            NewGame(directoryName);
         }
     }
 
@@ -20,7 +20,7 @@ public class StartAction : MonoBehaviour
     {
         if (NewGame != null)
         {
-            NewGame();
+            NewGame("save_0");
         }
     }
 }

@@ -11,6 +11,7 @@ public enum UIMainMenuWindowType
     Options,
     Extras,
     Achievements,
-    Credits
+    Credits,
+    DeleteSave
 
 }

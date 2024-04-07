@@ -1,3 +1,5 @@
+using _2___Scripts.Global;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +13,8 @@ public class MenuManager : MonoBehaviour
     public UIPanel mainMenuConfirmationPanel;
     public UIPanel exitConfirmationPanel;
     public PlayerUIPanel playerMenuPanel;
+
+    public static event Action MainMenuExit;
 
     public bool isMenuActive { get { return menuPanel.gameObject.activeSelf; } }
     private bool canOpenInventory = true;
@@ -83,7 +87,9 @@ public class MenuManager : MonoBehaviour
 
     public void GoToMainMenu()
     {
-        Debug.Log("Will save game, unload the scene and put player back in main menu.");
+        SaveManager.Instance.Save();
+        SceneLoader.Instance.LoadMainMenu();
+        SceneDataHolder.Instance.ClearLoadStrategy();
     }
 
     public void OpenExitGameConfirmationMenu()

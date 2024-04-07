@@ -14,7 +14,8 @@ GameObject:
   - component: {fileID: 2943298378896865419}
   - component: {fileID: 6372181372759324404}
   - component: {fileID: 1299712610314311249}
-  - component: {fileID: 3704909459953152649}
+  - component: {fileID: 5841019429851973943}
+  - component: {fileID: 7274773657647182279}
   m_Layer: 5
   m_Name: SaveElement_NewGame
   m_TagString: Untagged
@@ -125,8 +126,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3704909459953152649}
-        m_TargetAssemblyTypeName: StartAction, Assembly-CSharp
+      - m_Target: {fileID: 5841019429851973943}
+        m_TargetAssemblyTypeName: StartButton, Assembly-CSharp
         m_MethodName: Click
         m_Mode: 1
         m_Arguments:
@@ -149,10 +150,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dde6093e1d3bd74429688e984aaae3f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fadeoutTime: 0.2
+  fadeoutTime: 0.1
   targetAlphaMin: 0
   targetAlphaMax: 1
-  alphaAtStart: 1
+  alphaAtStart: 0
 --- !u!225 &1299712610314311249
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -165,7 +166,7 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &3704909459953152649
+--- !u!114 &5841019429851973943
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -174,9 +175,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 6922412180435055454}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 635dd74ac3da9964e9d24e945318d169, type: 3}
+  m_Script: {fileID: 11500000, guid: 7e4f93f6e014ee949b642ee8df279288, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7274773657647182279
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6922412180435055454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5e46ea690ab612429966cd455aa0123, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fadeController: {fileID: 6372181372759324404}
+  delay: 0.1
 --- !u!1 &7180893692618684735
 GameObject:
   m_ObjectHideFlags: 0

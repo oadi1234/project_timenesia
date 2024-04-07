@@ -1,3 +1,4 @@
+using _2___Scripts.Global;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,36 +9,45 @@ public class SceneLoader : MonoBehaviour
 {
     private AsyncOperation loadingAction;
     private Dictionary<string, bool> loadedAreas = new Dictionary<string, bool>();
+    public static SceneLoader Instance { get; private set; }
 
     private void Awake()
     {
-        DontDestroyOnLoad(gameObject);
-        LoadAreaGate.LoadArea += LoadArea;
-        UnloadAreaGate.UnloadArea += UnloadArea;
-        //LoadArea("Scene0_0");
-    }
-
-    public void InitialLoad(string areaName)
-    {
-        loadingAction = SceneManager.LoadSceneAsync("PersistentScene", LoadSceneMode.Additive); //additive to ensure order of operation does not screw loading sequence.
-        LoadArea(areaName);
-        loadingAction.completed += UnloadMainMenu;
-    }
-
-    public void CloseGameScenes(AsyncOperation obj)
-    {
-        foreach (var area in loadedAreas.Keys)
+        if (Instance == null)
         {
-            UnloadArea(area);
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+            LoadAreaGate.LoadArea += LoadArea;
+            UnloadAreaGate.UnloadArea += UnloadArea;
+            //LoadArea("Scene0_0");
+        }
+        else if (Instance != this)
+        {
+            Destroy(gameObject);
         }
     }
 
-    private void LoadMainMenu()
+    public void InitialLoad(string sceneName)
+    {
+        loadingAction = SceneManager.LoadSceneAsync("PersistentScene", LoadSceneMode.Additive); //additive to ensure order of operation does not screw loading sequence.
+        LoadArea(sceneName);
+        loadingAction.completed += UnloadMainMenu;
+    }
+    public void LoadMainMenu()
     {
         loadingAction = SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Additive);
         SceneManager.UnloadSceneAsync("PersistentScene");
         loadingAction.completed += CloseGameScenes;
 
+    }
+
+    private void CloseGameScenes(AsyncOperation obj)
+    {
+        foreach (var area in loadedAreas.Keys)
+        {
+            UnloadForMainMenu(area);
+        }
+        loadedAreas = new Dictionary<string, bool>();
     }
 
     private void UnloadMainMenu(AsyncOperation obj)
@@ -46,13 +56,21 @@ public class SceneLoader : MonoBehaviour
         //TODO send event that loading has completed here?
     }
 
-    private void LoadArea(string areaName)
+    private void LoadArea(string sceneName)
     {
-        if (!loadedAreas.GetValueOrDefault(areaName, false))
+        if (!loadedAreas.GetValueOrDefault(sceneName, false))
         {
-            loadedAreas[areaName] = true; //if trying to load the same area then fail above condition
-            SceneManager.LoadSceneAsync(areaName, LoadSceneMode.Additive);
+            loadedAreas[sceneName] = true; //if trying to load the same area then fail above condition
+            SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
 
+        }
+    }
+
+    private void UnloadForMainMenu(string areaName)
+    {
+        if (loadedAreas.GetValueOrDefault(areaName, false))
+        {
+            SceneManager.UnloadSceneAsync(areaName);
         }
     }
 

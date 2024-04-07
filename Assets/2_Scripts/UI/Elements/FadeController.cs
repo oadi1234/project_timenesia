@@ -40,8 +40,9 @@ public class FadeController : MonoBehaviour
         }
     }
 
-    public void SetFadeTimer(float time = 0)
+    public void Reset()
     {
-        fadeoutTime = time;
+        elapsedTime = Mathf.Clamp(targetAlphaMax - alphaAtStart, targetAlphaMin, targetAlphaMax) * fadeoutTime;
+        overlay.alpha = targetAlphaMin;
     }
 }

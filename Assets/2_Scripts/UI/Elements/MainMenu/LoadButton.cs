@@ -7,23 +7,22 @@ using UnityEngine;
 
 public class LoadButton : MonoBehaviour
 {
-    private PreviewStatsDataSchema savePreview;
+    public PreviewStatsDataSchema savePreview { get; set; }
+    public string directoryName { get; set; }
+
     private HealthBar healthBar;
     private EffortBar effortBar;
     private TextMeshProUGUI text;
-    private string saveName { get; set; }
 
-    public static event Action<string> Load;
+    public static event Action<string> LoadAction;
+    public static event Action<string> DeleteAction;
 
-    public LoadButton(PreviewStatsDataSchema savePreview, string saveName)
-    {
-        this.savePreview = savePreview;
-        this.saveName = saveName;
-    }
     private void Awake()
     {
         healthBar = GetComponentInChildren<HealthBar>();
         effortBar = GetComponentInChildren<EffortBar>();
+        healthBar.Initialize();
+        effortBar.Initialize();
         text = GetComponentInChildren<TextMeshProUGUI>();
     }
 
@@ -31,15 +30,36 @@ public class LoadButton : MonoBehaviour
     {
         healthBar.SetMaxHealth(savePreview.MaxHealth);
         effortBar.SetMaxEffort(savePreview.MaxEffort);
+        effortBar.SetSpellCapacity(savePreview.SpellCapacity);
         // TODO set button image.
-        text.text = saveName; // TODO set to something, name of the scene etc.
+        text.text = directoryName; // TODO in the future set the text to something better, like the scene name. For now its convenient for debugging.
+    }
+
+    private void OnEnable()
+    {
+        StartCoroutine(healthBar.FillSequentially(0.3f));
+        StartCoroutine(effortBar.FillSequentially(0.3f));
+    }
+
+    private void OnDisable()
+    {
+        StopAllCoroutines();
+        healthBar.SetCurrentHealth(0);
+        effortBar.SetCurrentEffort(0);
     }
 
     public void Click()
     {
-        if (Load != null)
+        if (LoadAction != null)
         {
-            Load(saveName);
+            LoadAction(directoryName);
         }
+    }
+
+    public void Delete()
+    {
+        //SaveManager.Instance.DeleteSave(directoryName);
+        if (DeleteAction != null)
+            DeleteAction(directoryName);
     }
 }

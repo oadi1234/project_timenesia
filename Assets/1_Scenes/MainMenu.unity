@@ -236,9 +236,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
-        m_MethodName: CloseExitGameConfirmationMenu
+      - m_Target: {fileID: 9151511677808143436}
+        m_TargetAssemblyTypeName: MainMenuManager, Assembly-CSharp
+        m_MethodName: CloseDeleteSaveConfirmationPanel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -529,6 +529,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1737019297920995953, guid: cc82de4524b44cf40b74674c5d1c69c4, type: 3}
   m_PrefabInstance: {fileID: 280903980}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &280903983 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2775939887598705920, guid: cc82de4524b44cf40b74674c5d1c69c4, type: 3}
+  m_PrefabInstance: {fileID: 280903980}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dff460a32c40c2d48acd391c99f33ced, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &380805680
 GameObject:
   m_ObjectHideFlags: 0
@@ -700,7 +711,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &393686298
 RectTransform:
   m_ObjectHideFlags: 0
@@ -732,7 +743,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dde6093e1d3bd74429688e984aaae3f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fadeoutTime: 3
+  fadeoutTime: 1
   targetAlphaMin: 0
   targetAlphaMax: 1
   alphaAtStart: 1
@@ -1035,6 +1046,9 @@ GameObject:
   - component: {fileID: 740074215}
   - component: {fileID: 740074216}
   - component: {fileID: 740074217}
+  - component: {fileID: 740074218}
+  - component: {fileID: 740074220}
+  - component: {fileID: 740074219}
   m_Layer: 5
   m_Name: SaveList
   m_TagString: Untagged
@@ -1058,7 +1072,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 441.87}
+  m_AnchoredPosition: {x: 0, y: 443.8683}
   m_SizeDelta: {x: 0.8000488, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &740074216
@@ -1101,6 +1115,48 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
   m_VerticalFit: 1
+--- !u!114 &740074218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 740074214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dff460a32c40c2d48acd391c99f33ced, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isActiveAtStart: 0
+  buttonIndexOnOpen: 0
+--- !u!114 &740074219
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 740074214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dde6093e1d3bd74429688e984aaae3f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fadeoutTime: 0.25
+  targetAlphaMin: 0
+  targetAlphaMax: 1
+  alphaAtStart: 0
+--- !u!225 &740074220
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 740074214}
+  m_Enabled: 1
+  m_Alpha: 0
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!114 &747088228 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2775939887598705920, guid: cc82de4524b44cf40b74674c5d1c69c4, type: 3}
@@ -1519,9 +1575,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
-        m_MethodName: ExitGame
+      - m_Target: {fileID: 2075503698}
+        m_TargetAssemblyTypeName: DeleteSavePanelScript, Assembly-CSharp
+        m_MethodName: Confirm
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2149,9 +2205,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
-        m_MethodName: CloseOptionsSubmenu
+      - m_Target: {fileID: 9151511677808143436}
+        m_TargetAssemblyTypeName: MainMenuManager, Assembly-CSharp
+        m_MethodName: StartButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2776,13 +2832,14 @@ GameObject:
   - component: {fileID: 2075503695}
   - component: {fileID: 2075503694}
   - component: {fileID: 2075503693}
+  - component: {fileID: 2075503698}
   m_Layer: 5
   m_Name: DeleteSaveConfirmationPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2075503692
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2885,6 +2942,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2075503691}
   m_CullTransparentMesh: 1
+--- !u!114 &2075503698
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2075503691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d36bf0b4c38822c4da60f40d127c5ccb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  saveListManager: {fileID: 5169126471870241778}
+  mainMenuManager: {fileID: 9151511677808143436}
+  saveListPanel: {fileID: 740074218}
 --- !u!1001 &2095726391
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3026,9 +3098,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
-        m_MethodName: CloseOptionsSubmenu
+      - m_Target: {fileID: 9151511677808143436}
+        m_TargetAssemblyTypeName: MainMenuManager, Assembly-CSharp
+        m_MethodName: OpenOptionsPanel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3359,9 +3431,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
-        m_MethodName: CloseExitGameConfirmationMenu
+      - m_Target: {fileID: 9151511677808143436}
+        m_TargetAssemblyTypeName: MainMenuManager, Assembly-CSharp
+        m_MethodName: CloseExitConfirmationPanel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3745,9 +3817,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
-        m_MethodName: ExitGame
+      - m_Target: {fileID: 9151511677808143436}
+        m_TargetAssemblyTypeName: MainMenuManager, Assembly-CSharp
+        m_MethodName: Quit
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3847,9 +3919,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
-        m_MethodName: OpenExitGameConfirmationMenu
+      - m_Target: {fileID: 9151511677808143436}
+        m_TargetAssemblyTypeName: MainMenuManager, Assembly-CSharp
+        m_MethodName: OpenExitConfirmationPanel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3879,7 +3951,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &4362479746718504136
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4232,7 +4304,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2783979522900002306, guid: cc82de4524b44cf40b74674c5d1c69c4, type: 3}
       propertyPath: m_Name
-      value: SelectGamePanel
+      value: SelectGame
+      objectReference: {fileID: 0}
+    - target: {fileID: 3933352555519662134, guid: cc82de4524b44cf40b74674c5d1c69c4, type: 3}
+      propertyPath: fadeoutTime
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 3933352555519662134, guid: cc82de4524b44cf40b74674c5d1c69c4, type: 3}
       propertyPath: alphaAtStart
@@ -4240,7 +4316,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4621505623735553211, guid: cc82de4524b44cf40b74674c5d1c69c4, type: 3}
       propertyPath: m_Alpha
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4249,9 +4325,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 837601744}
     m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 2783979522900002306, guid: cc82de4524b44cf40b74674c5d1c69c4, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 5169126471870241779}
     - targetCorrespondingSourceObject: {fileID: 2783979522900002306, guid: cc82de4524b44cf40b74674c5d1c69c4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5169126471870241778}
@@ -4273,23 +4346,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 601b55b9bb476ed4fa85a0330df9a540, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  saveFileNameList: []
+  saveDirectoryNameList: []
   newGameListElement: {fileID: 6922412180435055454, guid: 8936cbcb613611f4594a7601cea0fab0, type: 3}
   loadGameListElement: {fileID: 5594051283290376939, guid: 4a42bf09880237c40b8275fecab2f21b, type: 3}
   ScrollList: {fileID: 740074215}
---- !u!114 &5169126471870241779
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 589690705}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ecc02ffe050a9fd458ab387ed8d650ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SaveListManager: {fileID: 5169126471870241778}
 --- !u!114 &5169126471870241780 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2775939887598705920, guid: cc82de4524b44cf40b74674c5d1c69c4, type: 3}
@@ -4771,6 +4831,7 @@ GameObject:
   - component: {fileID: 9151511677808143436}
   - component: {fileID: 1838052101566195714}
   - component: {fileID: 9151511677808143437}
+  - component: {fileID: 9151511677808143438}
   m_Layer: 5
   m_Name: MainMenuCanvas
   m_TagString: Untagged
@@ -4841,6 +4902,9 @@ MonoBehaviour:
   creditsPanel: {fileID: 1070592636}
   achievementsPanel: {fileID: 747088228}
   menuPanel: {fileID: 7734353751648704123}
+  gameScrollListPanel: {fileID: 740074218}
+  exitConfirmationPanel: {fileID: 4405929226937874293}
+  extrasPanel: {fileID: 280903983}
 --- !u!114 &9151511677808143437
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4854,6 +4918,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BlackPanel: {fileID: 393686299}
+--- !u!114 &9151511677808143438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8772045786041933453}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecc02ffe050a9fd458ab387ed8d650ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SaveListManager: {fileID: 5169126471870241778}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

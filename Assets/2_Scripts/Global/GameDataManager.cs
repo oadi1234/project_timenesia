@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Drawing;
 using _2___Scripts.Global.Events;
 using TMPro;
-using UnityEditor;
 using UnityEngine;
 
 namespace _2___Scripts.Global
@@ -13,25 +10,28 @@ namespace _2___Scripts.Global
         private GameDataManager()
         {
         }
-
-        public SaveManager saveManager;
         public PlayerAbilityAndStats stats;
-        public SceneLoader sceneLoader;
 
         public static GameDataManager Instance { get; private set; }
         public static event Action<IBaseEvent> OnCollected;
 
-        private TextMeshProUGUI CoinText;
-        public static event Action<AbilityName> OnAbilityLoad;
-
         public Vector2 LastSavePointPosition;
+        public Savepoint lastSavepoint;
+        public string directoryName;
 
 
-        private void Awake()
+        private void Start()
         {
             if (Instance == null)
             {
                 Instance = this;
+
+                stats = new PlayerAbilityAndStats();
+                LastSavePointPosition = Vector2.zero;
+                DontDestroyOnLoad(gameObject);
+                OnPlayerEnteredEvent.OnPlayerEntered += OnPlayer_Entered;
+                LoadButton.LoadAction += Load;
+                StartButton.NewGame += SetGameStateForNewGame;
             }
             else if (Instance != this)
             {
@@ -39,19 +39,16 @@ namespace _2___Scripts.Global
             }
             //GameObject.Find("Player").GetComponent<PlayerMovementController>().SetVariablesOnLoad(ref stats); //move responsibility to load stats to player
             //CoinText = GameObject.Find("CoinCounter").GetComponent<TextMeshProUGUI>(); // see above
-            stats = new PlayerAbilityAndStats();
-            LastSavePointPosition = Vector2.zero;
-            DontDestroyOnLoad (gameObject);
-            OnPlayerEnteredEvent.OnPlayerEntered += OnPlayer_Entered;
-            LoadButton.Load += Load;
-            StartAction.NewGame += SetGameStateForNewGame;
+
         }
 
-        private void SetGameStateForNewGame()
+        private void SetGameStateForNewGame(string directoryName)
         {
             PurgeStats();
             SetStatsForNewGameStart();
-            sceneLoader.InitialLoad("Scene0_0");
+            this.directoryName = directoryName;
+            SaveManager.Instance.Save(LastSavePointPosition, ZoneEnum.OldDunheim, "Scene0_0");
+            SceneLoader.Instance.InitialLoad("Scene0_0");
         }
     
         private void OnPlayer_Entered(IOnPlayerEnteredEvent obj)
@@ -61,40 +58,41 @@ namespace _2___Scripts.Global
                 case IOnPlayerEnteredEvent.EventType.CoinCollected:
                     GainCoins(obj.numericData);
                     obj.Remove();
-                    SceneDataHolder.instance.AddData(obj.sceneName, obj.objectName);
-                    CoinText.text = stats.Coins.ToString();
+                    SceneDataHolder.Instance.AddData(obj.sceneName, obj.objectName);
+                    //CoinText.text = stats.Coins.ToString(); TODO move responsibility of being updated to the component itself.
                     break;
                 case IOnPlayerEnteredEvent.EventType.DashCollected:
                     obj.Remove();
                     stats.UnlockAbility(AbilityName.Dash);
-                    SceneDataHolder.instance.AddData(obj.sceneName, obj.objectName);
-                    saveManager.PersistObjectLoadingStrategy(obj.sceneName, obj.objectName);
+                    SceneDataHolder.Instance.AddData(obj.sceneName, obj.objectName);
+                    SaveManager.Instance.PersistObjectLoadingStrategy(obj.sceneName, obj.objectName);
                     break;
                 case IOnPlayerEnteredEvent.EventType.DoubleJumpCollected:
                     obj.Remove();
                     stats.UnlockAbility(AbilityName.DoubleJump);
-                    SceneDataHolder.instance.AddData(obj.sceneName, obj.objectName);
-                    saveManager.PersistObjectLoadingStrategy(obj.sceneName, obj.objectName);
+                    SceneDataHolder.Instance.AddData(obj.sceneName, obj.objectName);
+                    SaveManager.Instance.PersistObjectLoadingStrategy(obj.sceneName, obj.objectName);
                     break;
                 case IOnPlayerEnteredEvent.EventType.WallJumpCollected:
                     obj.Remove();
                     stats.UnlockAbility(AbilityName.WallJump);
-                    SceneDataHolder.instance.AddData(obj.sceneName, obj.objectName);
-                    saveManager.PersistObjectLoadingStrategy(obj.sceneName, obj.objectName);
+                    SceneDataHolder.Instance.AddData(obj.sceneName, obj.objectName);
+                    SaveManager.Instance.PersistObjectLoadingStrategy(obj.sceneName, obj.objectName);
                     break;
             }
         }
 
-        private void Load(string fileName)
+        private void Load(string directoryName)
         {
             // TODO Start loading animation here
-            SaveDataSchema data = saveManager.Load(fileName);
-            sceneLoader.InitialLoad(data.previewStatsDataSchema.sceneName);
+            SaveDataSchema data = SaveManager.Instance.Load(directoryName);
             AssignDataFromSave(data);
+            SceneLoader.Instance.InitialLoad(data.previewStatsDataSchema.sceneName);
             LastSavePointPosition = new Vector2(data.previewStatsDataSchema.savePointX, data.previewStatsDataSchema.savePointY);
             // TODO end loading animation here
             // TODO Start game entry animation, if one exists. Might be cool for simple and quick cinematics on game load.
             //GameObject.Find("Player").GetComponent<PlayerMovementController>().SetVariablesOnLoad(ref stats); //move responsibility for data retrieval to Player
+            this.directoryName = directoryName;
             Console.WriteLine("loaded");
         }
     
@@ -119,28 +117,21 @@ namespace _2___Scripts.Global
         private void AssignLoadDataToCurrencies(SaveDataSchema saveData)
         {
             stats.Coins = saveData.gameStateSaveDataSchema.Coins;
-            CoinText.text = stats.Coins.ToString();
+            //CoinText.text = stats.Coins.ToString(); TODO move responsibility of being updated to the component itself.
         }
 
         private void AssignLoadDataToAbilities(SaveDataSchema saveData)
         {
             stats.abilities = saveData.gameStateSaveDataSchema.abilities;
-            foreach (var ability in stats.abilities)
-            {
-                if(ability.Value)
-                {
-                    OnAbilityLoad(ability.Key); // TODO in the future all loading and saving should be moved to coroutines to avoid stuttering on both. It will also make it easier to control if we loaded everything.
-                }
-            }
         }
 
         private void AssignLoadDataToObjectLoadingStrategy(SaveDataSchema saveData)
         {
-            SceneDataHolder.instance.SetLoadStrategyOnGameLoad(saveData.gameStateSaveDataSchema.alteredObjects);
+            SceneDataHolder.Instance.SetLoadStrategyOnGameLoad(saveData.gameStateSaveDataSchema.alteredObjects);
         }
         #endregion
 
-        public bool TakeDamage(int amount)
+        public bool TakeDamage(int amount) // TODO I have a feeling this shouldn't be here.
         {
             if (amount >= stats.CurrentHealth)
             {

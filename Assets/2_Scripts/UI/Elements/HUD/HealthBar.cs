@@ -1,6 +1,6 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace _2___Scripts.UI
 {
@@ -56,6 +56,15 @@ namespace _2___Scripts.UI
             SwitchToBooleanBasedOnType(animator, true, type);
 
             healthType[index] = type;
+        }
+
+        public IEnumerator FillSequentially(float delay)
+        {
+            for (int i = 0; i < maxHealth; i++)
+            {
+                yield return new WaitForSeconds(delay);
+                SetHealthAnimation(HealthType.Health, i);
+            }
         }
 
         private void SwitchToBooleanBasedOnType(Animator animator, bool boolean, HealthType type)

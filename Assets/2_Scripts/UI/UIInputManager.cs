@@ -13,7 +13,7 @@ public class UIInputManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetButtonDown("Cancel")) // TODO adjust for pad
+        if (Input.GetButtonDown("Cancel"))
         {
             menuManager.EscCommand();
         }

@@ -1,12 +1,17 @@
 using _2___Scripts.Global;
+using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Text;
+using UnityEditor;
 using UnityEngine;
 
 public class SaveManager : MonoBehaviour
 {
     public static SaveManager Instance = null;
+    private static int gameVersion = 0;
+
+    private SaveDataSchema saveData;
 
     public static string SavePath;
     public static string SavePreviewSuffix = "preview.dat";
@@ -14,6 +19,7 @@ public class SaveManager : MonoBehaviour
 	
     private void Awake()
     {
+        SavePath = $"{Application.persistentDataPath}/saves";
         if (!Directory.Exists(SavePath))
         {
             Directory.CreateDirectory(SavePath);
@@ -28,32 +34,50 @@ public class SaveManager : MonoBehaviour
             Destroy(gameObject);
         }
         DontDestroyOnLoad (gameObject);
-        SavePath = $"{Application.persistentDataPath}/saves";
     }
-    
-    private static SaveDataSchema saveData;
 
     private void Initialize()
     {
         Savepoint.OnSave += Save;
     }
 
+    public void Save()
+    {
+        //Perform save using stored data.
+        if (saveData == null)
+        {
+            Debug.Log("This literally should never happen."); //For unknown reason this still happens. Even though SaveData is assigned on load it still is seen as null.
+            saveData = new SaveDataSchema();
+            saveData.previewStatsDataSchema = new PreviewStatsDataSchema();
+            saveData.gameStateSaveDataSchema = new GameStateSaveDataSchema();
+        }
+        Save(saveData, GameDataManager.Instance.directoryName);
+
+    }
+
     public void Save(Vector2 position, ZoneEnum zone, string sceneName)
     {
         if (saveData == null)
         {
-            saveData = new SaveDataSchema(new PreviewStatsDataSchema(), new GameStateSaveDataSchema());
+            saveData = new SaveDataSchema();
+            saveData.previewStatsDataSchema = new PreviewStatsDataSchema();
+            saveData.gameStateSaveDataSchema = new GameStateSaveDataSchema();
         }
         saveData.gameStateSaveDataSchema.abilities = GameDataManager.Instance.stats.abilities;
         saveData.previewStatsDataSchema.zone = zone;
         saveData.previewStatsDataSchema.sceneName = sceneName;
         saveData.previewStatsDataSchema.savePointX = position.x;
         saveData.previewStatsDataSchema.savePointY = position.y;
+        saveData.previewStatsDataSchema.MaxEffort = GameDataManager.Instance.stats.MaxEffort;
+        saveData.previewStatsDataSchema.MaxHealth = GameDataManager.Instance.stats.MaxHealth;
+        saveData.previewStatsDataSchema.gameVersion = gameVersion;
+        saveData.gameStateSaveDataSchema.Coins = GameDataManager.Instance.stats.Coins;
+        saveData.previewStatsDataSchema.SpellCapacity = GameDataManager.Instance.stats.SpellCapacity;
 
         // AudioManager.PlaySound();
         //SoundManager.Instance.PlayOnce(GlobalAssets.Instance.SaveAudioClip); //disabled for testing.
 
-        Save(saveData);
+        Save(saveData, GameDataManager.Instance.directoryName);
     }
 
     public void PersistObjectLoadingStrategy(string sceneName, string objectName) 
@@ -65,85 +89,96 @@ public class SaveManager : MonoBehaviour
     {
         if (saveData == null)
         {
-            saveData = new SaveDataSchema(new PreviewStatsDataSchema(), new GameStateSaveDataSchema());
+            Debug.Log("This literally should never happen.");
+            saveData = new SaveDataSchema();
+            saveData.previewStatsDataSchema = new PreviewStatsDataSchema();
+            saveData.gameStateSaveDataSchema = new GameStateSaveDataSchema();
         }
         saveData.gameStateSaveDataSchema.alteredObjects.Add(sceneName + objectName, true);
-        Save(saveData);
+        Save(saveData, GameDataManager.Instance.directoryName);
     }
 
-    public SaveDataSchema Load(string directoryName = "save_00")
+
+
+    public SaveDataSchema Load(string directoryName = "save_0")
     {
-        SaveDataSchema data = new SaveDataSchema(
-            LoadData<PreviewStatsDataSchema>($"{directoryName}_{SavePreviewSuffix}", directoryName),
-            LoadData<GameStateSaveDataSchema>($"{directoryName}_{SaveStateSuffix}", directoryName));
+        SaveDataSchema data = new SaveDataSchema();
+        data.previewStatsDataSchema = LoadData<PreviewStatsDataSchema>($"{directoryName}_{SavePreviewSuffix}", directoryName);
+        data.gameStateSaveDataSchema = LoadData<GameStateSaveDataSchema>($"{directoryName}_{SaveStateSuffix}", directoryName);
+
+        saveData = data;
 
         return data;
     }
-    public bool DeleteSave(string directoryName = "save_00")
+
+    public bool DeleteSave(string directoryName = "save_0")
     {
-        string fullpath = GetPath(directoryName);
-        if (File.Exists(fullpath))
+        var directory = $"{SavePath}/{directoryName}";
+        if (Directory.Exists(directory))
         {
-            File.Delete(fullpath);
+            FileUtil.DeleteFileOrDirectory(directory);
             return true;
         }
 
         return false;
     }
 
-    private bool Save(SaveDataSchema data, string directoryName = "save_00")
+    private bool Save(SaveDataSchema data, string directoryName = "save_0")
     {
+        CreateSaveDirectory(directoryName);
         bool result = false;
         if (data != null)
         {
-            result = SaveData(data.previewStatsDataSchema, $"{directoryName}_preview.dat", directoryName)
-                && SaveData(data.gameStateSaveDataSchema, $"{directoryName}_state.dat", directoryName);
+            result = SaveData(data.previewStatsDataSchema, $"{directoryName}_{SavePreviewSuffix}", directoryName)
+                && SaveData(data.gameStateSaveDataSchema, $"{directoryName}_{SaveStateSuffix}", directoryName);
         }
 
         return result;
     }
 
-    private bool SaveData<T>(T data, string fileName, string directoryName = "save_00")
+    private void CreateSaveDirectory(string directoryName = "save_0")
     {
-        if (typeof(T).IsSerializable)
+        if (!Directory.Exists($"{SavePath}/{directoryName}"))
+        {
+            Directory.CreateDirectory($"{SavePath}/{directoryName}");
+        }
+    }
+
+    private bool SaveData<T>(T data, string fileName, string directoryName = "save_0")
+    {
+        if (!typeof(T).IsSerializable)
         {
             throw new ArgumentException($"Non-serializable data passed to SaveData method. Argument type: {typeof(T)}");
         }
-        using (FileStream fs = File.Open($"{SavePath}/{directoryName}/{fileName}.dat", FileMode.OpenOrCreate))
+        using (FileStream fs = File.Open($"{SavePath}/{directoryName}/{fileName}", FileMode.OpenOrCreate))
         {
             BinaryWriter bw = new BinaryWriter(fs);
-            byte[] bytes = Encoding.UTF8.GetBytes(JsonUtility.ToJson(data));
+            byte[] bytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data));
             bw.Write(Convert.ToBase64String(bytes));
             bw.Flush();
         }
         return true;
     }
 
-    public T LoadData<T>(string fileName, string directoryName = "save_00") //might explode.
+    public T LoadData<T>(string fileName, string directoryName = "save_0") //might explode.
     {
         if (!Directory.Exists($"{SavePath}/{directoryName}"))
         {
             throw new ArgumentException($"Could not find save directory: {directoryName}");
         }
-        string filePath = $"{SavePath}/{directoryName}/{fileName}.dat";
+        string filePath = $"{SavePath}/{directoryName}/{fileName}";
         if (File.Exists(filePath))
         {
-            using (FileStream fs = File.Open($"{SavePath}/{directoryName}/{fileName}.dat", FileMode.Open))
+            using (FileStream fs = File.Open($"{SavePath}/{directoryName}/{fileName}", FileMode.Open))
             {
                 BinaryReader br = new BinaryReader(fs);
                 byte[] bytes = Convert.FromBase64String(br.ReadString());
-                return (T)Activator.CreateInstance(typeof(T), JsonUtility.FromJson<T>(Encoding.UTF8.GetString(bytes)));
+                return (T)Activator.CreateInstance(typeof(T), JsonConvert.DeserializeObject<T>(Encoding.UTF8.GetString(bytes)));
             }
         }
         else
         {
             throw new ArgumentException($"File {filePath} does not exist.");
         }
-    }
-
-
-    private string GetPath(string s)
-    {
-        return $"{SavePath}/{s}.dat";
     }
 }

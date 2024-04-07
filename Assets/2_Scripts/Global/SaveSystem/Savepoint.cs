@@ -1,6 +1,5 @@
 using System;
 using _2___Scripts.Global;
-using _2___Scripts.Player;
 using UnityEngine;
 
 public class Savepoint : MonoBehaviour
@@ -10,12 +9,13 @@ public class Savepoint : MonoBehaviour
 
     private Vector2 loadToLocationCoordinates;
     public ZoneEnum zone;
-    public string sceneName;
+    private string sceneName;
 
     private void Awake()
     {
         gdm = GameDataManager.Instance;
         loadToLocationCoordinates = transform.position; //TODO make it maybe settable later on.
+        sceneName = gameObject.scene.name;
     }
 
     public void OnTriggerEnter2D(Collider2D collision)

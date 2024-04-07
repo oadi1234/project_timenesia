@@ -145,6 +145,8 @@ GameObject:
   - component: {fileID: 5271253343452882298}
   - component: {fileID: 1222455629958276274}
   - component: {fileID: 6522727132981722459}
+  - component: {fileID: 6091612868872740540}
+  - component: {fileID: 3068836824571619881}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -223,7 +225,47 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 0}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7719877950385917045}
+        m_TargetAssemblyTypeName: LoadButton, Assembly-CSharp
+        m_MethodName: Delete
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &6091612868872740540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2444338019821026865}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dde6093e1d3bd74429688e984aaae3f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fadeoutTime: 0.1
+  targetAlphaMin: 0
+  targetAlphaMax: 1
+  alphaAtStart: 1
+--- !u!225 &3068836824571619881
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2444338019821026865}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &5594051283290376939
 GameObject:
   m_ObjectHideFlags: 0
@@ -239,6 +281,7 @@ GameObject:
   - component: {fileID: 8755910840519392724}
   - component: {fileID: 1228207797556342004}
   - component: {fileID: 7719877950385917045}
+  - component: {fileID: 398087177578819332}
   m_Layer: 5
   m_Name: SaveElement_LoadGame
   m_TagString: Untagged
@@ -377,10 +420,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dde6093e1d3bd74429688e984aaae3f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fadeoutTime: 0.2
+  fadeoutTime: 0.1
   targetAlphaMin: 0
   targetAlphaMax: 1
-  alphaAtStart: 1
+  alphaAtStart: 0
 --- !u!225 &1228207797556342004
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -405,6 +448,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 127c7b33ba5ab314db8f9dfa69200bc1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &398087177578819332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5594051283290376939}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5e46ea690ab612429966cd455aa0123, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fadeController: {fileID: 8755910840519392724}
+  delay: 0.1
 --- !u!1 &6075750399194040786
 GameObject:
   m_ObjectHideFlags: 0

@@ -187,7 +187,7 @@ namespace _2___Scripts.Player
                 return false;
             else
                 currentEffort -= cost;
-            effortBar.SetCurrentMana(currentEffort);
+            effortBar.SetCurrentEffort(currentEffort);
             effortBar.CleanManaSources();
             return true;
         }
@@ -204,7 +204,7 @@ namespace _2___Scripts.Player
             currentEffort += amount;
             if (currentEffort > maxEffort)
                 currentEffort = maxEffort;
-            effortBar.SetCurrentMana(currentEffort);
+            effortBar.SetCurrentEffort(currentEffort);
         }
     }
 }

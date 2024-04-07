@@ -10,7 +10,6 @@ public class PlayerAbilityAndStats
     public Dictionary<AbilityName, bool> abilities = new();
     #endregion
 
-
     #region BASE_STATS
     //might get moved to some other class. There is no need to provide this to classes like movementController.
     public int CurrentHealth { get; set; }

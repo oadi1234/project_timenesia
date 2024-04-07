@@ -6,7 +6,10 @@ using UnityEngine;
 [Serializable]
 public class GameStateSaveDataSchema
 {
-    public GameStateSaveDataSchema() { }
+    public GameStateSaveDataSchema()
+    {
+    }
+
     public GameStateSaveDataSchema(GameStateSaveDataSchema gameState)
     {
         Coins = gameState.Coins;
