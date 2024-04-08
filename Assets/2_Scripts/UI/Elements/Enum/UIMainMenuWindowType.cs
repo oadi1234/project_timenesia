@@ -1,17 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public enum UIMainMenuWindowType
+namespace _2_Scripts.UI.Elements.Enum
 {
-    None,
-    MainMenu,
-    ExitPanel,
-    LoadGame,
-    Options,
-    Extras,
-    Achievements,
-    Credits,
-    DeleteSave
+    public enum UIMainMenuWindowType
+    {
+        None,
+        MainMenu,
+        ExitPanel,
+        LoadGame,
+        Options,
+        Extras,
+        Achievements,
+        Credits,
+        DeleteSave
 
+    }
 }

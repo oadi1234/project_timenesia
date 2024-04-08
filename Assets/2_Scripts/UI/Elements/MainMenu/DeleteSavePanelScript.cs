@@ -1,20 +1,22 @@
-using System.Collections;
-using System.Collections.Generic;
+using _2_Scripts.Global.SaveSystem;
 using UnityEngine;
 
-public class DeleteSavePanelScript : MonoBehaviour
+namespace _2_Scripts.UI.Elements.MainMenu
 {
-    public SaveListManager saveListManager;
-    public MainMenuManager mainMenuManager;
-    public UIPanel saveListPanel;
-    public string directoryName { get; set; }
-
-    public void Confirm()
+    public class DeleteSavePanelScript : MonoBehaviour
     {
-        SaveManager.Instance.DeleteSave(directoryName);
-        saveListManager.RemoveElement(directoryName); //button gets destroyed here
-        //saveListPanel.RemoveNullsAndDestroyedFromList();
-        //saveListPanel.ReloadButtons();
-        mainMenuManager.CloseDeleteSaveConfirmationPanel();
+        public SaveListManager saveListManager;
+        public MainMenuManager mainMenuManager;
+        public UIPanel saveListPanel;
+        public string directoryName { get; set; }
+
+        public void Confirm()
+        {
+            SaveManager.Instance.DeleteSave(directoryName);
+            saveListManager.RemoveElement(directoryName); //button gets destroyed here
+            //saveListPanel.RemoveNullsAndDestroyedFromList();
+            //saveListPanel.ReloadButtons();
+            mainMenuManager.CloseDeleteSaveConfirmationPanel();
+        }
     }
 }

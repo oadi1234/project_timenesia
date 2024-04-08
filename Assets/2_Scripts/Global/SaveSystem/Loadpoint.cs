@@ -1,5 +1,5 @@
 using System;
-using _2___Scripts.Player;
+using _2_Scripts.Player.Statistics;
 using UnityEngine;
 
 public class Loadpoint : MonoBehaviour

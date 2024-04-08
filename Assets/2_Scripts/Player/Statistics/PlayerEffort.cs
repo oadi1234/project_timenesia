@@ -1,10 +1,11 @@
 using System.Collections.Generic;
-using _2___Scripts.Global;
-using _2___Scripts.UI;
+using _2_Scripts.Global;
+using _2_Scripts.Spells;
+using _2_Scripts.UI.Elements.HUD;
 using Spells;
 using UnityEngine;
 
-namespace _2___Scripts.Player
+namespace _2_Scripts.Player.Statistics
 {
     public class PlayerEffort : MonoBehaviour
     {

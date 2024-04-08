@@ -1,10 +1,7 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using _2___Scripts.Global.Events;
+using _2_Scripts.Global.Events;
 using UnityEngine;
-using UnityEngine.Serialization;
-using Object = UnityEngine.Object;
 
 public class Collector : MonoBehaviour, IBaseEvent
 {

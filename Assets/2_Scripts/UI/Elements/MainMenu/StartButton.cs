@@ -1,26 +1,27 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class StartButton : MonoBehaviour
+namespace _2_Scripts.UI.Elements.MainMenu
 {
-    public string directoryName {  get; set; }
-    public static event Action<string> NewGame;
-
-    public void Click()
+    public class StartButton : MonoBehaviour
     {
-        if (NewGame != null)
+        public string directoryName {  get; set; }
+        public static event Action<string> NewGame;
+
+        public void Click()
         {
-            NewGame(directoryName);
+            if (NewGame != null)
+            {
+                NewGame(directoryName);
+            }
         }
-    }
 
-    public static void StartNewGame() //for starting the first game.
-    {
-        if (NewGame != null)
+        public static void StartNewGame() //for starting the first game.
         {
-            NewGame("save_0");
+            if (NewGame != null)
+            {
+                NewGame("save_0");
+            }
         }
     }
 }

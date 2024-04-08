@@ -1,13 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public enum UIWindowType
+namespace _2_Scripts.UI.Elements.Enum
 {
-    None,
-    ExitPanel,
-    MainMenuPanel,
-    PlayerMenu,
-    Quickmap,
-    InGameMenu
+    public enum UIWindowType
+    {
+        None,
+        ExitPanel,
+        MainMenuPanel,
+        PlayerMenu,
+        Quickmap,
+        InGameMenu
+    }
 }

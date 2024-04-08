@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using _2_Scripts.Model;
 using UnityEngine;
 
 namespace _2___Scripts.UI

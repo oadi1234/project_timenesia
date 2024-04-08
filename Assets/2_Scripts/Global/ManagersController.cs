@@ -1,12 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class ManagersController : MonoBehaviour
+namespace _2_Scripts.Global
 {
-    void Awake()
+    public class ManagersController : MonoBehaviour
     {
-        // SaveManager.Initialize();
-        // AudioManager.Initialize();
+        void Awake()
+        {
+            // SaveManager.Initialize();
+            // AudioManager.Initialize();
+        }
     }
 }

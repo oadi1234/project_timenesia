@@ -1,31 +1,32 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class GlobalAssets : MonoBehaviour
+namespace _2_Scripts.Global
 {
-    [Header("SFX")]
-    public AudioClip SaveAudioClip;
-    
-    [Space(10)]
-    [Header("Music")]
-    public AudioClip Music_01;
-    public AudioClip Music_02;
-    public AudioClip Music_03;
-    
-    public static GlobalAssets Instance = null;
-	
-    private void Awake()
+    public class GlobalAssets : MonoBehaviour
     {
-        if (Instance == null)
+        [Header("SFX")]
+        public AudioClip SaveAudioClip;
+    
+        [Space(10)]
+        [Header("Music")]
+        public AudioClip Music_01;
+        public AudioClip Music_02;
+        public AudioClip Music_03;
+    
+        public static GlobalAssets Instance = null;
+	
+        private void Awake()
         {
-            Instance = this;
+            if (Instance == null)
+            {
+                Instance = this;
+            }
+            else if (Instance != this)
+            {
+                Destroy(gameObject);
+            }
+            DontDestroyOnLoad (gameObject);
         }
-        else if (Instance != this)
-        {
-            Destroy(gameObject);
-        }
-        DontDestroyOnLoad (gameObject);
     }
 }
 

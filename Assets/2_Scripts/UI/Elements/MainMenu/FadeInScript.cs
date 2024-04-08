@@ -1,21 +1,23 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class FadeInScript : MonoBehaviour
+namespace _2_Scripts.UI.Elements.MainMenu
 {
-    public FadeController BlackPanel;
-
-    // Update is called once per frame
-    void Awake()
+    public class FadeInScript : MonoBehaviour
     {
-        StartCoroutine(WaitSingleFrameThenFadeOut());
-    }
+        public FadeController BlackPanel;
 
-    private IEnumerator WaitSingleFrameThenFadeOut()
-    {
-        yield return new WaitForEndOfFrame();
-        yield return BlackPanel.DoFadeOut();
-        Destroy(this);
+        // Update is called once per frame
+        void Awake()
+        {
+            StartCoroutine(WaitSingleFrameThenFadeOut());
+        }
+
+        private IEnumerator WaitSingleFrameThenFadeOut()
+        {
+            yield return new WaitForEndOfFrame();
+            yield return BlackPanel.DoFadeOut();
+            Destroy(this);
+        }
     }
 }

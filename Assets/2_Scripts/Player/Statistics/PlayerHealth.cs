@@ -1,11 +1,10 @@
-using _2___Scripts.Enemies.Attacks;
-using _2___Scripts.Global;
-using _2___Scripts.UI;
-using Assets.Scripts.Enemies.Attacks;
 using System.Collections;
+using _2___Scripts.UI;
+using _2_Scripts.Enemies.Attacks;
+using _2_Scripts.Global;
 using UnityEngine;
 
-namespace _2___Scripts.Player
+namespace _2_Scripts.Player.Statistics
 {
     public class PlayerHealth : MonoBehaviour
     {
@@ -20,7 +19,7 @@ namespace _2___Scripts.Player
         void Start()
         {
             Initialize();
-            Attack_AoE.OnAttack += Attack_AoE_OnAttackHit;
+            BaseAttack.Attack += OnBasicAttackHit;
         }
 
         // Update is called once per frame
@@ -40,7 +39,7 @@ namespace _2___Scripts.Player
             //}
         }
 
-        private void Attack_AoE_OnAttackHit(IBaseAttack obj)
+        private void OnBasicAttackHit(BaseAttack obj)
         {
             TakeDamage(obj.Params);
         }
@@ -65,7 +64,7 @@ namespace _2___Scripts.Player
         
         private void TakeDamage(Hurt hurt)
         {
-            TakeDamage(hurt.damageDealt, hurt.iFramesGiven);
+            TakeDamage(hurt.DamageDealt, hurt.IFramesGiven);
         }
 
         public void TakeDamage(int damage, float iFrame)
@@ -95,9 +94,9 @@ namespace _2___Scripts.Player
 
         private IEnumerator ApplyIFrames()
         {
-            gameObject.layer = (int)LayerNames.PlayerIFrame;
+            gameObject.layer = (int)Layers.PlayerIFrame;
             yield return new WaitForSeconds(iFrame);
-            gameObject.layer = (int)LayerNames.Player;
+            gameObject.layer = (int)Layers.Player;
             iFrame = 0f;
         }
     }

@@ -1,49 +1,51 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class UISelectBox : MonoBehaviour
+namespace _2_Scripts.UI.Elements
 {
-
-    private FadeController fadeController;
-    private bool isActive = false;
-
-    void Start()
+    public class UISelectBox : MonoBehaviour
     {
-        fadeController = GetComponent<FadeController>();
-    }
 
-    public void ToggleActive()
-    {
-        if (isActive)
+        private FadeController fadeController;
+        private bool isActive = false;
+
+        void Start()
         {
-            Close();
+            fadeController = GetComponent<FadeController>();
         }
-        else
+
+        public void ToggleActive()
         {
-            Open();
+            if (isActive)
+            {
+                Close();
+            }
+            else
+            {
+                Open();
+            }
+            isActive = !isActive;
         }
-        isActive = !isActive;
-    }
 
-    public void Open()
-    {
-        fadeController.StopAllCoroutines();
-        StopAllCoroutines();
-        StartCoroutine(fadeController.DoFadeIn());
-    }
+        public void Open()
+        {
+            fadeController.StopAllCoroutines();
+            StopAllCoroutines();
+            StartCoroutine(fadeController.DoFadeIn());
+        }
 
-    public void Close()
-    {
-        fadeController.StopAllCoroutines();
-        StopAllCoroutines();
-        StartCoroutine(fadeController.DoFadeOut());
-    }
+        public void Close()
+        {
+            fadeController.StopAllCoroutines();
+            StopAllCoroutines();
+            StartCoroutine(fadeController.DoFadeOut());
+        }
 
-    public IEnumerator WaitForFadeOutAndDeactivate()
-    {
-        fadeController.StopAllCoroutines();
-        StopAllCoroutines();
-        yield return StartCoroutine(fadeController.DoFadeOut());
+        public IEnumerator WaitForFadeOutAndDeactivate()
+        {
+            fadeController.StopAllCoroutines();
+            StopAllCoroutines();
+            yield return StartCoroutine(fadeController.DoFadeOut());
+        }
     }
 }

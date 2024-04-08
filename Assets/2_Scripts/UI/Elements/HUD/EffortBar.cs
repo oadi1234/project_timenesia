@@ -1,9 +1,9 @@
-using _2___Scripts.Global;
 using System.Collections;
 using System.Collections.Generic;
+using _2_Scripts.Global;
 using UnityEngine;
 
-namespace _2___Scripts.UI
+namespace _2_Scripts.UI.Elements.HUD
 {
     public class EffortBar : MonoBehaviour
     {

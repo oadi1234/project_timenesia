@@ -1,13 +1,15 @@
-using System.Collections;
-using System.Collections.Generic;
+using _2_Scripts.Camera;
 using UnityEngine;
 
-public class CameraAttacher : MonoBehaviour
+namespace _2_Scripts.UI
 {
-    private Canvas canvas;
-    private void Start()
+    public class CameraAttacher : MonoBehaviour
     {
-        canvas = GetComponent<Canvas>();
-        canvas.worldCamera = CameraScript.Instance.GetComponent<Camera>();
+        private Canvas canvas;
+        private void Start()
+        {
+            canvas = GetComponent<Canvas>();
+            canvas.worldCamera = CameraScript.Instance.GetComponent<UnityEngine.Camera>();
+        }
     }
 }

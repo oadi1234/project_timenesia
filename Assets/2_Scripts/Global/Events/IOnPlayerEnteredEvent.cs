@@ -1,8 +1,6 @@
 ﻿using System;
-using Assets.Scripts.Enemies.Attacks;
-using UnityEngine;
 
-namespace _2___Scripts.Global.Events
+namespace _2_Scripts.Global.Events
 {
     internal interface IOnPlayerEnteredEvent
     {
