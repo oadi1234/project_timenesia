@@ -210,4 +210,9 @@ public class MainMenuManager : MonoBehaviour
         Application.Quit();
         Debug.Log("Application.Quit() calls are ignored in the editor.");
     }
+
+    public void DetachListener()
+    {
+        LoadButton.DeleteAction -= OpenDeleteSaveConfirmationPanel;
+    }
 }

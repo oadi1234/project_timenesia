@@ -11,6 +11,7 @@ public class SaveListManager : MonoBehaviour
     public GameObject newGameListElement;
     public GameObject loadGameListElement;
     public RectTransform ScrollList;
+    public MainMenuManager mainMenuManager;
 
     private Dictionary<string, GameObject> games = new Dictionary<string, GameObject>();
 
@@ -25,6 +26,7 @@ public class SaveListManager : MonoBehaviour
             loadButton.GetComponent<LoadButton>().directoryName = directoryName;
             loadButton.GetComponent<LoadButton>().savePreview = schema;
             loadButton.GetComponent<LoadButton>().Initialize();
+            loadButton.GetComponent<LoadButton>().mainMenuManager = mainMenuManager;
             loadButton.GetComponent<IndividualFader>().sequenceIndex = ++i;
             loadButton.name = $"{directoryName}";
             loadButton.transform.SetParent(ScrollList.transform);

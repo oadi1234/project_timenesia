@@ -3,7 +3,6 @@ using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Text;
-using UnityEditor;
 using UnityEngine;
 
 public class SaveManager : MonoBehaviour
@@ -116,7 +115,7 @@ public class SaveManager : MonoBehaviour
         var directory = $"{SavePath}/{directoryName}";
         if (Directory.Exists(directory))
         {
-            FileUtil.DeleteFileOrDirectory(directory);
+            Directory.Delete(directory, true);
             return true;
         }
 

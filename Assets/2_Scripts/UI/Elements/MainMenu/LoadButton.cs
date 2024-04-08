@@ -8,6 +8,7 @@ using UnityEngine;
 public class LoadButton : MonoBehaviour
 {
     public PreviewStatsDataSchema savePreview { get; set; }
+    public MainMenuManager mainMenuManager { get; set; }
     public string directoryName { get; set; }
 
     private HealthBar healthBar;
@@ -59,7 +60,6 @@ public class LoadButton : MonoBehaviour
     public void Delete()
     {
         //SaveManager.Instance.DeleteSave(directoryName);
-        if (DeleteAction != null)
-            DeleteAction(directoryName);
+        mainMenuManager.OpenDeleteSaveConfirmationPanel(directoryName);
     }
 }
