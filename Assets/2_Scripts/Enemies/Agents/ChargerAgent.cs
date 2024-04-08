@@ -1,10 +1,10 @@
-using _2___Scripts.Global;
+using _2_Scripts.Enemies.FSM;
 using _2_Scripts.Global;
 using UnityEngine;
 
-namespace _2_Scripts.Enemies.Temp_SecondApproach
+namespace _2_Scripts.Enemies.Agents
 {
-    public class DifferentApproachChargerAgent : DynamicEnemyBase
+    public class ChargerAgent : DynamicEnemyBase
     {
         private bool _playerSeenOnRight;
         private bool _chargeFinished;

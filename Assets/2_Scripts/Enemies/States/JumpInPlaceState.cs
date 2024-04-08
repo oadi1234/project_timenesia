@@ -1,6 +1,4 @@
-﻿using _2_Scripts.Enemies.Temp_FirstApproach;
-using Assets.Scripts.Enemies;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace _2_Scripts.Enemies.States
 {

@@ -1,10 +1,9 @@
-﻿using System;
-using _2___Scripts.Global;
+﻿using _2_Scripts.Enemies.Attacks;
 using _2_Scripts.Global;
 using _2_Scripts.Player;
 using UnityEngine;
 
-namespace _2_Scripts.Enemies.Attacks
+namespace _2_Scripts.Enemies.Temp_olds
 {
     public class AttackAoE : BaseAttack
     {

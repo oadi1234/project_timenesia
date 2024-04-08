@@ -1,10 +1,9 @@
-using System;
-using _2___Scripts.Global;
-using _2_Scripts.Enemies.Temp_SecondApproach;
+using _2_Scripts.Enemies.FSM;
+using _2_Scripts.Enemies.States;
 using _2_Scripts.Global;
 using UnityEngine;
 
-namespace _2_Scripts.Enemies.Temp_Walker
+namespace _2_Scripts.Enemies.Agents
 {
     public class WalkerAgent : DynamicEnemyBase
     {

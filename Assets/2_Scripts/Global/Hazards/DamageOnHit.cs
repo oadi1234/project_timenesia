@@ -1,12 +1,10 @@
-using System;
-using _2___Scripts.Global;
-using _2_Scripts.Global;
+using _2_Scripts.Enemies.Attacks;
 using _2_Scripts.Player;
 using UnityEngine;
 
-namespace _2_Scripts.Enemies.Attacks
+namespace _2_Scripts.Global.Hazards
 {
-    public class BodyDamageOnHit : BaseAttack
+    public class DamageOnHit : BaseAttack
     {
         [SerializeField]
         private string attackName = "basic";
@@ -19,6 +17,22 @@ namespace _2_Scripts.Enemies.Attacks
             AttackName = attackName;
         }
 
+        private void OnTriggerEnter2D(Collider2D other)
+        {
+            if (other.gameObject.layer == (int) Layers.Player)
+            {
+                OnAttack(this);
+                if (persistent) return;
+
+                gameObject.SetActive(false);
+                Destroy(this); //todo: is this 100% safe?
+            }
+            else if (!persistent && other.gameObject.layer is (int) Layers.Hazard or (int) Layers.Wall)
+            {
+                gameObject.SetActive(false);
+                Destroy(this); //todo: is this 100% safe?
+            }
+        }
         private void OnCollisionEnter2D(Collision2D other)
         {
             if (other.gameObject.layer == (int) Layers.Player)

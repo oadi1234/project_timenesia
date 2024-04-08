@@ -1,4 +1,6 @@
-namespace _2_Scripts.Enemies.Temp_SecondApproach
+using _2_Scripts.Enemies.States;
+
+namespace _2_Scripts.Enemies.FSM
 {
     public class CleanEnemyStateMachine : StateMachine
     {

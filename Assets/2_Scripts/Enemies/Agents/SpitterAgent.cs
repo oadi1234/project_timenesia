@@ -1,8 +1,8 @@
-using _2___Scripts.Global;
+using _2_Scripts.Enemies.FSM;
 using _2_Scripts.Global;
 using UnityEngine;
 
-namespace _2_Scripts.Enemies.Temp_Spitter
+namespace _2_Scripts.Enemies.Agents
 {
     public class SpitterAgent : StaticEnemyBase, IEnemyWithInstantiate
     {

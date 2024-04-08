@@ -1,4 +1,4 @@
-namespace _2_Scripts.Enemies.Temp_SecondApproach
+namespace _2_Scripts.Enemies.States
 {
     public interface IState
     {

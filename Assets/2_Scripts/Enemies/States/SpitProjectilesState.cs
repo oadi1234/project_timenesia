@@ -1,10 +1,8 @@
-using System;
 using System.Collections;
-using _2_Scripts.Enemies.Temp_SecondApproach;
+using _2_Scripts.Enemies.FSM;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
-namespace _2_Scripts.Enemies.Temp_Spitter
+namespace _2_Scripts.Enemies.States
 {
     public class SpitProjectilesState : IState
     {

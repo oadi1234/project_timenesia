@@ -1,7 +1,7 @@
-using _2_Scripts.Enemies.Temp_SecondApproach;
+using _2_Scripts.Enemies.States;
 using UnityEngine;
 
-namespace _2_Scripts.Enemies.Temp_Spitter
+namespace _2_Scripts.Enemies.FSM
 {
     public class SpitterStateMachine : StateMachine
     {

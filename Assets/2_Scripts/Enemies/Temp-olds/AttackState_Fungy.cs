@@ -1,8 +1,7 @@
-﻿using _2_Scripts.Enemies;
-using _2_Scripts.Enemies.Temp_FirstApproach;
+﻿using _2_Scripts.Enemies.Temp_FirstApproach;
 using UnityEngine;
 
-namespace Assets.Scripts.Enemies.States
+namespace _2_Scripts.Enemies.Temp_olds
 {
     internal class AttackState_Fungy : IState
     {

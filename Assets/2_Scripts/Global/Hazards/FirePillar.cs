@@ -1,7 +1,7 @@
-using _2_Scripts.Enemies.Attacks;
+using _2_Scripts.Enemies.Temp_olds;
 using UnityEngine;
 
-namespace _2___Scripts.Enemies.Attacks
+namespace _2_Scripts.Global.Hazards
 {
     public class FirePillar : AttackAoE
     {

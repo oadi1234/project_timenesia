@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 731381737819038068}
   - component: {fileID: 3236005919149936067}
   - component: {fileID: 6449254764724280879}
-  - component: {fileID: -9200438371842595202}
+  - component: {fileID: 7271366510713718000}
   m_Layer: 10
   m_Name: FlyingHunter
   m_TagString: Untagged
@@ -171,7 +171,7 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
---- !u!114 &-9200438371842595202
+--- !u!114 &7271366510713718000
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -180,7 +180,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 24862557987798301}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c5495bb330134a518198ff83226a00a2, type: 3}
+  m_Script: {fileID: 11500000, guid: 51b446a5978f4c279aea770e1650da1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   attackName: basic

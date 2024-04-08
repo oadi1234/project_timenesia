@@ -1,4 +1,3 @@
-using _2___Scripts.Enemies.Attacks;
 using _2___Scripts.Global;
 using _2___Scripts.UI;
 using _2_Scripts.Enemies.Attacks;

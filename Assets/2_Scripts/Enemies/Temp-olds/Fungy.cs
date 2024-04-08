@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections;
-using _2___Scripts.Enemies.Attacks;
 using _2_Scripts.Enemies.Attacks;
 using _2_Scripts.Enemies.Temp_FirstApproach;
-using Assets.Scripts.Enemies.States;
 using UnityEngine;
 
-namespace _2_Scripts.Enemies
+namespace _2_Scripts.Enemies.Temp_olds
 {
     internal class Fungy : MonoBehaviour
     {
