@@ -1,62 +1,63 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerAttackController : MonoBehaviour
+namespace _2_Scripts.Player.Controllers
 {
-    private Animator animator;
-    private Spellbook spellbook; // it should not be here. Spells are going to be a distinct thing from normal attacks. Left for now to avoid it crapping all over the compilation
-    private PlayerInputManager playerInputManager;
-    private PlayerMovementController playerMovementController;
-
-    private static readonly int AttackBoltTrigger = Animator.StringToHash("AttackBoltTrigger");
-    private static readonly int AttackSelfAoETrigger = Animator.StringToHash("AttackSelfAoETrigger");
-
-    private void Awake()
+    public class PlayerAttackController : MonoBehaviour
     {
-        animator = GetComponentInChildren<Animator>();
+        private Animator animator;
+        private Spellbook spellbook; // it should not be here. Spells are going to be a distinct thing from normal attacks. Left for now to avoid it crapping all over the compilation
+        private PlayerInputManager playerInputManager;
+        private PlayerMovementController playerMovementController;
 
-    }
+        private static readonly int AttackBoltTrigger = Animator.StringToHash("AttackBoltTrigger");
+        private static readonly int AttackSelfAoETrigger = Animator.StringToHash("AttackSelfAoETrigger");
 
-    #region Actions
-
-    public void Attack(int spellIndex)
-    {
-        switch (spellIndex)
+        private void Awake()
         {
-            case 0:
-                Attack_Bolt();
-                break;
-            case 1:
-                Attack_SelfAoE();
-                break;
+            animator = GetComponentInChildren<Animator>();
+
         }
-    }
 
-    private void Attack_Bolt()
-    {
-        animator.SetTrigger(AttackBoltTrigger);
-    }
+        #region Actions
 
-    private void Attack_SelfAoE()
-    {
-        animator.SetTrigger(AttackSelfAoETrigger);
-    }
-
-    public void Test(int spellIndex)
-    {
-        switch (spellIndex)
+        public void Attack(int spellIndex)
         {
-            case 0:
-                spellbook.CastFireBall(playerMovementController.IsFacingLeft() ? -1 : 1);
-                break;
-            case 1:
-                spellbook.CastEyeBall(playerMovementController.IsFacingLeft() ? -1 : 1);
-                break;
+            switch (spellIndex)
+            {
+                case 0:
+                    Attack_Bolt();
+                    break;
+                case 1:
+                    Attack_SelfAoE();
+                    break;
+            }
         }
-        playerInputManager.CastingAnimationFinished();
-        playerInputManager.SetInputEnabled(true);
-    }
 
-    #endregion
+        private void Attack_Bolt()
+        {
+            animator.SetTrigger(AttackBoltTrigger);
+        }
+
+        private void Attack_SelfAoE()
+        {
+            animator.SetTrigger(AttackSelfAoETrigger);
+        }
+
+        public void Test(int spellIndex)
+        {
+            switch (spellIndex)
+            {
+                case 0:
+                    spellbook.CastFireBall(playerMovementController.IsFacingLeft() ? -1 : 1);
+                    break;
+                case 1:
+                    spellbook.CastEyeBall(playerMovementController.IsFacingLeft() ? -1 : 1);
+                    break;
+            }
+            playerInputManager.CastingAnimationFinished();
+            playerInputManager.SetInputEnabled(true);
+        }
+
+        #endregion
+    }
 }

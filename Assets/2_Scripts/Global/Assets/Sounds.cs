@@ -1,5 +1,7 @@
-using UnityEngine;
-public class Sounds
+namespace _2_Scripts.Global.Assets
 {
+    public class Sounds
+    {
    
+    }
 }

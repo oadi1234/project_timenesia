@@ -1,15 +1,17 @@
-using _2___Scripts.Global;
-using System.Collections;
-using System.Collections.Generic;
+using _2_Scripts.Camera;
+using _2_Scripts.Global;
 using UnityEngine;
 
-public class PlayerLoadController : MonoBehaviour
+namespace _2_Scripts.Player
 {
-
-    private void Start()
+    public class PlayerLoadController : MonoBehaviour
     {
-        var transform = GetComponent<Transform>();
-        transform.position.Set(GameDataManager.Instance.LastSavePointPosition.x, GameDataManager.Instance.LastSavePointPosition.y, 0);
-        CameraScript.Instance.SetFollow(transform);
+
+        private void Start()
+        {
+            var transform = GetComponent<Transform>();
+            transform.position.Set(GameDataManager.Instance.LastSavePointPosition.x, GameDataManager.Instance.LastSavePointPosition.y, 0);
+            CameraScript.Instance.SetFollow(transform);
+        }
     }
 }

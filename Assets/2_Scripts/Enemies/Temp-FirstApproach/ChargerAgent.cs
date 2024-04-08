@@ -1,5 +1,4 @@
 using System;
-using _2___Scripts.Global;
 using _2_Scripts.Global;
 using UnityEngine;
 

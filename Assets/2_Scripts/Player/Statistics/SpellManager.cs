@@ -1,7 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-/**
+
+namespace _2_Scripts.Player.Statistics
+{
+    /**
  * How it works:
  * Basically player has mana. One point of mana is recharged every second (or half a second?)
  * spell of 1st tier (so a single element) uses 1 mana
@@ -41,10 +42,11 @@ using UnityEngine;
  * etc. It might be stuff from temporary passives (like charms in hollow knight).
  * Advanced elements would probably be just upgrades to spell effectiveness.
  */
-public class SpellManager : MonoBehaviour
-{
-    [SerializeField]
-    private int spellCapacity = 2; //2 - default
+    public class SpellManager : MonoBehaviour
+    {
+        [SerializeField]
+        private int spellCapacity = 2; //2 - default
 
 
+    }
 }

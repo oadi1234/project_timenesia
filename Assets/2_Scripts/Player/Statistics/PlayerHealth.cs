@@ -1,12 +1,10 @@
-using _2___Scripts.Global;
+using System.Collections;
 using _2___Scripts.UI;
 using _2_Scripts.Enemies.Attacks;
 using _2_Scripts.Global;
-using _2_Scripts.Player;
-using System.Collections;
 using UnityEngine;
 
-namespace _2___Scripts.Player
+namespace _2_Scripts.Player.Statistics
 {
     public class PlayerHealth : MonoBehaviour
     {

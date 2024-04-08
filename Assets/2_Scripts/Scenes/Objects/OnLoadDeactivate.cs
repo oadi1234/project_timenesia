@@ -1,19 +1,20 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class OnLoadDeactivate : MonoBehaviour, IOnLoadChecker
+namespace _2_Scripts.Scenes.Objects
 {
-
-    private void Awake()
+    public class OnLoadDeactivate : MonoBehaviour, IOnLoadChecker
     {
-        OnLoadHandler();
-    }
 
-    public void OnLoadHandler()
-    {
-        if(SceneDataHolder.Instance.TryGetLoadStrategy(gameObject.scene.name, gameObject.name)) {
-            gameObject.SetActive(false);
+        private void Awake()
+        {
+            OnLoadHandler();
+        }
+
+        public void OnLoadHandler()
+        {
+            if(SceneDataHolder.Instance.TryGetLoadStrategy(gameObject.scene.name, gameObject.name)) {
+                gameObject.SetActive(false);
+            }
         }
     }
 }

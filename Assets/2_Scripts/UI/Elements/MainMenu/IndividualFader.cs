@@ -1,30 +1,31 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class IndividualFader : MonoBehaviour
+namespace _2_Scripts.UI.Elements.MainMenu
 {
-    public FadeController fadeController;
-    public float delay = 0.1f;
-    public int sequenceIndex = 0;
-
-    private void OnEnable()
+    public class IndividualFader : MonoBehaviour
     {
-        fadeController.StopAllCoroutines();
-        StopAllCoroutines();
-        StartCoroutine(Activate());
-    }
+        public FadeController fadeController;
+        public float delay = 0.1f;
+        public int sequenceIndex = 0;
 
-    private IEnumerator Activate()
-    {
-        yield return new WaitForSeconds(sequenceIndex * delay);
-        StartCoroutine(fadeController.DoFadeIn());
-    }
+        private void OnEnable()
+        {
+            fadeController.StopAllCoroutines();
+            StopAllCoroutines();
+            StartCoroutine(Activate());
+        }
 
-    private void OnDisable()
-    {
-        StopAllCoroutines();
-        fadeController.Reset();
+        private IEnumerator Activate()
+        {
+            yield return new WaitForSeconds(sequenceIndex * delay);
+            StartCoroutine(fadeController.DoFadeIn());
+        }
+
+        private void OnDisable()
+        {
+            StopAllCoroutines();
+            fadeController.Reset();
+        }
     }
 }

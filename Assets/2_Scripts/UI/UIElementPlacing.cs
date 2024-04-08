@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace _2___Scripts.UI
+namespace _2_Scripts.UI
 {
     public class UIElementPlacing : MonoBehaviour
     {

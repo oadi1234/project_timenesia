@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace _2_Scripts.Player
 {
     public class Hurt

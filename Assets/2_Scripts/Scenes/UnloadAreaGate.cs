@@ -1,18 +1,19 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class UnloadAreaGate : MonoBehaviour
+namespace _2_Scripts.Scenes
 {
-    [SerializeField] private string AreaToUnload;
-
-    public static Action<string> UnloadArea;
-    private void OnTriggerEnter2D(Collider2D collision)
+    public class UnloadAreaGate : MonoBehaviour
     {
-        if (UnloadArea != null && collision.gameObject.CompareTag("Player"))
+        [SerializeField] private string AreaToUnload;
+
+        public static Action<string> UnloadArea;
+        private void OnTriggerEnter2D(Collider2D collision)
         {
-            UnloadArea(AreaToUnload);
+            if (UnloadArea != null && collision.gameObject.CompareTag("Player"))
+            {
+                UnloadArea(AreaToUnload);
+            }
         }
     }
 }

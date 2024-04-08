@@ -1,13 +1,15 @@
-using System.Collections;
-using System.Collections.Generic;
+using _2_Scripts.Player.Controllers;
 using UnityEngine;
 
-public class PlayerAnimationEvents : MonoBehaviour
-{ 
-    public PlayerAttackController playerAttackController;
+namespace _2_Scripts.Player.Animation
+{
+    public class PlayerAnimationEvents : MonoBehaviour
+    { 
+        public PlayerAttackController playerAttackController;
     
-    public void Test(int spellIndex)
-    {
-        playerAttackController.Test(spellIndex);
+        public void Test(int spellIndex)
+        {
+            playerAttackController.Test(spellIndex);
+        }
     }
 }

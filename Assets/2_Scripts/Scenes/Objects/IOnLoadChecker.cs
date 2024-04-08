@@ -1,9 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public interface IOnLoadChecker
+namespace _2_Scripts.Scenes.Objects
 {
-    public void OnLoadHandler();
+    public interface IOnLoadChecker
+    {
+        public void OnLoadHandler();
 
+    }
 }

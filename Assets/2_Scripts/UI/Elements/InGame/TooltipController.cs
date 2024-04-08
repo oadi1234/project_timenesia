@@ -1,21 +1,23 @@
-using System.Collections;
-using System.Collections.Generic;
+using _2_Scripts.UI.Elements.Enum;
 using TMPro;
 using UnityEngine;
 
-public class TooltipController : MonoBehaviour
+namespace _2_Scripts.UI.Elements.InGame
 {
-    public TextMeshProUGUI textObject;
-    private TooltipStringLoader tooltipStringLoader;
-    private void Awake()
+    public class TooltipController : MonoBehaviour
     {
-        tooltipStringLoader = GetComponent<TooltipStringLoader>();
-        textObject.text = tooltipStringLoader.GetTooltip(TooltipType.None);
-    }
+        public TextMeshProUGUI textObject;
+        private TooltipStringLoader tooltipStringLoader;
+        private void Awake()
+        {
+            tooltipStringLoader = GetComponent<TooltipStringLoader>();
+            textObject.text = tooltipStringLoader.GetTooltip(TooltipType.None);
+        }
 
-    public void SetTooltipText(TooltipType tooltip)
-    {
-        textObject.text = tooltipStringLoader.GetTooltip(tooltip);
-    }
+        public void SetTooltipText(TooltipType tooltip)
+        {
+            textObject.text = tooltipStringLoader.GetTooltip(tooltip);
+        }
 
+    }
 }

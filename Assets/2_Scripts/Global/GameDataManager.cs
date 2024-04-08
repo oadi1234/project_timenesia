@@ -1,9 +1,14 @@
 using System;
 using _2___Scripts.Global.Events;
-using TMPro;
+using _2_Scripts.Global.Events;
+using _2_Scripts.Global.SaveSystem;
+using _2_Scripts.Global.SaveSystem.Player;
+using _2_Scripts.Global.SaveSystem.SaveDataSchemas;
+using _2_Scripts.Scenes;
+using _2_Scripts.UI.Elements.MainMenu;
 using UnityEngine;
 
-namespace _2___Scripts.Global
+namespace _2_Scripts.Global
 {
     public class GameDataManager : MonoBehaviour
     {

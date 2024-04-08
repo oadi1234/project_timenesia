@@ -1,6 +1,4 @@
-using System;
-
-namespace Spells
+namespace _2_Scripts.Spells
 {
     public class BaseSpell
     {
