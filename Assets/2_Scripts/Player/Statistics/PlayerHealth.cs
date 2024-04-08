@@ -3,16 +3,17 @@ using _2___Scripts.UI;
 using _2_Scripts.Enemies.Attacks;
 using _2_Scripts.Global;
 using _2_Scripts.Player;
+using System.Collections;
 using UnityEngine;
 
 namespace _2___Scripts.Player
 {
     public class PlayerHealth : MonoBehaviour
     {
-        public int maxHealth = 3;
-        public int currentHealth = 3;
+        private int maxHealth;
+        private int currentHealth;
 
-        public float iFrame = 0f;
+        private float iFrame = 0f;
 
         public HealthBar healthBar;
 
@@ -21,24 +22,6 @@ namespace _2___Scripts.Player
         {
             Initialize();
             BaseAttack.Attack += OnBasicAttackHit;
-        }
-
-        private void OnBasicAttackHit(BaseAttack obj)
-        {
-            TakeDamage(obj.Params);
-        }
-
-        private void Initialize()
-        {
-            // var s = SaveManager.Instance.Load();
-            currentHealth = maxHealth;
-            healthBar.Initialize();
-            healthBar.SetMaxHealth(maxHealth);
-            healthBar.SetCurrentHealth(currentHealth);
-        }
-        public void Restart()
-        {
-            Initialize();
         }
 
         // Update is called once per frame
@@ -58,19 +41,27 @@ namespace _2___Scripts.Player
             //}
         }
 
-        private void FixedUpdate()
+        private void OnBasicAttackHit(BaseAttack obj)
         {
-            if (iFrame > 0)
-            {
-                gameObject.layer = (int) Layers.PlayerIFrame;
-                iFrame -= Time.fixedDeltaTime;
-            }
-            else gameObject.layer = (int) Layers.Player;
+            TakeDamage(obj.Params);
+        }
+
+        private void Initialize()
+        {
+            maxHealth = GameDataManager.Instance.stats.MaxHealth;
+            currentHealth = maxHealth;
+            healthBar.Initialize();
+            healthBar.SetMaxHealth(maxHealth);
+            healthBar.SetCurrentHealth(currentHealth);
+        }
+        public void Restart()
+        {
+            Initialize();
         }
 
         public void TakeDamage(int damage)
         {
-            TakeDamage(damage, 2f);
+            TakeDamage(damage, 1f);
         }        
         
         private void TakeDamage(Hurt hurt)
@@ -80,8 +71,9 @@ namespace _2___Scripts.Player
 
         public void TakeDamage(int damage, float iFrame)
         {
-            if (this.iFrame <= 0)
+            if (this.iFrame <= 0f)
             {
+                StartCoroutine(ApplyIFrames());
                 currentHealth -= damage;
                 if (currentHealth <= 0)
                 {
@@ -100,6 +92,14 @@ namespace _2___Scripts.Player
             if (maxHealth < 1) 
                 maxHealth = 1;
             healthBar.SetMaxHealth(maxHealth);
+        }
+
+        private IEnumerator ApplyIFrames()
+        {
+            gameObject.layer = (int)Layers.PlayerIFrame;
+            yield return new WaitForSeconds(iFrame);
+            gameObject.layer = (int)Layers.Player;
+            iFrame = 0f;
         }
     }
 }

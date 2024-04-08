@@ -12,7 +12,7 @@ public class OnLoadDeactivate : MonoBehaviour, IOnLoadChecker
 
     public void OnLoadHandler()
     {
-        if(SceneDataHolder.instance.TryGetLoadStrategy(gameObject.scene.name, gameObject.name)) {
+        if(SceneDataHolder.Instance.TryGetLoadStrategy(gameObject.scene.name, gameObject.name)) {
             gameObject.SetActive(false);
         }
     }

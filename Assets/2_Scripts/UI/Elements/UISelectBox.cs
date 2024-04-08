@@ -10,7 +10,6 @@ public class UISelectBox : MonoBehaviour
 
     void Start()
     {
-        gameObject.SetActive(false);
         fadeController = GetComponent<FadeController>();
     }
 
@@ -29,7 +28,6 @@ public class UISelectBox : MonoBehaviour
 
     public void Open()
     {
-        gameObject.SetActive(true);
         fadeController.StopAllCoroutines();
         StopAllCoroutines();
         StartCoroutine(fadeController.DoFadeIn());
@@ -47,6 +45,5 @@ public class UISelectBox : MonoBehaviour
         fadeController.StopAllCoroutines();
         StopAllCoroutines();
         yield return StartCoroutine(fadeController.DoFadeOut());
-        gameObject.SetActive(false);
     }
 }

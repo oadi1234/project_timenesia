@@ -4,7 +4,6 @@ using _2___Scripts.Global;
 using _2___Scripts.Player;
 using _2_Scripts.Player.ScriptableObjects;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class PlayerMovementController: MonoBehaviour
 {
@@ -52,8 +51,7 @@ public class PlayerMovementController: MonoBehaviour
     private WallChecker wallChecker;
     private Animator animator;
     private PlayerInputManager playerInputManager;
-    private PlayerHealth playerHealth;
-    private PlayerAbilityAndStats stats;
+    //private Dictionary<AbilityName, bool> abilities;
     private PlayerEffort effort;
     private IEnumerator blockInputCoroutine;
     private IEnumerator dashVariableReverserCoroutine;
@@ -69,7 +67,6 @@ public class PlayerMovementController: MonoBehaviour
         flatGroundChecker = GetComponent<FlatGroundChecker>();
         animator = GetComponentInChildren<Animator>();
         playerInputManager = GetComponent<PlayerInputManager>();
-        playerHealth = GetComponent<PlayerHealth>();
         effort = GetComponent<PlayerEffort>();
         velocityVector = new Vector2();
         tempValue = PlayerConstants.Instance.moveSpeed;
@@ -114,9 +111,9 @@ public class PlayerMovementController: MonoBehaviour
         ResetPosition(startingPosition);
     }
 
-    private void Restart()
+    private void Restart() // TODO remove from here - movement controller should not be doing a full restart. Might require something like a PlayerEventController.
     {
-        playerHealth.Restart();
+        //playerHealth.Restart();
         StartCoroutine(BlockInputForSeconds(2f));
         Initialize();
     }
@@ -125,6 +122,11 @@ public class PlayerMovementController: MonoBehaviour
     public bool IsFacingLeft()
     {
         return facingLeft;
+    }
+
+    private bool GetAbilityFlag(AbilityName abilityName)
+    {
+        return GameDataManager.Instance.stats.GetAbilityFlag(abilityName);
     }
     #endregion
 
@@ -208,7 +210,7 @@ public class PlayerMovementController: MonoBehaviour
 
     public void Jump(bool jump, bool keyHeld)
     {
-        if (jump && !isGrounded && isWallTouching && stats.GetAbilityFlag(AbilityName.WallJump))
+        if (jump && !isGrounded && isWallTouching && GetAbilityFlag(AbilityName.WallJump))
         {
             WallJump();
         }
@@ -216,7 +218,7 @@ public class PlayerMovementController: MonoBehaviour
         {
             GroundJump();
         }
-        else if (jump && !isDoubleJumping && stats.GetAbilityFlag(AbilityName.DoubleJump))
+        else if (jump && !isDoubleJumping && GetAbilityFlag(AbilityName.DoubleJump))
         {
             DoubleJump();
         }
@@ -233,7 +235,7 @@ public class PlayerMovementController: MonoBehaviour
     }
     public void Dash(bool dash, float move)
     {
-        if (currentDashCooldown <= 0 && canDash && dash && stats.GetAbilityFlag(AbilityName.Dash) && UseEffort(1)) //use effort for testing only
+        if (currentDashCooldown <= 0 && canDash && dash && GetAbilityFlag(AbilityName.Dash) && UseEffort(1)) //use effort for testing only
         {
             SetVariablesWhenDashing(move);
             blockInputCoroutine = BlockInputForSeconds(0.25f);
@@ -424,7 +426,7 @@ public class PlayerMovementController: MonoBehaviour
             !isWallJumping &&
             rigidBody2D.velocity.y <= 0 &&
             (jumpTime <= 0f || jumpTime > PlayerConstants.Instance.minJumpTimeBeforeWallSlidingEnabled) &&
-            stats.GetAbilityFlag(AbilityName.WallJump);
+            GetAbilityFlag(AbilityName.WallJump);
     }
 
     private void CheckFlipWhenWallJump()
@@ -448,11 +450,6 @@ public class PlayerMovementController: MonoBehaviour
         {
             rigidBody2D.sharedMaterial = _noFriction;
         }
-    }
-
-    internal void SetVariablesOnLoad(ref PlayerAbilityAndStats stats)
-    {
-        this.stats = stats;
     }
     private void SetVariablesWhenGrounded()
     {

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class UIPanel : MonoBehaviour
 {
-    private Button[] buttons;
+    private List<Button> buttons;
     private FadeController fadeController;
     public bool isActiveAtStart = false;
     private bool isActive;
@@ -13,10 +13,25 @@ public class UIPanel : MonoBehaviour
 
     void Start()
     {
-        buttons = GetComponentsInChildren<Button>();
+        buttons = new List<Button>(GetComponentsInChildren<Button>());
         gameObject.SetActive(isActiveAtStart);
         isActive = isActiveAtStart;
         fadeController = GetComponent<FadeController>();
+    }
+
+    public void ReloadButtons()
+    {
+        buttons = new List<Button>(GetComponentsInChildren<Button>());
+    }
+
+    public void RemoveNullsAndDestroyedFromList()
+    {
+        buttons.RemoveAll(x => !x);
+    }
+
+    public int GetButtonCount()
+    {
+        return buttons.Count;
     }
 
     public void SelectButton(int index)
@@ -67,7 +82,7 @@ public class UIPanel : MonoBehaviour
     {
         StartCoroutine(fadeController.DoFadeIn());
         yield return StartCoroutine(FadeInButtons());
-        if (buttonIndexOnOpen >= 0 && buttons.Length > buttonIndexOnOpen)
+        if (buttonIndexOnOpen >= 0 && buttons.Count > buttonIndexOnOpen)
         {
             buttons[buttonIndexOnOpen].Select();
         }
@@ -75,8 +90,15 @@ public class UIPanel : MonoBehaviour
 
     private IEnumerator Deactivate()
     {
-        StartCoroutine(fadeController.DoFadeOut());
-        yield return StartCoroutine(FadeOutButtons());
+        if(buttons.Count == 0)
+        {
+            yield return StartCoroutine(fadeController.DoFadeOut());
+        }
+        else
+        {
+            StartCoroutine(fadeController.DoFadeOut());
+            yield return StartCoroutine(FadeOutButtons());
+        }
         gameObject.SetActive(false);
     }
 
@@ -91,7 +113,7 @@ public class UIPanel : MonoBehaviour
 
     private IEnumerator FadeInButtons()
     {
-        for (int i = 0; i < buttons.Length; i++)
+        for (int i = 0; i < buttons.Count; i++)
         {
             buttons[i].interactable = true;
             StartCoroutine(EnableButton(buttons[i]));
@@ -101,7 +123,7 @@ public class UIPanel : MonoBehaviour
 
     private IEnumerator FadeOutButtons()
     {
-        for (int i = buttons.Length-1; i >= 0; i--)
+        for (int i = buttons.Count -1; i >= 0; i--)
         {
             buttons[i].interactable = false;
             
