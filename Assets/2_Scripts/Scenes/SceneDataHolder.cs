@@ -12,7 +12,7 @@ public class SceneDataHolder : ScriptableObject
     private Dictionary<string, bool> objectLoadStrategy = new Dictionary<string, bool>(); //string is sceneName+objectName
 
     static SceneDataHolder _instance;
-    public static SceneDataHolder instance
+    public static SceneDataHolder Instance
     {
         get
         {
@@ -37,6 +37,11 @@ public class SceneDataHolder : ScriptableObject
     public void SetLoadStrategyOnGameLoad(Dictionary<string, bool> loadData)
     {
         objectLoadStrategy = loadData;
+    }
+
+    public void ClearLoadStrategy()
+    {
+        objectLoadStrategy = new Dictionary<string, bool>();
     }
 
     //switch (behaviour)

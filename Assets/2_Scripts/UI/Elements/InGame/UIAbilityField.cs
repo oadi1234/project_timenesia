@@ -18,7 +18,7 @@ public class UIAbilityField : MonoBehaviour
     private IOnPlayerEnteredEvent.EventType reactOnEventType;
 
 
-    private void Awake()
+    private void Start()
     {
         CurrentImage = GetComponent<Image>();
         CurrentImage.sprite = NoSkillSprite;
@@ -26,13 +26,12 @@ public class UIAbilityField : MonoBehaviour
         buttonFrame.tooltipType = TooltipLocked;
         OnPlayerEnteredEvent.OnPlayerEntered += UnlockAbilityInMenu;
         reactOnEventType = GetReactOnEventType();
-        GameDataManager.OnAbilityLoad += OnAbilityLoad;
+        OnAbilityLoad();
     }
 
-    public void OnAbilityLoad(AbilityName ability)
+    public void OnAbilityLoad()
     {
-        //analogically to OnPlayerEntered
-        if(ability == abilityName)
+        if(GameDataManager.Instance.stats.abilities.GetValueOrDefault(abilityName, false))
         {
             CurrentImage.sprite = SkillSprite;
             buttonFrame.tooltipType = TooltipUnlocked;

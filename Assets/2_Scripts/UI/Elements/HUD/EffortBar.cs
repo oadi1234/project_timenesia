@@ -1,3 +1,5 @@
+using _2___Scripts.Global;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,13 +14,7 @@ namespace _2___Scripts.UI
         private GameObject backgroundPoint;
 
         [SerializeField]
-        private int maxMana = 4; //default 4
-
-        [SerializeField]
         private int currentEffort =0;
-
-        [SerializeField]
-        private int spellCapacity = 0; //default 2
 
         [SerializeField]
         private float scale = 1f;
@@ -30,12 +26,16 @@ namespace _2___Scripts.UI
         private int oldSpellCapacity;
         private int oldMaxEffort;
         private float positionX = 0f;
-        private float positionY = 0f;   
+        private float positionY = 0f;
+        private int maxEffort;
+        private int spellCapacity;
         private List<GameObject> renderedMana;
         private List<GameObject> renderedBackground;
 
         public void Initialize()
         {
+            maxEffort = GameDataManager.Instance.stats.MaxEffort;
+            spellCapacity = GameDataManager.Instance.stats.SpellCapacity;
             renderedMana = new List<GameObject>();
             renderedBackground = new List<GameObject>();
             effortType = new List<EffortType>();
@@ -46,8 +46,8 @@ namespace _2___Scripts.UI
 
         public void SetSpellCapacity(int capacity)
         {
-            if (spellCapacity > maxMana)
-                spellCapacity = maxMana;
+            if (spellCapacity > maxEffort)
+                spellCapacity = maxEffort;
 
             else if (capacity <= 0)
                 spellCapacity = 1;
@@ -74,18 +74,18 @@ namespace _2___Scripts.UI
 
         public void SetMaxEffort(int effort, bool shouldRefill = true)
         {
-            maxMana = effort;
+            maxEffort = effort;
 
-            if(maxMana > oldMaxEffort)
+            if(maxEffort > oldMaxEffort)
             {
-                for (int i = oldMaxEffort; i < maxMana; i++)
+                for (int i = oldMaxEffort; i < maxEffort; i++)
                 {
                     GenerateNewPoint(i);
                 }
             }
-            else if (oldMaxEffort > maxMana)
+            else if (oldMaxEffort > maxEffort)
             {
-                for (int i = oldMaxEffort - 1; i >= maxMana; i--)
+                for (int i = oldMaxEffort - 1; i >= maxEffort; i--)
                 {
                     Destroy(renderedMana[i]);
                     renderedMana.RemoveAt(i);
@@ -97,20 +97,20 @@ namespace _2___Scripts.UI
                 }
             }
 
-            oldMaxEffort = maxMana;
+            oldMaxEffort = maxEffort;
             if(shouldRefill)
-                SetCurrentMana(effort);
+                SetCurrentEffort(effort);
         }
 
-        public void SetCurrentMana(int mana)
+        public void SetCurrentEffort(int mana)
         {
-            if (mana >= maxMana)
+            if (mana >= maxEffort)
             {
-                for(int i = currentEffort; i < maxMana; i++)
+                for(int i = currentEffort; i < maxEffort; i++)
                 {
                     SetEffortAnimation(EffortType.Raw, i);
                 }
-                currentEffort = maxMana;
+                currentEffort = maxEffort;
             }
             else if (mana > currentEffort)
             {
@@ -122,7 +122,7 @@ namespace _2___Scripts.UI
             }
             else
             {
-                for (int i = maxMana - 1; i >= mana; i--)
+                for (int i = maxEffort - 1; i >= mana; i--)
                 {
                     SetEffortAnimation(EffortType.Empty, i);
                 }
@@ -134,9 +134,18 @@ namespace _2___Scripts.UI
         {
             Animator animator = renderedMana[index].GetComponent<Animator>();
             SetCurrentElementToFalse(animator, index);
-            SwitchToBooleanBasedOnElement(animator, true, element);
+            SwitchBooleanBasedOnElement(animator, true, element);
 
             effortType[index] = element;
+        }
+
+        public IEnumerator FillSequentially(float delay)
+        {
+            for (int i = 0; i < maxEffort; i++)
+            {
+                yield return new WaitForSeconds(delay);
+                SetEffortAnimation(EffortType.Raw, i);
+            }
         }
 
         internal void CleanManaSources()
@@ -151,10 +160,10 @@ namespace _2___Scripts.UI
         private void SetCurrentElementToFalse(Animator animator, int index)
         {
             EffortType element = effortType[index];
-            SwitchToBooleanBasedOnElement(animator, false, element);
+            SwitchBooleanBasedOnElement(animator, false, element);
         }
 
-        private void SwitchToBooleanBasedOnElement(Animator animator, bool boolean, EffortType element)
+        private void SwitchBooleanBasedOnElement(Animator animator, bool boolean, EffortType element)
         {
             switch (element)
             {
