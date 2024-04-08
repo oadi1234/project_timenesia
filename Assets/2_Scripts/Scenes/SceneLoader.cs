@@ -9,6 +9,8 @@ namespace _2_Scripts.Scenes
         private AsyncOperation loadingAction;
         private Dictionary<string, bool> loadedAreas = new Dictionary<string, bool>();
         public static SceneLoader Instance { get; private set; }
+        private static string MainScene = "MainScene";
+        private static string PersistentScene = "PersistentScene";
 
         private void Awake()
         {
@@ -28,14 +30,14 @@ namespace _2_Scripts.Scenes
 
         public void InitialLoad(string sceneName)
         {
-            loadingAction = SceneManager.LoadSceneAsync("PersistentScene", LoadSceneMode.Additive); //additive to ensure order of operation does not screw loading sequence.
+            loadingAction = SceneManager.LoadSceneAsync(PersistentScene, LoadSceneMode.Additive); //additive to ensure order of operation does not screw loading sequence.
             LoadArea(sceneName);
             loadingAction.completed += UnloadMainMenu;
         }
         public void LoadMainMenu()
         {
-            loadingAction = SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Additive);
-            SceneManager.UnloadSceneAsync("PersistentScene");
+            loadingAction = SceneManager.LoadSceneAsync(MainScene, LoadSceneMode.Additive);
+            SceneManager.UnloadSceneAsync(PersistentScene);
             loadingAction.completed += CloseGameScenes;
 
         }
@@ -51,7 +53,7 @@ namespace _2_Scripts.Scenes
 
         private void UnloadMainMenu(AsyncOperation obj)
         {
-            SceneManager.UnloadSceneAsync("MainMenu");
+            SceneManager.UnloadSceneAsync(MainScene);
             //TODO send event that loading has completed here?
         }
 
