@@ -124,6 +124,12 @@ namespace _2_Scripts.Global.SaveSystem
             return false;
         }
 
+        public bool SaveExists(string directoryName = "save_0")
+        {
+            var directory = $"{SavePath}/{directoryName}";
+            return Directory.Exists(directory);
+        }
+
         private bool Save(SaveDataSchema data, string directoryName = "save_0")
         {
             CreateSaveDirectory(directoryName);

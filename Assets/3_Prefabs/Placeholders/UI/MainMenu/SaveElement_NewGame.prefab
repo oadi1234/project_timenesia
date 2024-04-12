@@ -95,7 +95,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 4
+    m_Mode: 3
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -192,6 +192,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fadeController: {fileID: 6372181372759324404}
   delay: 0.1
+  sequenceIndex: 0
 --- !u!1 &7180893692618684735
 GameObject:
   m_ObjectHideFlags: 0

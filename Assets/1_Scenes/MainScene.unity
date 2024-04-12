@@ -1049,6 +1049,7 @@ GameObject:
   - component: {fileID: 740074218}
   - component: {fileID: 740074220}
   - component: {fileID: 740074219}
+  - component: {fileID: 740074221}
   m_Layer: 5
   m_Name: SaveList
   m_TagString: Untagged
@@ -1127,7 +1128,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dff460a32c40c2d48acd391c99f33ced, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  buttons: []
   isActiveAtStart: 0
+  controlButtonsFade: 0
   buttonIndexOnOpen: 0
 --- !u!114 &740074219
 MonoBehaviour:
@@ -1157,6 +1160,19 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &740074221
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 740074214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf0dcc7685cd6b240b15ec7631f9a211, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mainMenuManager: {fileID: 9151511677808143436}
 --- !u!114 &747088228 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2775939887598705920, guid: cc82de4524b44cf40b74674c5d1c69c4, type: 3}
@@ -2874,7 +2890,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dff460a32c40c2d48acd391c99f33ced, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  buttons: []
   isActiveAtStart: 0
+  controlButtonsFade: 1
   buttonIndexOnOpen: 0
 --- !u!225 &2075503694
 CanvasGroup:
@@ -2957,6 +2975,7 @@ MonoBehaviour:
   saveListManager: {fileID: 5169126471870241778}
   mainMenuManager: {fileID: 9151511677808143436}
   saveListPanel: {fileID: 740074218}
+  nullButtonChecker: {fileID: 740074221}
 --- !u!1001 &2095726391
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4053,7 +4072,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dff460a32c40c2d48acd391c99f33ced, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  buttons: []
   isActiveAtStart: 0
+  controlButtonsFade: 1
   buttonIndexOnOpen: 0
 --- !u!225 &4416322326934889711
 CanvasGroup:
@@ -4748,7 +4769,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dff460a32c40c2d48acd391c99f33ced, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  buttons: []
   isActiveAtStart: 1
+  controlButtonsFade: 1
   buttonIndexOnOpen: 0
 --- !u!114 &7734353751648704124
 MonoBehaviour:

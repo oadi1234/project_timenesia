@@ -98,32 +98,32 @@ namespace _2_Scripts.UI.Elements.InGame
         {
             currentlyOpenMenu = UIWindowType.ExitPanel;
             exitConfirmationPanel.ToggleActive();
+            exitConfirmationPanel.SetButtonToBeSelectedOnActive(0);
             menuPanel.ToggleActive();
-            exitConfirmationPanel.SelectButton(0);
         }
 
         public void CloseExitGameConfirmationMenu()
         {
             currentlyOpenMenu = UIWindowType.InGameMenu;
             exitConfirmationPanel.ToggleActive();
+            menuPanel.SetButtonToBeSelectedOnActive(0);
             menuPanel.ToggleActive();
-            menuPanel.SelectButton(0);
         }
 
         public void OpenMainMenuConfirmationMenu()
         {
             currentlyOpenMenu = UIWindowType.MainMenuPanel;
             mainMenuConfirmationPanel.ToggleActive();
+            mainMenuConfirmationPanel.SetButtonToBeSelectedOnActive(0);
             menuPanel.ToggleActive();
-            mainMenuConfirmationPanel.SelectButton(0);
         }
 
         public void CloseMainMenuConfirmationMenu()
         {
             currentlyOpenMenu = UIWindowType.InGameMenu;
             mainMenuConfirmationPanel.ToggleActive();
+            menuPanel.SetButtonToBeSelectedOnActive(0);
             menuPanel.ToggleActive();
-            menuPanel.SelectButton(0);
         }
 
         public void ExitGame()

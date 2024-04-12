@@ -7,9 +7,10 @@ namespace _2_Scripts.UI.Elements
 {
     public class UIPanel : MonoBehaviour
     {
-        private List<Button> buttons;
+        public List<Button> buttons;
         private FadeController fadeController;
         public bool isActiveAtStart = false;
+        public bool controlButtonsFade = true;
         private bool isActive;
         public int buttonIndexOnOpen = 0;
 
@@ -17,26 +18,25 @@ namespace _2_Scripts.UI.Elements
         {
             buttons = new List<Button>(GetComponentsInChildren<Button>());
             gameObject.SetActive(isActiveAtStart);
+            if(isActiveAtStart && buttonIndexOnOpen >= 0 && buttonIndexOnOpen < buttons.Count) 
+            {
+                buttons[buttonIndexOnOpen].Select();
+            }
             isActive = isActiveAtStart;
             fadeController = GetComponent<FadeController>();
         }
 
-        public void ReloadButtons()
+        public void LoadButtonList()
         {
             buttons = new List<Button>(GetComponentsInChildren<Button>());
         }
 
-        public void RemoveNullsAndDestroyedFromList()
+        public void RemoveNullButtons()
         {
-            buttons.RemoveAll(x => !x);
+            buttons.RemoveAll(button => button == null);
         }
 
-        public int GetButtonCount()
-        {
-            return buttons.Count;
-        }
-
-        public void SelectButton(int index)
+        public void SetButtonToBeSelectedOnActive(int index)
         {
             buttonIndexOnOpen = index;
         }
@@ -57,6 +57,7 @@ namespace _2_Scripts.UI.Elements
         public void Open()
         {
             gameObject.SetActive(true);
+            RemoveNullButtons();
             SetButtonsInteractable(true);
             fadeController.StopAllCoroutines();
             StopAllCoroutines();
@@ -65,6 +66,7 @@ namespace _2_Scripts.UI.Elements
 
         public void Close()
         {
+            RemoveNullButtons();
             SetButtonsInteractable(false);
             fadeController.StopAllCoroutines();
             StopAllCoroutines();
@@ -79,11 +81,17 @@ namespace _2_Scripts.UI.Elements
             yield return StartCoroutine(WaitForButtonFadeOutAndDeactivate());
         }
 
-
         private IEnumerator Activate()
         {
-            StartCoroutine(fadeController.DoFadeIn());
-            yield return StartCoroutine(FadeInButtons());
+            if (!controlButtonsFade)
+            {
+                yield return StartCoroutine(fadeController.DoFadeIn());
+            }
+            else
+            {
+                StartCoroutine(fadeController.DoFadeIn());
+                yield return StartCoroutine(FadeInButtons());
+            }
             if (buttonIndexOnOpen >= 0 && buttons.Count > buttonIndexOnOpen)
             {
                 buttons[buttonIndexOnOpen].Select();
@@ -92,7 +100,7 @@ namespace _2_Scripts.UI.Elements
 
         private IEnumerator Deactivate()
         {
-            if(buttons.Count == 0)
+            if(buttons.Count == 0 || !controlButtonsFade)
             {
                 yield return StartCoroutine(fadeController.DoFadeOut());
             }

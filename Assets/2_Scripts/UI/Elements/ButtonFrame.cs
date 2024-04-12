@@ -17,7 +17,10 @@ namespace _2_Scripts.UI.Elements
             {
                 selectBox.ToggleActive();
             }
-            tooltip.SetTooltipText(tooltipType);
+            if (tooltip)
+            {
+                tooltip.SetTooltipText(tooltipType);
+            }
         }
 
         public void OnDeselect(BaseEventData eventData)
@@ -26,7 +29,10 @@ namespace _2_Scripts.UI.Elements
             {
                 selectBox.ToggleActive();
             }
-            tooltip.SetTooltipText(TooltipType.None);
+            if (tooltip)
+            {
+                tooltip.SetTooltipText(TooltipType.None);
+            }
         }
     }
 }
