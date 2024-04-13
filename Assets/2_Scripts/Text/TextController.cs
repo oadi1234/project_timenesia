@@ -28,20 +28,16 @@ public class TextController : MonoBehaviour
     private TextState currentTextState = TextState.Hidden;
     private TextState nextTextState = TextState.None;
 
-    public Dictionary<int, List<CharacterCommand>> commandDictionaryPerIndex = new Dictionary<int, List<CharacterCommand>>(); // character index - list of commands pair.
+    private Dictionary<int, List<CharacterCommand>> commandsDictionary = new Dictionary<int, List<CharacterCommand>>(); // character index - list of commands pair.
     private float currentCommandCooldown = 0f;
     private float currentCharDelayShow = 0f;
     private float currentCharDelayHide = 0f;
-    private float[] elapsedTimePerCharacterTransition;
-    private bool[] shouldCharacterBeShown;
     private bool[] coroutineRunningForGivenIndex;
     private int lastVisibleCharacterIndex;
     private int currentlyAnimatedShow = 0;
     private int currentlyAnimatedHide = 0;
 
-    private IEnumerator showTextCoroutine;
-    private IEnumerator hideTextCoroutine;
-    private List<CharacterMeshVertexOperation> perLetterAnimation = new List<CharacterMeshVertexOperation>();
+    public CharacterMeshVertexOperation[] perLetterAnimation;
 
     private void Awake()
     {
@@ -51,20 +47,13 @@ public class TextController : MonoBehaviour
         originalTextColor = text.faceColor;
         textInfo = text.textInfo;
         text.ForceMeshUpdate();
-        elapsedTimePerCharacterTransition = new float[textInfo.characterCount];
-        shouldCharacterBeShown = new bool[textInfo.characterCount];
         coroutineRunningForGivenIndex = new bool[textInfo.characterCount];
-        for (int i = 0; i < textInfo.characterCount; i++)
-            elapsedTimePerCharacterTransition[i] = 0;
+        perLetterAnimation = new CharacterMeshVertexOperation[textInfo.characterCount];
 
         for (lastVisibleCharacterIndex = textInfo.characterCount - 1; lastVisibleCharacterIndex >= 0 && !textInfo.characterInfo[lastVisibleCharacterIndex].isVisible; --lastVisibleCharacterIndex);
 
         originalMeshInfo = textInfo.CopyMeshInfoVertexData(); //store original mesh info data for animating.
         PrepareTextBasedOnTransitionType();
-
-        showTextCoroutine = ShowTextCoroutine();
-        hideTextCoroutine = HideTextCoroutine();
-
 
         UpdateMesh();
     }
@@ -88,9 +77,14 @@ public class TextController : MonoBehaviour
             UpdateMesh();
     }
 
-    public TMP_TextInfo GetTextInfo()
+    public void SetColors(int materialReferenceIndex, int vertexIndex, Color32 result)
     {
-        return textInfo;
+        textInfo.meshInfo[materialReferenceIndex].colors32[vertexIndex] = result;
+    }
+
+    public void SetVertices(int materialReferenceIndex, int vertexIndex, Vector3 result)
+    {
+        textInfo.meshInfo[materialReferenceIndex].vertices[vertexIndex] = result;
     }
 
     public TMP_MeshInfo[] GetOriginalMeshInfo()
@@ -101,6 +95,12 @@ public class TextController : MonoBehaviour
     public void SetText(string text)
     {
         this.text.text = text;
+    }
+
+    public void SetCommands(List<TextCommand> commands)
+    {
+        this.commands = commands;
+        TranslateCommandListToPerIndexDictionary();
     }
 
     public void ShowText()
@@ -115,6 +115,11 @@ public class TextController : MonoBehaviour
         nextTextState = TextState.AnimationHide;
     }
 
+    public void RemoveFromPerLetterAnimation(int charIndex)
+    {
+        perLetterAnimation[charIndex] = null;
+    }
+
     private void HandleNextTextCommand()
     {
         switch (currentTextState)
@@ -122,16 +127,14 @@ public class TextController : MonoBehaviour
             case TextState.Visible:
                 if (nextTextState==TextState.AnimationHide)
                 {
-                    hideTextCoroutine = HideTextCoroutine();
-                    StartCoroutine(hideTextCoroutine);
+                    StartCoroutine(HideTextCoroutine());
                     nextTextState = TextState.None;
                 }
                 break;
             case TextState.Hidden:
                 if (nextTextState == TextState.AnimationShow)
                 {
-                    showTextCoroutine = ShowTextCoroutine();
-                    StartCoroutine(showTextCoroutine);
+                    StartCoroutine(ShowTextCoroutine());
                     nextTextState = TextState.None;
                 }
                 break;
@@ -146,37 +149,12 @@ public class TextController : MonoBehaviour
         }
     }
 
-    private void TranslateCommandListToPerIndexDictionary()
-    {
-        for (int i = 0; i < commands.Count; i++)
-        {
-            if (commands[i].indexStart <= commands[i].indexEnd)
-            {
-                List<CharacterCommand> characterCommands;
-
-                List<int> indexList = Enumerable.Range(commands[i].indexStart, commands[i].indexEnd - commands[i].indexStart + 1).ToList();
-                for (int charIndex = 0; charIndex < indexList.Count; charIndex++)
-                {
-                    if (commandDictionaryPerIndex.ContainsKey(charIndex))
-                        characterCommands = commandDictionaryPerIndex[charIndex];
-                    else
-                        characterCommands = new List<CharacterCommand>();
-
-                    characterCommands.Add(new CharacterCommand(commands[i], charIndex));
-
-                    commandDictionaryPerIndex[charIndex] = characterCommands;
-                }
-            }
-
-        }
-    }
-
     private void PrepareTextBasedOnTransitionType()
     {
         switch (transitionType)
         {
             case TextTransitionType.Simple:
-            case TextTransitionType.Enlarge:
+            case TextTransitionType.EnlargeReduce:
                 SetAllVerticesToZero();
                 break;
             case TextTransitionType.Fade:
@@ -214,18 +192,17 @@ public class TextController : MonoBehaviour
         yield return new WaitForSeconds(hideDelay);
         currentTextState = TextState.AnimationHide;
         currentlyAnimatedHide = 0;
-        shouldCharacterBeShown[0] = false;
         currentCharDelayHide = 0f;
-        while (elapsedTimePerCharacterTransition[lastVisibleCharacterIndex] > 0f)
+        while (perLetterAnimation[lastVisibleCharacterIndex]!=null)
         {
 
-            if (currentlyAnimatedHide < textInfo.characterCount && !shouldCharacterBeShown[currentlyAnimatedHide]) 
+            if (currentlyAnimatedHide < textInfo.characterCount) 
             { 
                 TMP_CharacterInfo charInfo = textInfo.characterInfo[currentlyAnimatedHide];
-                if (charInfo.isVisible && !coroutineRunningForGivenIndex[currentlyAnimatedHide])
+                if (charInfo.isVisible && coroutineRunningForGivenIndex[currentlyAnimatedHide])
                 {
-                    coroutineRunningForGivenIndex[currentlyAnimatedHide] = true;
-                    StartCoroutine(AnimateCharacterHide(charInfo, currentlyAnimatedHide));
+                    perLetterAnimation[currentlyAnimatedHide].StopAnimating();
+                    coroutineRunningForGivenIndex[currentlyAnimatedHide] = false;
                 }
             }
 
@@ -234,14 +211,10 @@ public class TextController : MonoBehaviour
             {
                 currentCharDelayHide = 0f;
                 currentlyAnimatedHide++;
-                if (currentlyAnimatedHide < textInfo.characterCount)
-                    shouldCharacterBeShown[currentlyAnimatedHide] = false;
             }
 
             yield return null;
         }
-
-        //end all per character animations here.
         currentTextState = TextState.Hidden;
     }
 
@@ -249,19 +222,17 @@ public class TextController : MonoBehaviour
     {
         currentTextState = TextState.AnimationShow;
         currentlyAnimatedShow = 0;
-        shouldCharacterBeShown[0] = true;
         currentCharDelayShow = 0f;
-        while (elapsedTimePerCharacterTransition[lastVisibleCharacterIndex] < animationTime)
+        while (perLetterAnimation[lastVisibleCharacterIndex] == null)
         {
-            if (currentlyAnimatedShow < textInfo.characterCount && shouldCharacterBeShown[currentlyAnimatedShow])
+            if (currentlyAnimatedShow < textInfo.characterCount)
             {
                 TMP_CharacterInfo charInfo = textInfo.characterInfo[currentlyAnimatedShow];
                 if (charInfo.isVisible && !coroutineRunningForGivenIndex[currentlyAnimatedShow])
                 {
+                    perLetterAnimation[currentlyAnimatedShow] = CreateNewMeshVertexOperation(charInfo, currentlyAnimatedShow);
+                    StartCoroutine(perLetterAnimation[currentlyAnimatedShow].PerformCharacterCalculations());
                     coroutineRunningForGivenIndex[currentlyAnimatedShow] = true;
-                    StartCoroutine(AnimateCharacterShow(charInfo, currentlyAnimatedShow));
-                    //start all per character animations here
-                    CreateCharacterAnimationCoroutine(charInfo, currentlyAnimatedShow);
                 }
             }
 
@@ -270,8 +241,6 @@ public class TextController : MonoBehaviour
             {
                 currentCharDelayShow = 0f;
                 currentlyAnimatedShow++;
-                if (currentlyAnimatedShow < textInfo.characterCount)
-                    shouldCharacterBeShown[currentlyAnimatedShow] = true;
             }
             
             yield return null;
@@ -289,125 +258,49 @@ public class TextController : MonoBehaviour
         }
     }
 
-    private IEnumerator AnimateCharacterShow(TMP_CharacterInfo charInfo, int characterIndex)
+    private void TranslateCommandListToPerIndexDictionary()
     {
-        //Get vertices per character. Each character has 4 vertices in its mesh.
-        //following textInfo.meshInfo is sort of a draft data stored by TMP_TextInfo.
-        //by the way - all of this is horribly documented on the internet so I am trying
-        // to sort of save it here.
-        while (elapsedTimePerCharacterTransition[characterIndex] < animationTime)
+        for (int i = 0; i < commands.Count; i++)
         {
-            PerformAnimationBasedOnTransitionType(charInfo, characterIndex, true);
-            yield return null;
-        }
-        coroutineRunningForGivenIndex[characterIndex] = false;
-    }
+            if (commands[i].indexStart <= commands[i].indexEnd)
+            {
+                List<CharacterCommand> characterCommands;
 
-    private IEnumerator AnimateCharacterHide(TMP_CharacterInfo charInfo, int characterIndex)
-    {
-        //as method above.
-        while (elapsedTimePerCharacterTransition[characterIndex] > 0f)
-        {
-            PerformAnimationBasedOnTransitionType(charInfo, characterIndex, false);
-            yield return null;
-        }
-        coroutineRunningForGivenIndex[characterIndex] = false;
-    }
+                List<int> indexList = Enumerable.Range(commands[i].indexStart, commands[i].indexEnd - commands[i].indexStart + 1).ToList();
 
-    private void CreateCharacterAnimationCoroutine(TMP_CharacterInfo charInfo, int characterIndex)
-    {
-        List<CharacterCommand> charCommands;
-        if (commandDictionaryPerIndex.ContainsKey(characterIndex))
-        {
-             charCommands = commandDictionaryPerIndex[characterIndex];
-        }
-        else charCommands = new List<CharacterCommand>();
+                for (int charIndex = 0; charIndex < indexList.Count; charIndex++)
+                {
+                    if (commandsDictionary.ContainsKey(indexList[charIndex]))
+                        characterCommands = commandsDictionary[indexList[charIndex]];
+                    else
+                        characterCommands = new List<CharacterCommand>();
 
-        for (int i = 0; i < charCommands.Count; i++)
-        {
-            //execute coroutine per each command
-            PerformAnimationBasedOnCommand(charInfo, charCommands[i].type, i);
+                    characterCommands.Add(new CharacterCommand(commands[i], indexList[charIndex]));
+
+                    commandsDictionary[indexList[charIndex]] = characterCommands;
+                }
+            }
+
         }
     }
 
-    private void PerformAnimationBasedOnCommand(TMP_CharacterInfo charInfo, TextCommandType textCommandType, int characterIndex)
+    private CharacterMeshVertexOperation CreateNewMeshVertexOperation(TMP_CharacterInfo charInfo, int characterIndex)
     {
-        IEnumerator characterCoroutine;
-        switch (textCommandType)
+        CharacterMeshVertexOperation operation = new CharacterMeshVertexOperation();
+        operation.textController = this;
+        operation.materialReferenceIndex = charInfo.materialReferenceIndex;
+        operation.vertexIndex = charInfo.vertexIndex;
+        operation.transitionType = transitionType;
+        if (commandsDictionary.ContainsKey(characterIndex))
         {
-            case TextCommandType.Shake:
-                //characterCoroutine = ShakyText(charInfo, characterIndex);
-                //StartCoroutine(characterCoroutine);
-                break;
-            case TextCommandType.Wave:
-                break;
-            case TextCommandType.FadeWave:
-                break;
-            case TextCommandType.None:
-            case TextCommandType.Gradient:
-            case TextCommandType.Pulse:
-            default:
-                break;
+            operation.characterCommands = commandsDictionary[characterIndex];
+
         }
-    }
-
-    //private IEnumerator ShakyText(TMP_CharacterInfo charInfo, int characterIndex)
-    //{
-
-    //    while (true)
-    //    {
-    //        Vector3 adjustmentVector = new Vector3(
-    //            (Mathf.PerlinNoise((characterIndex + Time.unscaledTime) * 5f, 0) - 0.5f) * text.fontSize * 0.06f,
-    //            (Mathf.PerlinNoise((characterIndex + Time.unscaledTime) * 5f, 1) - 0.5f) * text.fontSize * 0.06f,
-    //            0);
-    //        for (int i = 0; i < 4; i++)
-    //            textInfo.meshInfo[charInfo.materialReferenceIndex].vertices[charInfo.vertexIndex + i] = originalMeshInfo_working[charInfo.materialReferenceIndex].vertices[charInfo.vertexIndex + i] + adjustmentVector;
-    //        yield return null;
-    //    }
-    //}
-
-    private void PerformAnimationBasedOnTransitionType(TMP_CharacterInfo charInfo, int characterIndex, bool transitionInAnimation)
-    {
-        if (transitionInAnimation)
-            elapsedTimePerCharacterTransition[characterIndex] += Time.fixedDeltaTime;
-        else
-            elapsedTimePerCharacterTransition[characterIndex] -= Time.fixedDeltaTime;
-
-        switch (transitionType)
-        {
-            case TextTransitionType.Simple:
-                AssignModifiedVerticeToMeshInfo(charInfo, getMiddlePoint(charInfo), transitionInAnimation ? 1 : 0);
-                break;
-            case TextTransitionType.Enlarge:
-                AssignModifiedVerticeToMeshInfo(charInfo, getMiddlePoint(charInfo), Mathf.Clamp01((elapsedTimePerCharacterTransition[characterIndex] / animationTime)));
-                break;
-            case TextTransitionType.Fade:
-                AssignModifiedAlphaValueToMeshInfo(charInfo, elapsedTimePerCharacterTransition[characterIndex] / animationTime);
-                break;
-        }
-    }
-
-    private void AssignModifiedVerticeToMeshInfo(TMP_CharacterInfo charInfo, Vector3 middlePoint, float size)
-    {
-        //We grab the meshes from text, grab our current character and modify given vertice by given amount
-        for (int i = 0; i < 4; i++)
-        {
-            Vector3 modifiedVector = ((originalMeshInfo[charInfo.materialReferenceIndex].vertices[charInfo.vertexIndex + i] - middlePoint) * size) + middlePoint;
-            textInfo.meshInfo[charInfo.materialReferenceIndex].vertices[charInfo.vertexIndex + i] = modifiedVector;
-        }
-    }
-
-    private void AssignModifiedAlphaValueToMeshInfo(TMP_CharacterInfo charInfo, float alphaPercent)
-    {
-        for (int i = 0; i < 4; i++)
-        {
-            textInfo.meshInfo[charInfo.materialReferenceIndex].colors32[charInfo.vertexIndex + i] = Color32.Lerp(originalTextColor, transitionFromColor, 1f - alphaPercent);
-        }
-    }
-
-    private Vector3 getMiddlePoint(TMP_CharacterInfo charInfo )
-    {
-        return (originalMeshInfo[charInfo.materialReferenceIndex].vertices[charInfo.vertexIndex + 0] 
-            + originalMeshInfo[charInfo.materialReferenceIndex].vertices[charInfo.vertexIndex + 2]) / 2;
+        operation.gradientColors = gradientColorList;
+        operation.characterIndex = characterIndex;
+        operation.fontSize = text.fontSize;
+        operation.stopSignal = false;
+        operation.originalColor = originalTextColor;
+        return operation;
     }
 }
