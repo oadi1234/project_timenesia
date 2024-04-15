@@ -53,7 +53,7 @@ namespace _2_Scripts.UI.Elements.InGame
             {
                 CloseCurrentlyOpenTab();
                 currentlyOpenTab = UIPlayerTabType.Inventory;
-                PlayerMenuTabs.SelectButton((int)UIPlayerTabType.Inventory);
+                PlayerMenuTabs.SetButtonToBeSelectedOnActive((int)UIPlayerTabType.Inventory);
                 Inventory.Open();
             }
         }
@@ -64,7 +64,7 @@ namespace _2_Scripts.UI.Elements.InGame
             {
                 CloseCurrentlyOpenTab();
                 currentlyOpenTab = UIPlayerTabType.Spells;
-                PlayerMenuTabs.SelectButton((int)UIPlayerTabType.Spells);
+                PlayerMenuTabs.SetButtonToBeSelectedOnActive((int)UIPlayerTabType.Spells);
                 Spells.Open();
             }
         }
@@ -75,7 +75,7 @@ namespace _2_Scripts.UI.Elements.InGame
             {
                 CloseCurrentlyOpenTab();
                 currentlyOpenTab = UIPlayerTabType.Map;
-                PlayerMenuTabs.SelectButton((int)UIPlayerTabType.Map);
+                PlayerMenuTabs.SetButtonToBeSelectedOnActive((int)UIPlayerTabType.Map);
                 Map.Open();
             }
         }
@@ -86,7 +86,7 @@ namespace _2_Scripts.UI.Elements.InGame
             {
                 CloseCurrentlyOpenTab();
                 currentlyOpenTab = UIPlayerTabType.Journal;
-                PlayerMenuTabs.SelectButton((int)UIPlayerTabType.Journal);
+                PlayerMenuTabs.SetButtonToBeSelectedOnActive((int)UIPlayerTabType.Journal);
                 Journal.Open();
             }
         }

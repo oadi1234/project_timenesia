@@ -3,9 +3,6 @@ using UnityEngine;
 
 namespace _2_Scripts.UI.Elements.MainMenu
 {
-    /**
- * TODO set as the script for the actual main menu.
- */
     public class MainMenuManager : MonoBehaviour
     {
         public SaveListManager SaveListManager;
@@ -21,18 +18,20 @@ namespace _2_Scripts.UI.Elements.MainMenu
 
         private UIMainMenuWindowType currentlyOpen = UIMainMenuWindowType.MainMenu;
 
+        private bool awaitingDeleteConfirmation = false;
+
         //public static event Action OnMenuPrepared;
 
         private void Awake()
         {
-            menuPanel.SelectButton(0);
+            //menuPanel.SelectButton(0);
             //OnMenuPrepared();
             LoadButton.DeleteAction += OpenDeleteSaveConfirmationPanel;
         }
 
         private void Update()
         {
-            if (Input.GetButtonDown("Cancel")) // TODO adjust for pad
+            if (Input.GetButtonDown("Cancel") && !awaitingDeleteConfirmation) // TODO adjust for pad
             {
                 EscCommand();
             }
@@ -45,10 +44,11 @@ namespace _2_Scripts.UI.Elements.MainMenu
             // else open saved games panel.
             if(SaveListManager.saveDirectoryNameList.Count == 0)
             {
-                global::_2_Scripts.UI.Elements.MainMenu.StartButton.StartNewGame();
+                MainMenu.StartButton.StartNewGame();
             }
             else
             {
+                gameScrollListPanel.LoadButtonList();
                 OpenSavedGamesPanel();
             }
         }
@@ -58,7 +58,7 @@ namespace _2_Scripts.UI.Elements.MainMenu
             currentlyOpen = UIMainMenuWindowType.Options;
             menuPanel.ToggleActive();
             optionsPanel.ToggleActive();
-            optionsPanel.SelectButton(0);
+            optionsPanel.SetButtonToBeSelectedOnActive(0);
         }
 
         public void CloseOptionsPanel()
@@ -66,7 +66,7 @@ namespace _2_Scripts.UI.Elements.MainMenu
             currentlyOpen = UIMainMenuWindowType.MainMenu;
             optionsPanel.ToggleActive();
             menuPanel.ToggleActive();
-            menuPanel.SelectButton(0);
+            menuPanel.SetButtonToBeSelectedOnActive(0);
         }
 
         public void OpenCreditsPanel()
@@ -81,7 +81,7 @@ namespace _2_Scripts.UI.Elements.MainMenu
             currentlyOpen = UIMainMenuWindowType.MainMenu;
             creditsPanel.ToggleActive();
             menuPanel.ToggleActive();
-            menuPanel.SelectButton(0);
+            menuPanel.SetButtonToBeSelectedOnActive(0);
         }
 
         public void OpenExitConfirmationPanel()
@@ -89,7 +89,7 @@ namespace _2_Scripts.UI.Elements.MainMenu
             currentlyOpen = UIMainMenuWindowType.ExitPanel;
             menuPanel.ToggleActive();
             exitConfirmationPanel.ToggleActive();
-            exitConfirmationPanel.SelectButton(0);
+            exitConfirmationPanel.SetButtonToBeSelectedOnActive(0);
         }
 
         public void CloseExitConfirmationPanel()
@@ -97,7 +97,7 @@ namespace _2_Scripts.UI.Elements.MainMenu
             currentlyOpen = UIMainMenuWindowType.MainMenu;
             exitConfirmationPanel.ToggleActive();
             menuPanel.ToggleActive();
-            menuPanel.SelectButton(0);
+            menuPanel.SetButtonToBeSelectedOnActive(0);
         }
 
         public void OpenSavedGamesPanel()
@@ -106,7 +106,19 @@ namespace _2_Scripts.UI.Elements.MainMenu
             menuPanel.ToggleActive();
             savedGamesPanel.ToggleActive();
             gameScrollListPanel.ToggleActive();
-            gameScrollListPanel.SelectButton(0);
+            gameScrollListPanel.SetButtonToBeSelectedOnActive(0);
+        }
+
+        public void OpenSavedGamesAfterDelete()
+        {
+            if (awaitingDeleteConfirmation)
+            {
+                awaitingDeleteConfirmation = false;
+            }
+            currentlyOpen = UIMainMenuWindowType.LoadGame;
+            savedGamesPanel.ToggleActive();
+            gameScrollListPanel.ToggleActive();
+            gameScrollListPanel.SetButtonToBeSelectedOnActive(0);
         }
 
         public void CloseSavedGamesPanel()
@@ -115,17 +127,23 @@ namespace _2_Scripts.UI.Elements.MainMenu
             savedGamesPanel.ToggleActive();
             gameScrollListPanel.ToggleActive();
             menuPanel.ToggleActive();
-            menuPanel.SelectButton(0);
+            menuPanel.SetButtonToBeSelectedOnActive(0);
         }
 
         public void OpenDeleteSaveConfirmationPanel(string directoryName)
         {
             currentlyOpen = UIMainMenuWindowType.DeleteSave;
-            deleteSaveConfirmationPanel.ToggleActive();
             deleteSaveConfirmationPanel.GetComponent<DeleteSavePanelScript>().directoryName = directoryName;
+            deleteSaveConfirmationPanel.ToggleActive();
+            deleteSaveConfirmationPanel.SetButtonToBeSelectedOnActive(0);
             savedGamesPanel.ToggleActive();
             gameScrollListPanel.ToggleActive();
-            deleteSaveConfirmationPanel.SelectButton(0);
+        }
+
+        public void CloseDeleteSaveConfirmationPanelAfterDelete()
+        {
+            deleteSaveConfirmationPanel.ToggleActive();
+            awaitingDeleteConfirmation = true;
         }
 
         public void CloseDeleteSaveConfirmationPanel()
@@ -134,7 +152,7 @@ namespace _2_Scripts.UI.Elements.MainMenu
             deleteSaveConfirmationPanel.ToggleActive();
             savedGamesPanel.ToggleActive();
             gameScrollListPanel.ToggleActive();
-            gameScrollListPanel.SelectButton(0);
+            gameScrollListPanel.SetButtonToBeSelectedOnActive(0);
         }
 
         public void OpenAchievementsPanel()
@@ -142,7 +160,7 @@ namespace _2_Scripts.UI.Elements.MainMenu
             currentlyOpen = UIMainMenuWindowType.Achievements;
             menuPanel.ToggleActive();
             achievementsPanel.ToggleActive();
-            achievementsPanel.SelectButton(0);
+            achievementsPanel.SetButtonToBeSelectedOnActive(0);
         }
 
         public void CloseAchievementsPanel()
@@ -150,7 +168,7 @@ namespace _2_Scripts.UI.Elements.MainMenu
             currentlyOpen = UIMainMenuWindowType.MainMenu;
             achievementsPanel.ToggleActive();
             menuPanel.ToggleActive();
-            menuPanel.SelectButton(0);
+            menuPanel.SetButtonToBeSelectedOnActive(0);
         }
 
         public void OpenExtrasPanel()
@@ -158,7 +176,7 @@ namespace _2_Scripts.UI.Elements.MainMenu
             currentlyOpen = UIMainMenuWindowType.Extras;
             menuPanel.ToggleActive();
             extrasPanel.ToggleActive();
-            extrasPanel.SelectButton(0);
+            extrasPanel.SetButtonToBeSelectedOnActive(0);
         }
 
         public void CloseExtrasPanel()
@@ -166,7 +184,16 @@ namespace _2_Scripts.UI.Elements.MainMenu
             currentlyOpen = UIMainMenuWindowType.MainMenu;
             extrasPanel.ToggleActive();
             menuPanel.ToggleActive();
-            menuPanel.SelectButton(0);
+            menuPanel.SetButtonToBeSelectedOnActive(0);
+        }
+
+        private void TogglePanelActive(UIPanel panel, int? selectButton)
+        {
+            panel.ToggleActive();
+            if (selectButton.HasValue)
+            {
+                panel.SetButtonToBeSelectedOnActive(selectButton.Value);
+            }
         }
 
         public void EscCommand()
