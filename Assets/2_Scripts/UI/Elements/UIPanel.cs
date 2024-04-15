@@ -107,7 +107,7 @@ namespace _2_Scripts.UI.Elements
             else
             {
                 StartCoroutine(fadeController.DoFadeOut());
-                yield return StartCoroutine(FadeOutButtons());
+                yield return FadeOutButtons();
             }
             gameObject.SetActive(false);
         }
@@ -136,20 +136,23 @@ namespace _2_Scripts.UI.Elements
             for (int i = buttons.Count -1; i >= 0; i--)
             {
                 buttons[i].interactable = false;
-            
-                yield return StartCoroutine(DisableButton(buttons[i]));
+
+                yield return DisableButton(buttons[i]);
             }
         }
 
         private IEnumerator EnableButton(Button button)
         {
             button.gameObject.SetActive(true);
+
             yield return button.GetComponent<FadeController>().DoFadeIn();
         }
 
         private IEnumerator DisableButton(Button button)
         {
+
             yield return button.GetComponent<FadeController>().DoFadeOut();
+
             button.gameObject.SetActive(false);
         }
 

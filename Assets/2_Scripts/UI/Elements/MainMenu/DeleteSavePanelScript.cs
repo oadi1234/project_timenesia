@@ -17,7 +17,7 @@ namespace _2_Scripts.UI.Elements.MainMenu
             SaveManager.Instance.DeleteSave(directoryName);
             saveListManager.RemoveElement(directoryName); //button gets destroyed here
             saveListPanel.RemoveNullButtons();
-            mainMenuManager.CloseDeleteSaveConfirmationPanel();
+            mainMenuManager.CloseDeleteSaveConfirmationPanelAfterDelete();
             StartCoroutine(nullButtonChecker.StallUntilNullIsFound());
         }
 

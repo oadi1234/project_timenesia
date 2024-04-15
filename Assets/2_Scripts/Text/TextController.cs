@@ -10,23 +10,23 @@ public class TextController : MonoBehaviour
     public Color32 transitionFromColor;
     public List<TextCommand> commands = new List<TextCommand>();
     public TextTransitionType transitionType = TextTransitionType.Fade;
-    public List<Color32> gradientColorList = new List<Color32>();
+    public List<Color32> gradientColorList = new List<Color32>(); // TODO replace with Gradient class, which does the exact same thing and is straight up better than a list.
 
     public float animationTime = 2f;
     public float charDelay = 0.1f;
     public float commandCooldown = 20f;
-    public float hideDelay = 0.5f;
     public bool canBeFastForwarded = false;
     public bool transitionAllAtOnce = false;
     public bool hideFromRightToLeft = false;
+    public bool startHidden = true;
 
     private TMP_Text text;
 
     private TMP_TextInfo textInfo;
     private TMP_MeshInfo[] originalMeshInfo;
     private Color32 originalTextColor;
-    private TextState currentTextState = TextState.Hidden;
-    private TextState nextTextState = TextState.None;
+    public TextState currentTextState = TextState.Hidden;
+    public TextState nextTextState = TextState.None;
 
     private Dictionary<int, List<CharacterCommand>> commandsDictionary = new Dictionary<int, List<CharacterCommand>>(); // character index - list of commands pair.
     private float currentCommandCooldown = 0f;
@@ -41,21 +41,30 @@ public class TextController : MonoBehaviour
 
     private void Awake()
     {
-        TranslateCommandListToPerIndexDictionary();
-        text = GetComponent<TMP_Text>();
-        text.overrideColorTags = true;
-        originalTextColor = text.faceColor;
-        textInfo = text.textInfo;
-        text.ForceMeshUpdate();
-        coroutineRunningForGivenIndex = new bool[textInfo.characterCount];
-        perLetterAnimation = new CharacterMeshVertexOperation[textInfo.characterCount];
+        Initialize();
+    }
 
-        for (lastVisibleCharacterIndex = textInfo.characterCount - 1; lastVisibleCharacterIndex >= 0 && !textInfo.characterInfo[lastVisibleCharacterIndex].isVisible; --lastVisibleCharacterIndex);
-
-        originalMeshInfo = textInfo.CopyMeshInfoVertexData(); //store original mesh info data for animating.
-        PrepareTextBasedOnTransitionType();
-
+    private void OnEnable()
+    {
+        text.color = transitionFromColor;
+        PrepareText();
         UpdateMesh();
+        if (!startHidden)
+            ShowText();
+    }
+
+    private void OnDisable()
+    {
+        currentTextState = TextState.Hidden;
+        nextTextState = TextState.None;
+        SetAllVerticesToZero();
+        text.color = transitionFromColor;
+        UpdateMesh();
+        for (int i = 0; i < textInfo.characterCount; i++)
+        {
+            coroutineRunningForGivenIndex[i] = false;
+            perLetterAnimation[i] = null;
+        }
     }
 
     private void Update()
@@ -73,16 +82,16 @@ public class TextController : MonoBehaviour
             HandleNextTextCommand();
         }
 
-        if (currentTextState != TextState.Hidden && commands.Count > 0)
+        if (currentTextState != TextState.Hidden)
             UpdateMesh();
     }
 
-    public void SetColors(int materialReferenceIndex, int vertexIndex, Color32 result)
+    public void SetMaterialColorAtVertex(int materialReferenceIndex, int vertexIndex, Color32 result)
     {
         textInfo.meshInfo[materialReferenceIndex].colors32[vertexIndex] = result;
     }
 
-    public void SetVertices(int materialReferenceIndex, int vertexIndex, Vector3 result)
+    public void SetMaterialVerticeAtVertex(int materialReferenceIndex, int vertexIndex, Vector3 result)
     {
         textInfo.meshInfo[materialReferenceIndex].vertices[vertexIndex] = result;
     }
@@ -95,6 +104,27 @@ public class TextController : MonoBehaviour
     public void SetText(string text)
     {
         this.text.text = text;
+        Initialize();
+    }
+
+    public bool IsHidden()
+    {
+        return currentTextState == TextState.Hidden;
+    }
+    private void Initialize()
+    {
+        TranslateCommandListToPerIndexDictionary();
+        text = GetComponent<TMP_Text>();
+        text.overrideColorTags = true;
+        originalTextColor = text.color;
+        textInfo = text.textInfo;
+        text.ForceMeshUpdate();
+        coroutineRunningForGivenIndex = new bool[textInfo.characterCount];
+        perLetterAnimation = new CharacterMeshVertexOperation[textInfo.characterCount];
+
+        for (lastVisibleCharacterIndex = textInfo.characterCount - 1; lastVisibleCharacterIndex >= 0 && !textInfo.characterInfo[lastVisibleCharacterIndex].isVisible; --lastVisibleCharacterIndex) ;
+
+        originalMeshInfo = textInfo.CopyMeshInfoVertexData(); //store original mesh info data for animating.
     }
 
     public void SetCommands(List<TextCommand> commands)
@@ -127,7 +157,10 @@ public class TextController : MonoBehaviour
             case TextState.Visible:
                 if (nextTextState==TextState.AnimationHide)
                 {
-                    StartCoroutine(HideTextCoroutine());
+                    if (hideFromRightToLeft)
+                        StartCoroutine(HideTextCoroutineRightToLeft());
+                    else
+                        StartCoroutine(HideTextCoroutine());
                     nextTextState = TextState.None;
                 }
                 break;
@@ -149,18 +182,10 @@ public class TextController : MonoBehaviour
         }
     }
 
-    private void PrepareTextBasedOnTransitionType()
+    public void PrepareText()
     {
-        switch (transitionType)
-        {
-            case TextTransitionType.Simple:
-            case TextTransitionType.EnlargeReduce:
-                SetAllVerticesToZero();
-                break;
-            case TextTransitionType.Fade:
-                SetInitialColor();
-                break;
-        }
+        text.color = transitionFromColor;
+        SetAllVerticesToZero();
     }
 
     private void SetAllVerticesToZero()
@@ -175,21 +200,8 @@ public class TextController : MonoBehaviour
         }
     }
 
-    private void SetInitialColor()
-    {
-        for (int i = 0; i < textInfo.meshInfo.Length; i++)
-        {
-            if (textInfo.meshInfo[i].vertices != null)
-            {
-                for (int j = 0; j < textInfo.meshInfo[i].colors32.Length; j++)
-                    textInfo.meshInfo[i].colors32[j] = transitionFromColor;
-            }
-        }
-    }
-
     private IEnumerator HideTextCoroutine()
     {
-        yield return new WaitForSeconds(hideDelay);
         currentTextState = TextState.AnimationHide;
         currentlyAnimatedHide = 0;
         currentCharDelayHide = 0f;
@@ -211,6 +223,36 @@ public class TextController : MonoBehaviour
             {
                 currentCharDelayHide = 0f;
                 currentlyAnimatedHide++;
+            }
+
+            yield return null;
+        }
+        currentTextState = TextState.Hidden;
+    }
+
+    private IEnumerator HideTextCoroutineRightToLeft()
+    {
+        currentTextState = TextState.AnimationHide;
+        currentlyAnimatedHide = lastVisibleCharacterIndex;
+        currentCharDelayHide = 0f;
+        while (perLetterAnimation[0] != null)
+        {
+
+            if (currentlyAnimatedHide >= 0)
+            {
+                TMP_CharacterInfo charInfo = textInfo.characterInfo[currentlyAnimatedHide];
+                if (charInfo.isVisible && coroutineRunningForGivenIndex[currentlyAnimatedHide])
+                {
+                    perLetterAnimation[currentlyAnimatedHide].StopAnimating();
+                    coroutineRunningForGivenIndex[currentlyAnimatedHide] = false;
+                }
+            }
+
+            currentCharDelayHide += Time.fixedDeltaTime;
+            if (currentCharDelayHide >= charDelay || transitionAllAtOnce)
+            {
+                currentCharDelayHide = 0f;
+                currentlyAnimatedHide--;
             }
 
             yield return null;
@@ -248,7 +290,7 @@ public class TextController : MonoBehaviour
         currentTextState = TextState.Visible;
     }
 
-    private void UpdateMesh()
+    public void UpdateMesh()
     {
         for (int i = 0; i < textInfo.meshInfo.Length; i++)
         {

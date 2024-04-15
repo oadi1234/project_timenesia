@@ -3,9 +3,6 @@ using UnityEngine;
 
 namespace _2_Scripts.UI.Elements.MainMenu
 {
-    /**
- * TODO set as the script for the actual main menu.
- */
     public class MainMenuManager : MonoBehaviour
     {
         public SaveListManager SaveListManager;
@@ -143,10 +140,19 @@ namespace _2_Scripts.UI.Elements.MainMenu
             gameScrollListPanel.ToggleActive();
         }
 
-        public void CloseDeleteSaveConfirmationPanel()
+        public void CloseDeleteSaveConfirmationPanelAfterDelete()
         {
             deleteSaveConfirmationPanel.ToggleActive();
             awaitingDeleteConfirmation = true;
+        }
+
+        public void CloseDeleteSaveConfirmationPanel()
+        {
+            currentlyOpen = UIMainMenuWindowType.LoadGame;
+            deleteSaveConfirmationPanel.ToggleActive();
+            savedGamesPanel.ToggleActive();
+            gameScrollListPanel.ToggleActive();
+            gameScrollListPanel.SetButtonToBeSelectedOnActive(0);
         }
 
         public void OpenAchievementsPanel()

@@ -25861,7 +25861,7 @@ MonoBehaviour:
   type: 5
   indexStart: 0
   indexEnd: 15
-  magnitude: 5
+  magnitude: 8
 --- !u!1001 &1064724166
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -26669,16 +26669,24 @@ PrefabInstance:
       value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 49175966467136505, guid: cce424c0c38c1e14795e5f6b913732f2, type: 3}
-      propertyPath: animationTime
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 49175966467136505, guid: cce424c0c38c1e14795e5f6b913732f2, type: 3}
-      propertyPath: transitionType
+      propertyPath: startHidden
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 49175966467136505, guid: cce424c0c38c1e14795e5f6b913732f2, type: 3}
+      propertyPath: animationTime
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 49175966467136505, guid: cce424c0c38c1e14795e5f6b913732f2, type: 3}
+      propertyPath: transitionType
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 49175966467136505, guid: cce424c0c38c1e14795e5f6b913732f2, type: 3}
       propertyPath: commandCooldown
-      value: 20
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 49175966467136505, guid: cce424c0c38c1e14795e5f6b913732f2, type: 3}
+      propertyPath: gradient.atime0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 49175966467136505, guid: cce424c0c38c1e14795e5f6b913732f2, type: 3}
       propertyPath: canBeFastForwarded
@@ -26706,7 +26714,7 @@ PrefabInstance:
       objectReference: {fileID: 1980042325}
     - target: {fileID: 49175966467136505, guid: cce424c0c38c1e14795e5f6b913732f2, type: 3}
       propertyPath: transitionFromColor.rgba
-      value: 2013200559
+      value: 16711855
       objectReference: {fileID: 0}
     - target: {fileID: 49175966467136505, guid: cce424c0c38c1e14795e5f6b913732f2, type: 3}
       propertyPath: gradientColorList.Array.size
@@ -26936,7 +26944,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6202e7b8b2471644bfa694749fee08b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 3
+  type: 0
   indexStart: 0
   indexEnd: 15
   magnitude: 1

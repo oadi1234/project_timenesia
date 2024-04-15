@@ -30,10 +30,7 @@ public class CharacterMeshVertexOperation
     private float x = 0f; //position adjustment vector values
     private float y = 0f;
     private Color32 operationColor;
-    private byte r;
-    private byte g;
-    private byte b;
-    private byte a;
+    private int chaoticResult = Random.Range(0, 6);
 
     private static readonly float WAVE_MOD = 0.01f;
     private static readonly float SHAKE_MOD = 0.03f;
@@ -86,8 +83,8 @@ public class CharacterMeshVertexOperation
             //Color32 transitionColor = Color32.Lerp(textController.transitionFromColor, originalColor, transitionTime / textController.animationTime);
             //operationColor = Color32.Lerp(textController.transitionFromColor, originalColor, transitionTime / textController.animationTime);
 
-            textController.SetColors(materialReferenceIndex, vertexIndex + i, operationColor);
-            textController.SetVertices(materialReferenceIndex, vertexIndex + i, operationVector);
+            textController.SetMaterialColorAtVertex(materialReferenceIndex, vertexIndex + i, operationColor);
+            textController.SetMaterialVerticeAtVertex(materialReferenceIndex, vertexIndex + i, operationVector);
         }
     }
 
@@ -109,9 +106,44 @@ public class CharacterMeshVertexOperation
                 operationColor = Color32.Lerp(textController.transitionFromColor, originalColor, transitionTime / textController.animationTime);
                 size = 1;
                 break;
-            default:
+            case TextTransitionType.Chaotic:
+                if (chaoticResult == 0) 
+                    goto case TextTransitionType.Simple;
+                if (chaoticResult == 1) 
+                    goto case TextTransitionType.EnlargeReduce;
+                if (chaoticResult == 2) 
+                    goto case TextTransitionType.Fade;
+                if (chaoticResult == 3)
+                    goto case TextTransitionType.ScrollDown;
+                if (chaoticResult == 4)
+                    goto case TextTransitionType.ScrollUp;
+                if (chaoticResult == 5)
+                    goto case TextTransitionType.FadeReduce;
+                if (chaoticResult == 6)
+                    goto case TextTransitionType.FadeEnlarge;
+                break;
+            case TextTransitionType.ScrollDown:
                 size = 1;
-                operationColor = originalColor;
+                y += Mathf.Pow(((transitionTime/textController.animationTime) - 1) * 2, 2) * fontSize * 0.5f;
+                operationColor = Color32.Lerp(textController.transitionFromColor, originalColor, transitionTime / textController.animationTime);
+                break;
+            case TextTransitionType.ScrollUp:
+                size = 1;
+                y -= Mathf.Pow((transitionTime / textController.animationTime - 1) * 2, 2) * fontSize * 0.5f;
+                operationColor = Color32.Lerp(textController.transitionFromColor, originalColor, transitionTime / textController.animationTime);
+                break;
+            case TextTransitionType.Simple:
+            default:
+                if (!stopSignal)
+                {
+                    operationColor = originalColor;
+                    size = 1;
+                }
+                else
+                {
+                    operationColor = textController.transitionFromColor;
+                    size = 0;
+                }
                 break;
         }
     }
@@ -130,7 +162,9 @@ public class CharacterMeshVertexOperation
                     y += (Mathf.PerlinNoise((characterIndex + Time.unscaledTime) * 15f, 1) - 0.5f) * fontSize * command.magnitude * SHAKE_MOD;
                     break;
                 case TextCommandType.FadeWave:
-                    operationColor = Color32.Lerp(textController.transitionFromColor, operationColor, (Mathf.Sin(-characterIndex * (1 / textController.animationTime) + Time.unscaledTime * 4f * command.magnitude) + 1)/2);
+                    operationColor = 
+                        Color32.Lerp(textController.transitionFromColor, operationColor, 
+                        (Mathf.Sin(-characterIndex * (1 / textController.animationTime) + Time.unscaledTime * 4f * command.magnitude) + 1)/2);
                     break;
                 case TextCommandType.Pulse:
                     CalculateOperationTimePulse(command);
