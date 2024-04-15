@@ -24,7 +24,6 @@ namespace _2_Scripts.Player.Controllers
         private bool canDash; //only one dash mid-air.
 
         private bool facingLeft = false;
-        private bool isGettingKnockedBack = false;
         private bool isGrounded;
         private bool isJumping;
         private bool isWallJumping = false;
@@ -35,10 +34,7 @@ namespace _2_Scripts.Player.Controllers
 
         private float currentCoyoteTime;
         private float timeAfterJumpPressed; //cooldown for setting variables after pressing jump.
-        private float currentKnockbackTime;
-        private float knockbackStrength;
         private float flipCooldown;
-        private float hurtTime;
         private float tempValue; //temporary value to avoid constant reassignment or temp value creation on loop.
         private float currentDashCooldown;
         private float jumpTime = 0f;
@@ -72,10 +68,8 @@ namespace _2_Scripts.Player.Controllers
             effort = GetComponent<PlayerEffort>();
             velocityVector = new Vector2();
             tempValue = PlayerConstants.Instance.moveSpeed;
-            hurtTime = 0f;
             startingPosition = rigidBody2D.position;
             currentCoyoteTime = PlayerConstants.Instance.coyoteTime;
-            currentKnockbackTime = PlayerConstants.Instance.knockbackTime;
             //GameDataManager.Instance.LoadFromSave(new SaveDataSchema{Coins = 10, CurrentHealth = 2, MaxHealth = 4, 
             //    MaxMana = 8, MaxConcentrationSlots = 2, SavePoint = "lol"});
         }
@@ -92,8 +86,6 @@ namespace _2_Scripts.Player.Controllers
             animator.SetBool("isGrounded", isGrounded); // TODO move animator to Update on its own class.
             animator.SetBool("wallSliding", isWallSliding);
             // _animator.SetFloat("Hurt", _hurtTime);
-
-            Knockback();
 
             if (timeAfterJumpPressed > 0)
             {
@@ -311,34 +303,25 @@ namespace _2_Scripts.Player.Controllers
                 transform.localScale = scale;
             }
         }
+
         private void ResetPosition(Vector3 position)
         {
             velocityVector = new Vector2();
             gameObject.transform.position = position;
         }
-        private void Knockback()
-        {
-            if (hurtTime > 0)
-            {
-                hurtTime -= Time.fixedDeltaTime;
-            }
-            if (currentKnockbackTime > 0)
-            {
-                isGettingKnockedBack = true;
-                currentKnockbackTime -= Time.fixedDeltaTime;
-            }
-            else if (isGettingKnockedBack)
-            {
-                isGettingKnockedBack = false;
-                playerInputManager.SetInputEnabled(true);
-            }
 
-            if (isGettingKnockedBack)
-            {
-                velocityVector.Set(knockbackStrength * currentKnockbackTime, knockbackStrength * currentKnockbackTime);
-                rigidBody2D.AddForce(velocityVector, ForceMode2D.Impulse);
-            }
+        public void Knockback(float knockbackStrength)
+        {
+            StartCoroutine(BlockInputForSeconds(PlayerConstants.Instance.knockbackTime));
+            var sign = ((Convert.ToInt32(facingLeft) << 1) - 1);
+            velocityVector = Vector2.zero;
+            rigidBody2D.velocity = velocityVector;
+            rigidBody2D.AddForce(new Vector2(knockbackStrength * sign, knockbackStrength*0.8f), ForceMode2D.Impulse);
+            
+            // TODO slow time for a while here. Getting pushed around by enemies while 
+            
         }
+
 
         #endregion Movement
 

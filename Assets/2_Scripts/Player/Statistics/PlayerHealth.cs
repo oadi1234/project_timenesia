@@ -2,41 +2,26 @@ using System.Collections;
 using _2___Scripts.UI;
 using _2_Scripts.Enemies.Attacks;
 using _2_Scripts.Global;
+using _2_Scripts.Player.Controllers;
 using UnityEngine;
 
 namespace _2_Scripts.Player.Statistics
 {
     public class PlayerHealth : MonoBehaviour
     {
+        private Animator animator;
         private int maxHealth;
         private int currentHealth;
-
-        private float iFrame = 0f;
+        private PlayerMovementController playerMovementController;
 
         public HealthBar healthBar;
 
-        // Start is called before the first frame update
         void Start()
         {
             Initialize();
             BaseAttack.Attack += OnBasicAttackHit;
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-            //if(Input.GetKeyDown(KeyCode.U))
-            //{
-            //    TakeDamage(1);
-            //}
-            //if(Input.GetKeyDown(KeyCode.I))
-            //{
-            //    IncreaseHealth(1);
-            //}
-            //if(Input.GetKeyDown(KeyCode.K))
-            //{
-            //    IncreaseHealth(-1);
-            //}
+            animator = GetComponentInChildren<Animator>();
+            playerMovementController = GetComponent<PlayerMovementController>();
         }
 
         private void OnBasicAttackHit(BaseAttack obj)
@@ -55,49 +40,53 @@ namespace _2_Scripts.Player.Statistics
         public void Restart()
         {
             Initialize();
-        }
+        }      
 
-        public void TakeDamage(int damage)
+        public void TakeDamage(Hurt hurt)
         {
-            TakeDamage(damage, 1f);
-        }        
-        
-        private void TakeDamage(Hurt hurt)
-        {
-            TakeDamage(hurt.DamageDealt, hurt.IFramesGiven);
-        }
 
-        public void TakeDamage(int damage, float iFrame)
-        {
-            if (this.iFrame <= 0f)
+            playerMovementController.Knockback(hurt.KnockbackStrength);
+            if (hurt.IFramesGiven >= 0f)
             {
-                StartCoroutine(ApplyIFrames());
-                currentHealth -= damage;
-                if (currentHealth <= 0)
-                {
-                    currentHealth = 0;
-                    //Destroy(gameObject);
-                }
-                healthBar.SetCurrentHealth(currentHealth);
-                this.iFrame = iFrame;
+                StartCoroutine(ApplyIFrames(hurt.IFramesGiven));
             }
+            currentHealth -= hurt.DamageDealt;
+            if (currentHealth <= 0)
+            {
+                currentHealth = 0;
+                // TODO play death animation here. Then load game.
+            }
+            healthBar.SetCurrentHealth(currentHealth);
         }
 
         public void IncreaseHealth(int amount)
         {
             maxHealth += amount;
             currentHealth = maxHealth;
-            if (maxHealth < 1) 
+            if (maxHealth < 1) // wtf is this
                 maxHealth = 1;
             healthBar.SetMaxHealth(maxHealth);
+            //TODO play increase max health animation here. Both on health bar and do an overlay of sorts maybe?
         }
 
-        private IEnumerator ApplyIFrames()
+        public void Heal(int amount)
+        {
+            currentHealth += amount;
+            if (currentHealth > maxHealth)
+            {
+                currentHealth = maxHealth;
+            }
+            healthBar.SetCurrentHealth(currentHealth);
+            //TODO play heal animation on the health bar here.
+        }
+
+        private IEnumerator ApplyIFrames(float iFrame)
         {
             gameObject.layer = (int)Layers.PlayerIFrame;
+            animator.SetBool("iFrame", true);
             yield return new WaitForSeconds(iFrame);
             gameObject.layer = (int)Layers.Player;
-            iFrame = 0f;
+            animator.SetBool("iFrame", false);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace _2_Scripts.Global.Hazards
 
         private void Start()
         {
-            Params = new Hurt {DamageDealt = 1, IFramesGiven = 0};
+            Params = new Hurt {DamageDealt = 1, IFramesGiven = 2f};
             AttackName = attackName;
         }
 
