@@ -161,9 +161,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 132f1e0c3aadbdf498c370670d99484a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxEffort: 4
-  currentEffort: 0
-  spellCapacity: 4
   regenInterval: 0.5
   effortPerInterval: 1
   effortBar: {fileID: 0}
@@ -180,9 +177,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbc94886cff2882429fc7a517b9a8b78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 20
-  currentHealth: 20
-  iFrame: 0
   healthBar: {fileID: 0}
 --- !u!114 &5552875086602648877
 MonoBehaviour:
@@ -386,7 +380,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 10
   m_Sprite: {fileID: 988619662, guid: 9179b0678e54cc54786fbfb918b383c7, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.43397382, g: 1, b: 0.11792451, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
