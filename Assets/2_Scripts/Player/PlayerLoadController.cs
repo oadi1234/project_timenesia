@@ -1,4 +1,3 @@
-using _2_Scripts.Camera;
 using _2_Scripts.Global;
 using UnityEngine;
 
