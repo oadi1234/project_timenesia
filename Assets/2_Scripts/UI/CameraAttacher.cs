@@ -1,4 +1,3 @@
-using _2_Scripts.Camera;
 using UnityEngine;
 
 namespace _2_Scripts.UI
