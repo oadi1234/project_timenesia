@@ -1,3 +1,4 @@
+using _2_Scripts.Model;
 using _2_Scripts.Player.Controllers;
 using UnityEngine;
 
@@ -7,12 +8,16 @@ namespace _2_Scripts.Player
     {
         public PlayerMovementController playerMovementController;
         public PlayerAttackController playerAttackController;
+        public WeaponController weaponController;
 
         float _xInput = 0f;
+        float _yInput = 0f;
+        float _yInputForCombos = 0f;
         bool _isInputEnabled = true;
         bool _jumpPressed = false;
         bool _jumpKeyHold = false;
         bool _spellAttack = false;
+        bool _weaponAttack = false;
         bool _dashPressed = false;
         int _spellIndex = -1;
 
@@ -23,6 +28,7 @@ namespace _2_Scripts.Player
         void Update()
         {
             _xInput = Input.GetAxisRaw("Horizontal");
+            _yInput = Input.GetAxisRaw("Vertical");
             if (Input.GetButtonDown("Jump"))
             {
                 _jumpPressed = true;
@@ -43,9 +49,20 @@ namespace _2_Scripts.Player
                 _spellAttack = true;
                 _spellIndex = 1;
             }
+
+            if (Input.GetButtonDown("Fire3"))
+            {
+                _yInputForCombos = _yInput;
+                _weaponAttack = true;
+            }
             if(Input.GetButtonDown("Dash"))
             {
                 _dashPressed = true;
+            }
+
+            if (Input.GetButtonDown("SwitchWeapon"))
+            {
+                weaponController.QuickChangeWeapon();
             }
         }
 
@@ -59,6 +76,11 @@ namespace _2_Scripts.Player
                     _castingAnimationInProgress = true;
                     _spellAttack = false;
                     _spellIndex = -1;
+                }
+                else if (_weaponAttack)
+                {
+                    weaponController.Attack(GetDirectionOfCombo());
+                    _weaponAttack = false;
                 }
                 else
                 {
@@ -79,6 +101,15 @@ namespace _2_Scripts.Player
                 _jumpKeyHold = false;
                 _jumpPressed = false;
             }
+        }
+
+        private Direction GetDirectionOfCombo()
+        {
+            return _yInputForCombos == 0
+                ? (playerMovementController.IsFacingLeft() ? Direction.LEFT : Direction.RIGHT)
+                : _yInputForCombos > 0
+                    ? Direction.UP
+                    : Direction.DOWN;
         }
 
         public void SetInputEnabled(bool enable)

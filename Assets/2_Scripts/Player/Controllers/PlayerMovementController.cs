@@ -298,9 +298,10 @@ namespace _2_Scripts.Player.Controllers
             if (flipCooldown <= 0)
             {
                 facingLeft = !facingLeft;
-                Vector3 scale = transform.localScale;
-                scale.x *= -1;
-                transform.localScale = scale;
+                // Vector3 scale = transform.localScale;
+                // scale.x *= -1;
+                // transform.localScale = scale;
+                //TODO: refactor this: flip shouldn't flip whole game object, but only a sprite as this can generate mess
             }
         }
 

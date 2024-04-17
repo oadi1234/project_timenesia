@@ -1,7 +1,7 @@
 using System;
 
 [Serializable]
-public enum AbilityName
+public enum AbilityName //TODO(?): refactor values so they start from 1, not 0 (as 0 is default value of int) + other enums
 {
     DoubleJump = 0,
     Dash = 1,
