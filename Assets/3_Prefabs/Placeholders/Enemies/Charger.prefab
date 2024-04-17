@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2077765357759080880}
   - component: {fileID: 5456040431369369331}
   m_Layer: 10
-  m_Name: Cleaner
+  m_Name: Charger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -127,6 +127,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68c4b4576a804664ae78998349eb7926, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MaxHP: 1
 --- !u!1 &5034654243076720787
 GameObject:
   m_ObjectHideFlags: 0
@@ -230,7 +231,7 @@ GameObject:
   - component: {fileID: 1059330251896522571}
   - component: {fileID: 4378195630332551775}
   - component: {fileID: 3638768329013849567}
-  m_Layer: 10
+  m_Layer: 16
   m_Name: Sight
   m_TagString: Sight
   m_Icon: {fileID: 0}

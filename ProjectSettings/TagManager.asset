@@ -19,12 +19,12 @@ TagManager:
   - Player
   - HurtSource
   - Enemy
-  - 
+  - Weapon
   - Wall
   - Collision
   - Ceiling
   - OneWayGround
-  - 
+  - EnemyNavigation
   - Interactables
   - Hazard
   - SafeGroundCheckpoint

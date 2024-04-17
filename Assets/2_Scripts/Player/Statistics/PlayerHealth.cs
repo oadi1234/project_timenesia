@@ -40,9 +40,9 @@ namespace _2_Scripts.Player.Statistics
         public void Restart()
         {
             Initialize();
-        }      
+        }
 
-        public void TakeDamage(Hurt hurt)
+        private void TakeDamage(Hurt hurt)
         {
 
             playerMovementController.Knockback(hurt.KnockbackStrength);

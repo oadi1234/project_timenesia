@@ -128,6 +128,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73d2b746a3c24baebe9b19728dde5c8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MaxHP: 10
   movingSpeed: 5
 --- !u!1 &3653066383777987346
 GameObject:
@@ -139,7 +140,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2622960540395833237}
   - component: {fileID: 5106987083281138451}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: RightEdge
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -308,7 +309,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7403959486702569877}
   - component: {fileID: 3728443053510940026}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: LeftEdge
   m_TagString: Untagged
   m_Icon: {fileID: 0}

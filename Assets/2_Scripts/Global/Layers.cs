@@ -12,10 +12,12 @@ namespace _2_Scripts.Global
         Player = 8,
         HurtSource = 9,
         Enemy = 10,
+        Weapon = 11,
         Wall = 12,
         Collision = 13,
         Ceiling = 14,
         OneWayGround = 15,
+        EnemyNavigation = 16,
         Interactables = 17,
         Hazard = 18,
         SafeGroundCheckpoint = 19
