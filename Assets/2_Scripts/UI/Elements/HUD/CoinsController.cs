@@ -5,12 +5,12 @@ using UnityEngine;
 
 namespace _2_Scripts.UI.Elements.HUD
 {
-    public class CoinsBar : MonoBehaviour
+    public class CoinsController : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI counterText;
         public int Coins { get; private set; }
 
-        public static CoinsBar Instance { get; private set; }
+        public static CoinsController Instance { get; private set; }
         
         private void Awake()
         {

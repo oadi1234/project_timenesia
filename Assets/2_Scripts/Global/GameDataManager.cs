@@ -64,7 +64,7 @@ namespace _2_Scripts.Global
                     // GainCoins(ev.numericData); // TODO? needed? Coins should be save only on save/death
                     // SceneDataHolder.Instance.AddData(ev.sceneName, ev.objectName); // TODO? needed? Coins should be roaming around scene, rather they should appear from chests/enemies etc. So we should save that chest was open, not that coin was taken
                     //CoinText.text = stats.Coins.ToString(); TODO move responsibility of being updated to the component itself.
-                    CoinsBar.Instance.AddCoins(ev.numericData);              
+                    CoinsController.Instance.AddCoins(ev.numericData);              
                     ev.Remove();
                     break;
                 case IOnPlayerEnteredEvent.EventType.DashCollected:
@@ -174,7 +174,7 @@ namespace _2_Scripts.Global
         }
         public void SaveData(GameStateSaveDataSchema dataSchema)
         {
-            dataSchema.Coins = CoinsBar.Instance.Coins;
+            dataSchema.Coins = CoinsController.Instance.Coins;
             dataSchema.abilities = Stats.abilities;
         }
     }
