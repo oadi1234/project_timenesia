@@ -34,8 +34,8 @@ namespace _2_Scripts.UI.Elements.HUD
 
         public void Initialize()
         {
-            maxEffort = GameDataManager.Instance.stats.MaxEffort;
-            spellCapacity = GameDataManager.Instance.stats.SpellCapacity;
+            maxEffort = GameDataManager.Instance.Stats.MaxEffort;
+            spellCapacity = GameDataManager.Instance.Stats.SpellCapacity;
             renderedMana = new List<GameObject>();
             renderedBackground = new List<GameObject>();
             effortType = new List<EffortType>();

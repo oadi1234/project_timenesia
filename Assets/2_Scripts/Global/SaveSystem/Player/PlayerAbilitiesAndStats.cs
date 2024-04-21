@@ -2,9 +2,8 @@ using System.Collections.Generic;
 
 namespace _2_Scripts.Global.SaveSystem.Player
 {
-    public class PlayerAbilityAndStats
+    public class PlayerAbilitiesAndStats
     {
-
         #region ABILITIES
         public Dictionary<AbilityName, bool> abilities = new();
         #endregion
@@ -33,6 +32,5 @@ namespace _2_Scripts.Global.SaveSystem.Player
         {
             return abilities.GetValueOrDefault(abilityName, false);
         }
-
     }
 }

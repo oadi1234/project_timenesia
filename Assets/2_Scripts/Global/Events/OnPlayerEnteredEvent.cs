@@ -16,14 +16,13 @@ namespace _2_Scripts.Global.Events
 
         public void OnTriggerEnter2D(Collider2D collision)
         {
-            if (OnPlayerEntered != null && collision.CompareTag("Player"))
-                OnPlayerEntered(this);
+            if (collision.gameObject.layer == (int) Layers.Player)
+                OnPlayerEntered?.Invoke(this);
         }
 
         public void Remove()
         {
             Destroy(gameObject);
         }
-
     }
 }

@@ -9,7 +9,7 @@ namespace _2_Scripts.Global.SaveSystem.SaveDataSchemas
         {
 
         }
-
+        //for json magic
         public PreviewStatsDataSchema(PreviewStatsDataSchema preview)
         {
             sceneName = preview.sceneName;
@@ -20,6 +20,7 @@ namespace _2_Scripts.Global.SaveSystem.SaveDataSchemas
             MaxEffort = preview.MaxEffort;
             gameVersion = preview.gameVersion;
         }
+        
         public string sceneName { get; set; } //scene into which load the player.
         public float savePointX;
         public float savePointY;

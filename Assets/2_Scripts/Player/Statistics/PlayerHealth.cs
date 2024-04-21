@@ -31,7 +31,7 @@ namespace _2_Scripts.Player.Statistics
 
         private void Initialize()
         {
-            maxHealth = GameDataManager.Instance.stats.MaxHealth;
+            maxHealth = GameDataManager.Instance.Stats.MaxHealth;
             currentHealth = maxHealth;
             healthBar.Initialize();
             healthBar.SetMaxHealth(maxHealth);

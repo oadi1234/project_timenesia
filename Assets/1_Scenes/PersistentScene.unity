@@ -1595,7 +1595,8 @@ PrefabInstance:
       propertyPath: fadeoutTime
       value: 0.5
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7213165531343841858, guid: 4782c59f59eaa0f49854b242bc7e0af1, type: 3}
     m_RemovedGameObjects:
     - {fileID: 8772716008597110592, guid: 4782c59f59eaa0f49854b242bc7e0af1, type: 3}
     m_AddedGameObjects:

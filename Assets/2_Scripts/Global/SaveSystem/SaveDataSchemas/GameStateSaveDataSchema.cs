@@ -10,6 +10,7 @@ namespace _2_Scripts.Global.SaveSystem.SaveDataSchemas
         {
         }
 
+        //for json magic
         public GameStateSaveDataSchema(GameStateSaveDataSchema gameState)
         {
             Coins = gameState.Coins;

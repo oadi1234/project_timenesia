@@ -48,12 +48,13 @@ namespace _2_Scripts.Global.SaveSystem
             if (saveData == null)
             {
                 Debug.Log("This literally should never happen."); //For unknown reason this still happens. Even though SaveData is assigned on load it still is seen as null.
-                saveData = new SaveDataSchema();
-                saveData.previewStatsDataSchema = new PreviewStatsDataSchema();
-                saveData.gameStateSaveDataSchema = new GameStateSaveDataSchema();
+                saveData = new SaveDataSchema
+                {
+                    previewStatsDataSchema = new PreviewStatsDataSchema(),
+                    gameStateSaveDataSchema = new GameStateSaveDataSchema()
+                };
             }
             Save(saveData, GameDataManager.Instance.directoryName);
-
         }
 
         public void Save(Vector2 position, ZoneEnum zone, string sceneName)
@@ -64,21 +65,23 @@ namespace _2_Scripts.Global.SaveSystem
                 saveData.previewStatsDataSchema = new PreviewStatsDataSchema();
                 saveData.gameStateSaveDataSchema = new GameStateSaveDataSchema();
             }
-            saveData.gameStateSaveDataSchema.abilities = GameDataManager.Instance.stats.abilities;
-            saveData.previewStatsDataSchema.zone = zone;
-            saveData.previewStatsDataSchema.sceneName = sceneName;
-            saveData.previewStatsDataSchema.savePointX = position.x;
-            saveData.previewStatsDataSchema.savePointY = position.y;
-            saveData.previewStatsDataSchema.MaxEffort = GameDataManager.Instance.stats.MaxEffort;
-            saveData.previewStatsDataSchema.MaxHealth = GameDataManager.Instance.stats.MaxHealth;
-            saveData.previewStatsDataSchema.gameVersion = gameVersion;
-            saveData.gameStateSaveDataSchema.Coins = GameDataManager.Instance.stats.Coins;
-            saveData.previewStatsDataSchema.SpellCapacity = GameDataManager.Instance.stats.SpellCapacity;
+            SavePreviewData(position, zone, sceneName);
+            GameDataManager.Instance.SaveData(saveData.previewStatsDataSchema);
+            GameDataManager.Instance.SaveData(saveData.gameStateSaveDataSchema);
 
             // AudioManager.PlaySound();
             //SoundManager.Instance.PlayOnce(GlobalAssets.Instance.SaveAudioClip); //disabled for testing.
 
             Save(saveData, GameDataManager.Instance.directoryName);
+        }
+
+        private void SavePreviewData(Vector2 position, ZoneEnum zone, string sceneName)
+        {
+            saveData.previewStatsDataSchema.zone = zone;
+            saveData.previewStatsDataSchema.sceneName = sceneName;
+            saveData.previewStatsDataSchema.savePointX = position.x;
+            saveData.previewStatsDataSchema.savePointY = position.y;
+            saveData.previewStatsDataSchema.gameVersion = gameVersion;
         }
 
         public void PersistObjectLoadingStrategy(string sceneName, string objectName) 
@@ -98,9 +101,7 @@ namespace _2_Scripts.Global.SaveSystem
             saveData.gameStateSaveDataSchema.alteredObjects.Add(sceneName + objectName, true);
             Save(saveData, GameDataManager.Instance.directoryName);
         }
-
-
-
+        
         public SaveDataSchema Load(string directoryName = "save_0")
         {
             SaveDataSchema data = new SaveDataSchema();
@@ -132,7 +133,7 @@ namespace _2_Scripts.Global.SaveSystem
 
         private bool Save(SaveDataSchema data, string directoryName = "save_0")
         {
-            CreateSaveDirectory(directoryName);
+            CheckSaveDirectory(directoryName);
             bool result = false;
             if (data != null)
             {
@@ -143,7 +144,7 @@ namespace _2_Scripts.Global.SaveSystem
             return result;
         }
 
-        private void CreateSaveDirectory(string directoryName = "save_0")
+        private void CheckSaveDirectory(string directoryName = "save_0")
         {
             if (!Directory.Exists($"{SavePath}/{directoryName}"))
             {
