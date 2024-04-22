@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using _2_Scripts.Model;
+using _2_Scripts.Player;
 using _2_Scripts.UI.Elements.HUD;
 
 namespace _2_Scripts.Global.SaveSystem.SaveDataSchemas

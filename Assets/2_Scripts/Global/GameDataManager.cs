@@ -5,6 +5,8 @@ using _2_Scripts.ExtensionMethods;
 using _2_Scripts.Global.Events;
 using _2_Scripts.Global.SaveSystem;
 using _2_Scripts.Global.SaveSystem.SaveDataSchemas;
+using _2_Scripts.Model;
+using _2_Scripts.Player;
 using _2_Scripts.Scenes;
 using _2_Scripts.UI.Elements.HUD;
 using _2_Scripts.UI.Elements.MainMenu;
@@ -75,34 +77,31 @@ namespace _2_Scripts.Global
     
         private void OnPlayer_Entered(IOnPlayerEnteredEvent ev)
         {
-            switch (ev.eventType)
+            switch (ev.collectedEventType)
             {
-                case IOnPlayerEnteredEvent.EventType.CoinCollected:
-                    // GainCoins(ev.numericData); // TODO? needed? Coins should be save only on save/death
-                    // SceneDataHolder.Instance.AddData(ev.sceneName, ev.objectName); // TODO? needed? Coins should be roaming around scene, rather they should appear from chests/enemies etc. So we should save that chest was open, not that coin was taken
-                    //CoinText.text = GameData.Coins.ToString(); TODO move responsibility of being updated to the component itself.
-                    CoinsController.Instance.AddCoins(ev.numericData);              
-                    ev.Remove();
+                case CollectedEventType.CoinCollected:
+                    CoinsController.Instance.AddCoins(ev.numericData);     
                     break;
-                case IOnPlayerEnteredEvent.EventType.DashCollected:
-                    ev.Remove();
-                    UnlockAbility(AbilityName.Dash);
+                case CollectedEventType.DashCollected:
+                case CollectedEventType.DoubleJumpCollected:
+                case CollectedEventType.WallJumpCollected:
+                case CollectedEventType.LongDashCollected:
+                case CollectedEventType.SpatialDashCollected:
+                case CollectedEventType.TimeGateCollected:
+                case CollectedEventType.SwimUnderwaterCollected:
+                case CollectedEventType.SlowmotionFocusCollected:
+                case CollectedEventType.MidAirFocusCollected:
+                case CollectedEventType.ChargeSpellCollected:
+                    UnlockAbility(Mappers.Map(ev.collectedEventType));
                     SceneDataHolder.Instance.AddData(ev.sceneName, ev.objectName);
                     SaveManager.Instance.PersistObjectLoadingStrategy(ev.sceneName, ev.objectName);
                     break;
-                case IOnPlayerEnteredEvent.EventType.DoubleJumpCollected:
-                    ev.Remove();
-                    UnlockAbility(AbilityName.DoubleJump);
-                    SceneDataHolder.Instance.AddData(ev.sceneName, ev.objectName);
-                    SaveManager.Instance.PersistObjectLoadingStrategy(ev.sceneName, ev.objectName);
+                case CollectedEventType.None:
                     break;
-                case IOnPlayerEnteredEvent.EventType.WallJumpCollected:
-                    ev.Remove();
-                    UnlockAbility(AbilityName.WallJump);
-                    SceneDataHolder.Instance.AddData(ev.sceneName, ev.objectName);
-                    SaveManager.Instance.PersistObjectLoadingStrategy(ev.sceneName, ev.objectName);
-                    break;
-            }
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }         
+            ev.Remove();
         }
 
         private void Load(string directoryName, PreviewDataSchema previewDataSchema)
@@ -121,9 +120,8 @@ namespace _2_Scripts.Global
             //GameObject.Find("Player").GetComponent<PlayerMovementController>().SetVariablesOnLoad(ref GameData); //move responsibility for data retrieval to Player
             Console.WriteLine("loaded");
         }
-        
 
-        public void UnlockAbility(AbilityName abilityName)
+        private void UnlockAbility(AbilityName abilityName)
         {
             currentGameData.Abilities.AddOrUpdate(abilityName, true);
         }

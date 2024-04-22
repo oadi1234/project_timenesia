@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using _2_Scripts.Model;
+using _2_Scripts.Player;
 
 namespace _2_Scripts.Global.SaveSystem.Player
 {

@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using _2_Scripts.Global;
 using _2_Scripts.Global.Events;
+using _2_Scripts.Model;
+using _2_Scripts.Player;
 using _2_Scripts.UI.Elements.Enum;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,7 +19,7 @@ namespace _2_Scripts.UI.Elements.InGame
         public TooltipType TooltipLocked = TooltipType.NotYetCollected;
         public TooltipType TooltipUnlocked = TooltipType.QuestionMarks;
         private ButtonFrame buttonFrame;
-        private IOnPlayerEnteredEvent.EventType reactOnEventType;
+        private CollectedEventType _reactOnCollectedEventType;
 
 
         private void Start()
@@ -27,7 +29,7 @@ namespace _2_Scripts.UI.Elements.InGame
             buttonFrame = GetComponent<ButtonFrame>();
             buttonFrame.tooltipType = TooltipLocked;
             OnPlayerEnteredEvent.OnPlayerEntered += UnlockAbilityInMenu;
-            reactOnEventType = GetReactOnEventType();
+            _reactOnCollectedEventType = GetReactOnEventType();
             OnAbilityLoad();
         }
 
@@ -42,25 +44,25 @@ namespace _2_Scripts.UI.Elements.InGame
 
         private void UnlockAbilityInMenu(IOnPlayerEnteredEvent obj)
         {
-            if(obj.eventType == reactOnEventType)
+            if(obj.collectedEventType == _reactOnCollectedEventType)
             {
                 CurrentImage.sprite = SkillSprite;
                 buttonFrame.tooltipType = TooltipUnlocked;
             }
         }
 
-        private IOnPlayerEnteredEvent.EventType GetReactOnEventType()
+        private CollectedEventType GetReactOnEventType()
         {
             switch(abilityName)
             {
                 case AbilityName.DoubleJump:
-                    return IOnPlayerEnteredEvent.EventType.DoubleJumpCollected;
+                    return CollectedEventType.DoubleJumpCollected;
                 case AbilityName.Dash:
-                    return IOnPlayerEnteredEvent.EventType.DashCollected;
+                    return CollectedEventType.DashCollected;
                 case AbilityName.WallJump:
-                    return IOnPlayerEnteredEvent.EventType.WallJumpCollected;
+                    return CollectedEventType.WallJumpCollected;
                 default:
-                    return IOnPlayerEnteredEvent.EventType.None;
+                    return CollectedEventType.None;
             }
         }
     }

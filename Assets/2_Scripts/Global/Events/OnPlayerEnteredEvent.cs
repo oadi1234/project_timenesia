@@ -1,5 +1,7 @@
 ﻿using System;
+using _2_Scripts.Model;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace _2_Scripts.Global.Events
 {
@@ -7,9 +9,9 @@ namespace _2_Scripts.Global.Events
     {
         public static event Action<IOnPlayerEnteredEvent> OnPlayerEntered;
 
-        [SerializeField] private IOnPlayerEnteredEvent.EventType _eventType;
+        [SerializeField] private CollectedEventType _collectedEventType;
         [SerializeField] private int _numericData;
-        public IOnPlayerEnteredEvent.EventType eventType => _eventType;
+        public CollectedEventType collectedEventType => _collectedEventType;
         public int numericData => _numericData;
         public string sceneName => gameObject.scene.name;
         public string objectName => gameObject.name;
