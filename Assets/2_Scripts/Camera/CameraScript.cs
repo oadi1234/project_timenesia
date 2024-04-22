@@ -72,7 +72,6 @@ public class CameraScript : MonoBehaviour
             if (limitLeft)
             {
                 x = Mathf.Max(x - cameraWidth, limitLeft.position.x) + cameraWidth;
-                Debug.Log("X: " + (x - cameraWidth) + " x limit: " + limitLeft.position.x + "camera width: " + cameraWidth + "camera height: " + cameraHeight + "width/height" + cameraWidth/cameraHeight);
             }
             if (limitRight)
             {
