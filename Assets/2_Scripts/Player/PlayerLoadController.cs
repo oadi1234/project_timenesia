@@ -9,7 +9,7 @@ namespace _2_Scripts.Player
         private void Start()
         {
             var transform = GetComponent<Transform>();
-            transform.position.Set(GameDataManager.Instance.LastSavePointPosition.x, GameDataManager.Instance.LastSavePointPosition.y, 0);
+            transform.position.Set(GameDataManager.Instance.lastSavePointPosition.x, GameDataManager.Instance.lastSavePointPosition.y, 0);
             CameraScript.Instance.SetFollow(transform);
         }
     }

@@ -73,8 +73,8 @@ namespace _2_Scripts.Player.Statistics
 
         private void Initialize()
         {
-            maxEffort = GameDataManager.Instance.Stats.MaxEffort;
-            spellCapacity = GameDataManager.Instance.Stats.SpellCapacity;
+            maxEffort = GameDataManager.Instance.currentGameData.MaxEffort;
+            spellCapacity = GameDataManager.Instance.currentGameData.SpellCapacity;
             currentEffort = 0;
             effortBar.Initialize();
             effortBar.SetMaxEffort(maxEffort, false);

@@ -33,7 +33,7 @@ namespace _2_Scripts.UI.Elements.InGame
 
         public void OnAbilityLoad()
         {
-            if(GameDataManager.Instance.Stats.abilities.GetValueOrDefault(abilityName, false))
+            if(GameDataManager.Instance.currentGameData.Abilities.GetValueOrDefault(abilityName, false))
             {
                 CurrentImage.sprite = SkillSprite;
                 buttonFrame.tooltipType = TooltipUnlocked;

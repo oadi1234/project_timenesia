@@ -9,8 +9,6 @@ namespace _2_Scripts.Global.SaveSystem.Player
         #endregion
 
         #region BASE_STATS
-        //might get moved to some other class. There is no need to provide this to classes like movementController.
-        public int CurrentHealth { get; set; }
         public int MaxHealth { get; set; }
         //public int CurrentConcentrationSlots { get; set; }
         //public int MaxConcentrationSlots { get; set; } //unused for now.

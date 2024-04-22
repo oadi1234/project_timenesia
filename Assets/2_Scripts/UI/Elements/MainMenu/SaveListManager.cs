@@ -23,7 +23,7 @@ namespace _2_Scripts.UI.Elements.MainMenu
             foreach (string directoryName in saveDirectoryNameList) 
             {
                 GameObject loadButton = Instantiate(loadGameListElement);
-                PreviewStatsDataSchema schema = SaveManager.Instance.LoadData<PreviewStatsDataSchema>($"{directoryName}_{SaveManager.SavePreviewSuffix}", directoryName);
+                PreviewDataSchema schema = SaveManager.Instance.LoadData<PreviewDataSchema>($"{directoryName}_{SaveManager.SavePreviewSuffix}", directoryName);
                 loadButton.GetComponent<LoadButton>().directoryName = directoryName;
                 loadButton.GetComponent<LoadButton>().savePreview = schema;
                 loadButton.GetComponent<LoadButton>().Initialize();

@@ -3,14 +3,14 @@ using System;
 namespace _2_Scripts.Global.SaveSystem.SaveDataSchemas
 {
     [Serializable]
-    public class PreviewStatsDataSchema
+    public class PreviewDataSchema
     {
-        public PreviewStatsDataSchema()
+        public PreviewDataSchema()
         {
 
         }
         //for json magic
-        public PreviewStatsDataSchema(PreviewStatsDataSchema preview)
+        public PreviewDataSchema(PreviewDataSchema preview)
         {
             sceneName = preview.sceneName;
             savePointX = preview.savePointX;
@@ -28,6 +28,6 @@ namespace _2_Scripts.Global.SaveSystem.SaveDataSchemas
         public int MaxHealth;
         public int MaxEffort;
         public int SpellCapacity;
-        public int gameVersion;
+        public string gameVersion;
     }
 }

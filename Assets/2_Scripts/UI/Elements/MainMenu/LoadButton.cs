@@ -9,7 +9,7 @@ namespace _2_Scripts.UI.Elements.MainMenu
 {
     public class LoadButton : MonoBehaviour
     {
-        public PreviewStatsDataSchema savePreview { get; set; }
+        public PreviewDataSchema savePreview { get; set; }
         public MainMenuManager mainMenuManager { get; set; }
         public string directoryName { get; set; }
 
@@ -17,7 +17,7 @@ namespace _2_Scripts.UI.Elements.MainMenu
         private EffortBar effortBar;
         private TextMeshProUGUI text;
 
-        public static event Action<string> LoadAction;
+        public static event Action<string, PreviewDataSchema> LoadAction;
         public static event Action<string> DeleteAction;
 
         private void Awake()
@@ -53,10 +53,7 @@ namespace _2_Scripts.UI.Elements.MainMenu
 
         public void Click()
         {
-            if (LoadAction != null)
-            {
-                LoadAction(directoryName);
-            }
+            LoadAction?.Invoke(directoryName, savePreview);
         }
 
         public void Delete()

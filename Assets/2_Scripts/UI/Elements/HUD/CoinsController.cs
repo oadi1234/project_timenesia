@@ -28,7 +28,7 @@ namespace _2_Scripts.UI.Elements.HUD
 
         private void Initialize()
         {
-            SetCoins(GameDataManager.Instance.Stats.Coins);
+            SetCoins(GameDataManager.Instance.currentGameData.Coins);
         }
         
         public void AddCoins(int numberOfCoins)

@@ -120,7 +120,7 @@ namespace _2_Scripts.Player.Controllers
 
         private bool GetAbilityFlag(AbilityName abilityName)
         {
-            return GameDataManager.Instance.Stats.GetAbilityFlag(abilityName);
+            return GameDataManager.Instance.IsAbilityUnlocked(abilityName);
         }
         #endregion
 
