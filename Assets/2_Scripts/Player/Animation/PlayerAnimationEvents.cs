@@ -1,15 +1,16 @@
 using _2_Scripts.Player.Controllers;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace _2_Scripts.Player.Animation
 {
     public class PlayerAnimationEvents : MonoBehaviour
     { 
-        public PlayerAttackController playerAttackController;
+        [FormerlySerializedAs("playerAttackController")] public PlayerSpellController playerSpellController;
     
         public void Test(int spellIndex)
         {
-            playerAttackController.Test(spellIndex);
+            playerSpellController.Test(spellIndex);
         }
     }
 }

@@ -14877,6 +14877,10 @@ PrefabInstance:
       propertyPath: _eventType
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 7824073097203945038, guid: 25f84b1daade44f449f68efb8da575b3, type: 3}
+      propertyPath: _collectedEventType
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 8134309259508562269, guid: 25f84b1daade44f449f68efb8da575b3, type: 3}
       propertyPath: m_Name
       value: AbilityUnlocker

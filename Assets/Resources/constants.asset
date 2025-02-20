@@ -32,3 +32,4 @@ MonoBehaviour:
   initialJumpForce: 10
   doubleJumpForce: 3
   wallSlideSpeed: -4.5
+  lungeMultiplier: 15
