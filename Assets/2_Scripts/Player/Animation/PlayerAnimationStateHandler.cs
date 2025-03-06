@@ -14,20 +14,24 @@ namespace _2_Scripts.Player.Animation
         [SerializeField] private int currentState;
         [SerializeField] private int hurtLayerState;
 
+        private SpellType spellType; 
         private int bufferedState;
         private float currentStateDuration = -1f; //total time of animation
         private float currentStateLockDuration = -1f; // for how long the animation is not changeable
         private float bufferedStateDuration = -1f;
         private float bufferedStateLockDuration = -1f;
         private float hurtDuration = -1f;
+        private float timeOnGround = 0f;
         private bool dashTriggered;
         private bool doubleJumpedTriggered;
         private bool hurtTriggered;
         private bool attackTriggered;
         private bool heavyHurtTriggered;
+        private bool heavyAttackTriggered;
         private bool inputReceived;
-        private bool attackOngoing = false;
-        private static readonly float attackMoveMagnitude = 0.9f;
+        private bool shouldDoMovementStates = true;
+        private const float AttackMoveMagnitude = 1f;
+        private const float CooldownAfterLanding = 0.2f;
 
         void Awake()
         {
@@ -37,13 +41,16 @@ namespace _2_Scripts.Player.Animation
 
         void Update()
         {
-            if (currentStateDuration < 0f && attackOngoing) attackOngoing = false;
+            if (currentStateDuration < 0f && !shouldDoMovementStates) shouldDoMovementStates = true;
             if (currentStateDuration > 0f) currentStateDuration -= Time.deltaTime;
             if (currentStateLockDuration > 0f) currentStateLockDuration -= Time.deltaTime;
             if (hurtDuration > 0f) hurtDuration -= Time.deltaTime;
+            if (playerMovementController.GetIsGrounded()) timeOnGround += Time.deltaTime;
+            else timeOnGround = 0f;
             ClearBufferedState();
             currentState = GetState();
             ResetLogic();
+
             // if (currentStateLockDuration < 0f && currentStateDuration > 0f) Debug.Log("Combo window");
         }
 
@@ -52,19 +59,9 @@ namespace _2_Scripts.Player.Animation
             return currentState;
         }
 
-        public int GetCurrentFrame()
-        {
-            return (int)Math.Floor(currentStateDuration);
-        }
-
-        public float GetRotation()
-        {
-            return 0f;
-        }
-
         public bool LockXFlip()
         {
-            return attackOngoing;
+            return !shouldDoMovementStates && currentState != AC.DashEnd;
         }
 
         private void ClearBufferedState()
@@ -93,9 +90,41 @@ namespace _2_Scripts.Player.Animation
                 return PlayState(AC.HurtHeavy, AC.HeavyHurtDuration, AC.HeavyHurtStateLockDuration);
             }
 
+            if (dashTriggered && (currentState != AC.HurtHeavy) == (currentState != AC.HurtLight))
+            {
+                InterruptState();
+                BufferState(AC.DashEnd, AC.DashEndStateLockDuration, AC.DashEndDuration);
+                return PlayState(AC.Dash, AC.DashDuration, AC.DashStateLockDuration);
+            }
+
             if (currentStateLockDuration > 0f)
             {
-                return currentState;
+                if (!(currentState == AC.Dash && playerMovementController.GetIsWallSliding()))
+                    return currentState;
+            }
+
+            if (doubleJumpedTriggered)
+            {
+                InterruptState();
+                shouldDoMovementStates = false;
+                return PlayState(AC.DoubleJump, AC.DoubleJumpDuration, AC.DoubleJumpStateLockDuration);
+            }
+            
+            if (heavyAttackTriggered)
+            {
+                InterruptState();
+                shouldDoMovementStates = false;
+                playerMovementController.AirHangForAttacks(AC.StaffHeavyAttackDuration, 0f);
+                heavyAttackTriggered = false;
+                playerInputManager.SetChargeCooldown(AC.StaffHeavyAttackStateLockDuration);
+                return PlayState(AC.StaffHeavyAttack, AC.StaffHeavyAttackDuration,
+                    AC.StaffHeavyAttackStateLockDuration);
+            }
+
+            if (playerMovementController.GetIsWallSliding())
+            {
+                InterruptState();
+                return AC.Wallslide;
             }
 
             if (currentStateDuration > 0f && !inputReceived)
@@ -105,26 +134,64 @@ namespace _2_Scripts.Player.Animation
 
             if (bufferedState != AC.None)
             {
-                currentStateDuration = bufferedStateDuration;
-                currentStateLockDuration = bufferedStateLockDuration;
-                return bufferedState;
+                return PlayBufferedState();
             }
 
+            if (spellType != SpellType.None)
+            {
+                if (spellType == SpellType.Bolt)
+                {
+                    InterruptState();
+                    spellType = SpellType.None;
+                    playerMovementController.AirHangForAttacks(AC.StaffSpellcastBoltStateLockDuration, 0.15f);
+                    if (playerInputManager.GetYInput() > 0f)
+                    {
+                        return PlayState(AC.SpellcastStaffBoltUp, AC.StaffSpellcastBoltDuration,
+                            AC.StaffSpellcastBoltStateLockDuration);
+                    }
+
+                    if (playerInputManager.GetYInput() < 0f)
+                    {
+                        return PlayState(AC.SpellcastStaffBoltDown, AC.StaffSpellcastBoltDuration,
+                            AC.StaffSpellcastBoltStateLockDuration);
+                    }
+
+                    return PlayState(AC.SpellcastStaffBolt, AC.StaffSpellcastBoltDuration, AC.StaffSpellcastBoltStateLockDuration);
+                }
+
+                if (spellType == SpellType.Heavy)
+                {
+                    InterruptState();
+                    spellType = SpellType.None;
+                    playerMovementController.AirHangForAttacks(AC.StaffSpellcastHeavyStateLockDuration, 0f);
+                    playerMovementController.AttackLunge(40f);
+                    return PlayState(AC.SpellcastStaffHeavy, AC.StaffSpellcastHeavyDuration, AC.StaffSpellcastHeavyStateLockDuration);
+                }
+                
+                if (spellType == SpellType.Aoe)
+                {
+                    InterruptState();
+                    spellType = SpellType.None;
+                    playerMovementController.AirHangForAttacks(AC.StaffSpellcastAoeStateLockDuration, 0f);
+                    return PlayState(AC.SpellcastStaffAoE, AC.StaffSpellcastAoeDuration, AC.StaffSpellcastAoeStateLockDuration);
+                }
+                spellType = SpellType.None;
+            }
 
             if (attackTriggered && playerInputManager.GetYInput() > 0f)
             {
                 InterruptState();
-                attackOngoing = true;
-                playerMovementController.ReduceInputMoveStrength(AC.StaffAttackStateLockDuration, attackMoveMagnitude);
+                shouldDoMovementStates = false;
+                playerMovementController.AdjustInputMoveStrength(AC.StaffAttackStateLockDuration, AttackMoveMagnitude);
                 return PlayState(AC.StaffAttackAirUp, AC.StaffAttackUpDuration, AC.StaffAttackStateLockDuration);
             }
 
             if (attackTriggered && playerMovementController.GetIsGrounded() && playerInputManager.GetYInput() == 0f)
             {
                 InterruptState();
-                attackOngoing = true;
-                playerMovementController.AttackLunge();
-                playerMovementController.ReduceInputMoveStrength(AC.StaffAttackStateLockDuration, attackMoveMagnitude);
+                shouldDoMovementStates = false;
+                playerMovementController.AdjustInputMoveStrength(AC.StaffAttackStateLockDuration, AttackMoveMagnitude);
+                playerMovementController.AttackLunge(15f);
                 return PlayState(
                     currentState == AC.StaffAttack1
                         ? AC.StaffAttack2
@@ -135,8 +202,8 @@ namespace _2_Scripts.Player.Animation
             if (!playerMovementController.GetIsGrounded() && attackTriggered && playerInputManager.GetYInput() < 0f)
             {
                 InterruptState();
-                attackOngoing = true;
-                playerMovementController.ReduceInputMoveStrength(AC.StaffAttackStateLockDuration, attackMoveMagnitude);
+                shouldDoMovementStates = false;
+                playerMovementController.AdjustInputMoveStrength(AC.StaffAttackStateLockDuration, AttackMoveMagnitude);
                 return PlayState(
                     currentState == AC.StaffAttackAirDown1
                         ? AC.StaffAttackAirDown2
@@ -148,8 +215,8 @@ namespace _2_Scripts.Player.Animation
             if (attackTriggered && !playerMovementController.GetIsGrounded())
             {
                 InterruptState();
-                attackOngoing = true;
-                playerMovementController.ReduceInputMoveStrength(AC.StaffAttackStateLockDuration, attackMoveMagnitude);
+                shouldDoMovementStates = false;
+                playerMovementController.AdjustInputMoveStrength(AC.StaffAttackStateLockDuration, AttackMoveMagnitude);
                 return PlayState(
                     currentState == AC.StaffAttackAir1
                         ? AC.StaffAttackAir2
@@ -157,31 +224,54 @@ namespace _2_Scripts.Player.Animation
                     AC.StaffAttackDuration,
                     AC.StaffAttackStateLockDuration);
             }
-            
-            if (doubleJumpedTriggered)
+
+            // If jumped during ground attack animation. Also has other attacks and double jump there to avoid skipping the animation.
+            if (!shouldDoMovementStates && (currentState != AC.DoubleJump) && !IsGroundAttackState() &&
+                !playerMovementController.GetIsGrounded())
             {
                 InterruptState();
-                return PlayState(AC.DoubleJump, AC.DoubleJumpDuration, AC.DoubleJumpStateLockDuration);
+                shouldDoMovementStates = true;
             }
 
-            if (dashTriggered)
+            if (playerMovementController.GetIsGrounded() && playerInputManager.IsConcentrating() &&
+                playerMovementController.GetXVelocity() == 0f && timeOnGround > CooldownAfterLanding)
             {
-                InterruptState();
-                bufferedStateDuration = AC.DashEndDuration;
-                bufferedStateLockDuration = AC.DashEndStateLockDuration;
-                return PlayState(AC.Dash, AC.DashDuration, AC.DashStateLockDuration, AC.DashEnd);
+                return AC.StaffConcentration;
             }
 
-            if (playerMovementController.GetIsWallSliding())
+            if (shouldDoMovementStates || !(currentStateDuration > 0f))
             {
-                InterruptState();
-                return AC.Wallslide;
-            }
+                if (playerMovementController.GetIsGrounded() && playerInputManager.GetXInput() == 0f)
+                {
+                    if (currentState == AC.Run)
+                    {
+                        InterruptState();
+                        return PlayState(AC.RunStop, AC.RunStopDuration, 0f);
+                    }
 
-            if (!attackOngoing || !(currentStateDuration > 0f))
-            {
-                if (!playerMovementController.GetIsGrounded() && playerMovementController.GetYVelocity() < 0f &&
-                    !playerMovementController.IsOnCoyoteTime())
+                    if (currentStateDuration > 0f)
+                        return AC.RunStop;
+
+                    return AC.Idle;
+                }
+
+                if (playerMovementController.GetIsGrounded() && playerInputManager.GetXInput() != 0f)
+                {
+                    if (currentState == AC.Idle)
+                    {
+                        InterruptState();
+                        return PlayState(AC.RunStart, AC.RunStartDuration, 0f);
+                    }
+
+                    if (currentStateDuration > 0f)
+                    {
+                        return AC.RunStart;
+                    }
+
+                    return AC.Run;
+                }
+
+                if (!playerMovementController.GetIsGrounded() && playerMovementController.GetYVelocity() < 0f)
                 {
                     InterruptState();
                     return AC.Descent;
@@ -192,42 +282,12 @@ namespace _2_Scripts.Player.Animation
                     InterruptState();
                     return AC.Ascend;
                 }
-
-
-                if (playerMovementController.GetIsGrounded() && playerInputManager.GetXInput() == 0f &&
-                    playerInputManager.IsInputEnabled)
-                {
-                    InterruptState();
-                    if (currentState == AC.Run)
-                    {
-                        return PlayState(AC.RunStop, AC.RunStopDuration, 0f);
-                    }
-
-                    if (currentStateDuration > 0f)
-                        return AC.RunStop;
-
-                    return AC.Idle;
-                }
-
-                if (playerMovementController.GetIsGrounded() && playerInputManager.GetXInput() != 0f &&
-                    playerInputManager.IsInputEnabled)
-                {
-                    InterruptState();
-                    if (currentState == AC.Idle)
-                    {
-                        return PlayState(AC.RunStart, AC.RunStartDuration, 0f);
-                    }
-
-                    if (currentStateDuration > 0f)
-                        return AC.RunStart;
-
-                    return AC.Run;
-                }
             }
             else
             {
                 return currentState;
             }
+
 
             return AC.None;
         }
@@ -239,10 +299,10 @@ namespace _2_Scripts.Player.Animation
             bufferedState = AC.None;
         }
 
-        private int PlayState(int state, float stateDuration, float stateLockDuration, int bufferState)
+        private void ShouldSkipMovementStatesOnBufferedState()
         {
-            bufferedState = bufferState;
-            return PlayState(state, stateDuration, stateLockDuration);
+            if (bufferedState == AC.DashEnd)
+                shouldDoMovementStates = false;
         }
 
         private int PlayState(int state, float stateDuration, float stateLockDuration)
@@ -250,6 +310,21 @@ namespace _2_Scripts.Player.Animation
             currentStateDuration = stateDuration;
             currentStateLockDuration = stateLockDuration;
             return state;
+        }
+
+        private void BufferState(int state, float lockDuration, float stateDuration)
+        {
+            bufferedStateDuration = stateDuration;
+            bufferedStateLockDuration = lockDuration;
+            bufferedState = state;
+        }
+
+        private int PlayBufferedState()
+        {
+            currentStateDuration = bufferedStateDuration;
+            currentStateLockDuration = bufferedStateLockDuration;
+            ShouldSkipMovementStatesOnBufferedState();
+            return bufferedState;
         }
 
         #region event_handling
@@ -260,6 +335,11 @@ namespace _2_Scripts.Player.Animation
             playerMovementController.Dashed += () => { dashTriggered = true; };
             playerInputManager.Attacked += () => { attackTriggered = true; };
             playerInputManager.InputReceived += () => { inputReceived = true; };
+            playerInputManager.HeavyAttack += () => { heavyAttackTriggered = true; };
+            
+            // TODO the thing below will not be how it will be handled. Ultimately playerSpellController will send
+            //  actual spell type.
+            playerInputManager.Spellcasted += (spell) => { spellType = (SpellType) spell; };
         }
 
         private void ResetLogic()
@@ -273,6 +353,12 @@ namespace _2_Scripts.Player.Animation
             {
                 hurtLayerState = AC.HurtNone;
             }
+        }
+
+        private bool IsGroundAttackState()
+        {
+            return (currentState != AC.StaffAttack1) ==
+                   (currentState != AC.StaffAttack2);
         }
 
         #endregion

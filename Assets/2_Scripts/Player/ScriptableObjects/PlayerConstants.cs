@@ -23,7 +23,7 @@ namespace _2_Scripts.Player.ScriptableObjects
 
         #region CONSTANTS
 
-        public float coyoteTime = 0.05f;
+        public float coyoteTime = 0.1f;
         public float knockbackTime = 0.5f;
         public float jumpGroundCheckCooldown = 0.01f;
         public float minJumpTimeBeforeWallSlidingEnabled = 0.15f;
@@ -38,17 +38,15 @@ namespace _2_Scripts.Player.ScriptableObjects
 
         public float
             wallJumpPersistenceModifier =
-                1f; //increases time counted after jumping, so holding the key is a bit shorter. To count by how much it decreases do 1/(this variable)
+                0.5f; //increases time counted after jumping, so holding the key is a bit shorter. To count by how much it decreases do 1/(this variable)
 
-        public float moveSpeed = 7f;
+        public float moveSpeed = 10f;
         public float dashCooldown = 0.6f;
         public float maxHorizontalSpeed = 25f;
         public float maxVerticalSpeed = 19f;
         public float initialJumpForce = 10f;
         public float doubleJumpForce = 3f;
         public float wallSlideSpeed = -4.5f;
-
-        public float lungeMultiplier = 15f;
         //private float _glideSpeed = 5f; //Unused for now, marked for deletion
         //private float _crouchSpeed = 0.3f; //unused for now, but might get some use later
 

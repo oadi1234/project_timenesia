@@ -1,6 +1,7 @@
 using _2_Scripts.Player.Animation.model;
 using _2_Scripts.Player.Controllers;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace _2_Scripts.Player.Animation
 {
@@ -8,10 +9,12 @@ namespace _2_Scripts.Player.Animation
     {
         [SerializeField, OfType(typeof(IStateHandler))] private Object _stateHandler;
         [SerializeField] private PlayerMovementController playerMovementController;
+        [SerializeField] private bool shouldHandleRotation = true;
         private SpriteRenderer spriteRenderer;
 
         private Animator animator;
         private bool facingLeft;
+        private int lastState;
 
         public IStateHandler stateHandler
         {
@@ -23,16 +26,18 @@ namespace _2_Scripts.Player.Animation
         {
             animator = GetComponent<Animator>();
             spriteRenderer = GetComponent<SpriteRenderer>();
-            playerMovementController.Flipped += (facingLeft) => { this.facingLeft = facingLeft; };
+            playerMovementController.Flipped += (facingLeftParam) => { this.facingLeft = facingLeftParam; };
         }
 
         // Update is called once per frame
         void Update()
         {
-            SetFacingDirection();
+            if (shouldHandleRotation)
+                SetFacingDirection();
             if (animator.HasState(0, stateHandler.GetCurrentState()))
                 animator.CrossFade(stateHandler.GetCurrentState(), 0, 0);
             else animator.CrossFade(AC.None, 0, 0);
+            lastState = stateHandler.GetCurrentState();
         }
         
         private void SetFacingDirection()
@@ -41,6 +46,17 @@ namespace _2_Scripts.Player.Animation
             {
                 spriteRenderer.flipX = !facingLeft;
             }
+
+            // force flip on state change if character was actually flipped
+            if (lastState != stateHandler.GetCurrentState() && spriteRenderer.flipX == facingLeft)
+            {
+                spriteRenderer.flipX = !facingLeft;
+            }
+        }
+
+        public bool IsFacingLeft()
+        {
+            return facingLeft;
         }
     }
 }

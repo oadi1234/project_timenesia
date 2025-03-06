@@ -6,7 +6,7 @@ namespace _2_Scripts.Player.Animation
 {
     public class PlayerAnimationEvents : MonoBehaviour
     { 
-        [FormerlySerializedAs("playerAttackController")] public PlayerSpellController playerSpellController;
+        public PlayerSpellController playerSpellController;
     
         public void Test(int spellIndex)
         {

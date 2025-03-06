@@ -48,7 +48,7 @@ namespace _2_Scripts.Player.Animation.model
         public static readonly int HingeStopMove = Animator.StringToHash("Stop-move");
         public static readonly int HingeMove = Animator.StringToHash("Move");
 
-        //None failsafe
+        //None animation (empty sprite) for certain states
         public static readonly int None = Animator.StringToHash("none");
 
         #endregion
@@ -80,6 +80,8 @@ namespace _2_Scripts.Player.Animation.model
         public const float StaffAttackDuration = 6f / 12f;
         public const float StaffAttackUpDuration = 5f / 12f;
         public const float StaffConcentrationDuration = 6f / 12f;
+
+        public const float StaffHeavyAttackDuration = 10f / 12f;
         //cloak durations
         public const float CloakStopMoveDuration = 10f / 12f;
         public const float CloakIdleDuration = 1f / 12f;
@@ -90,22 +92,24 @@ namespace _2_Scripts.Player.Animation.model
 
         #region animation_state_locks
         
-        public const float DashEndStateLockDuration = 4f / 12f;
+        public const float DashEndStateLockDuration = 0f;
         public const float DashStateLockDuration = 8f / 24f;
-        public const float DoubleJumpStateLockDuration = 5f / 12f;
+        public const float DoubleJumpStateLockDuration = 0f;
         public const float HeavyHurtStateLockDuration = 11f / 12f;
         public const float LightHurtStateLockDuration = 6f / 12f;
         public const float StaffSpellcastAoeStateLockDuration = 1f;
         public const float StaffSpellcastBoltStateLockDuration = 7f / 12f;
         public const float StaffSpellcastHeavyStateLockDuration = 11f / 12f;
-        public const float StaffAttackStateLockDuration = 4.5f / 12f;
+        public const float StaffAttackStateLockDuration = 4f / 12f;
+        public const float StaffHeavyAttackStateLockDuration = 9f / 12f;
 
         #endregion
-        
+
         #region pivot_points
+
         //all of the pivot points in cloak and hair animation is stored in here.
         // they are created when constructor is called. Preferably move this whole info to a json file
-        
+
         #endregion
     }
 }

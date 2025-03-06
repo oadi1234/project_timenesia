@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using _2_Scripts.Player.Controllers;
 using UnityEngine;
@@ -10,7 +9,7 @@ namespace _2_Scripts.Player.Animation.model
         [SerializeField] HingeSpriteStateHandler hingeSpriteStateHandler;
         [SerializeField] PlayerAnimationStateHandler playerAnimationStateHandler;
         [SerializeField] PlayerMovementController playerMovementController;
-        private SpriteRenderer spriteRenderer; //The sprite which it affects
+        [SerializeField] private Animator bodyAnimator;
 
         private Dictionary<Vector2, int>
             coordinatesPerFrame; //coordinates of the pivot point relative to the sprite area for a given frame in order. Probably a percentage.
@@ -21,32 +20,46 @@ namespace _2_Scripts.Player.Animation.model
 
         void Awake()
         {
-            spriteRenderer = GetComponent<SpriteRenderer>();
             pivot = Vector2.zero;
         }
 
         void Update()
         {
-            spriteRenderer.transform.localEulerAngles =
-                new Vector3(0f, 0f, hingeSpriteStateHandler.GetRotationAngle());
-
-
-            if (playerAnimationStateHandler.GetCurrentFrame() < 0f) frame = 0;
+            frame = (int)(bodyAnimator.GetCurrentAnimatorClipInfo(0)[0].clip.length *
+                          (bodyAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime % 1) *
+                          bodyAnimator.GetCurrentAnimatorClipInfo(0)[0].clip.frameRate);
             if (hingeSpriteStateHandler.GetHingeSpriteType() == 1)
             {
                 pivot = PivotPerFrame.Instance.GetHairPivotLocation(playerAnimationStateHandler.GetCurrentState(),
                     frame);
-            } 
+            }
             else
                 pivot = PivotPerFrame.Instance.GetCloakPivotLocation(playerAnimationStateHandler.GetCurrentState(),
-                frame);
+                    frame);
 
             if (!playerMovementController.IsFacingLeft())
             {
                 pivot.x = -pivot.x;
             }
 
-            spriteRenderer.transform.localPosition = pivot;
+            // transform.localPosition = pivot;
+        }
+
+        // The function below predicts where the pivot will be in the next frame. It is necessary to work when adjusting
+        // position of a rigidbody, otherwise any rigidbody trying to overlap the point will appear as if it was
+        // "lagging behind".
+        public Vector2 GetPivot()
+        {
+            float x = pivot.x;
+            float y = pivot.y;
+            x += playerMovementController.GetXVelocity() * Time.fixedDeltaTime;
+            y += playerMovementController.GetYVelocity() * Time.fixedDeltaTime;
+            return (Vector2)transform.position + new Vector2(x, y);
+        }
+
+        public float GetRotationAngle()
+        {
+            return hingeSpriteStateHandler.GetRotationAngle();
         }
     }
 }

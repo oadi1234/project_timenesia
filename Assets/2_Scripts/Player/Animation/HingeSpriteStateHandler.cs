@@ -28,15 +28,15 @@ namespace _2_Scripts.Player.Animation
             playerMovementController.Flipped += (bleb) => { turnAroundTimer = 0.1f; };
         }
 
-        void FixedUpdate()
+        void Update()
         {
-            if (currentStateDuration > 0f) currentStateDuration -= Time.fixedDeltaTime;
+            if (currentStateDuration > 0f) currentStateDuration -= Time.deltaTime;
             pendulum.drag = 20f * playerMovementController.GetTotalVelocity() / 10f + 10f + directionDragAdjustment;
             pendulum.gravityScale =
                 5f / (playerMovementController.GetTotalVelocity() + 0.1f);
             if (turnAroundTimer > 0f)
             {
-                turnAroundTimer -= Time.fixedDeltaTime;
+                turnAroundTimer -= Time.deltaTime;
                 pendulum.drag = 5f;
                 pendulum.gravityScale = 50f;
             }
@@ -54,7 +54,8 @@ namespace _2_Scripts.Player.Animation
             if (PivotPerFrame.Instance.IsIncorrectState(playerAnimationStateHandler.GetCurrentState()))
             {
                 SetRotation(0f); //most animations work best with 0 rotation afterwards.
-                ResetVelocity();
+                // ResetVelocity();
+                currentStateDuration = 0f;
                 return AC.None;
             }
 
@@ -100,11 +101,6 @@ namespace _2_Scripts.Player.Animation
             return false;
         }
 
-        private float GetAngularVelocity()
-        {
-            return pendulum.angularVelocity;
-        }
-
         private int PlayState(int state, float stateDuration)
         {
             currentStateDuration = stateDuration;
@@ -112,14 +108,9 @@ namespace _2_Scripts.Player.Animation
         }
 
         // Necessary to use after certain animations, i.e. dash, double jump, attack. Can also be useful for fast snap to angle if hit really hard
-        public void SetRotation(float angle)
+        private void SetRotation(float angle)
         {
-            pendulumTransform.localEulerAngles.Set(0, 0, angle);
-        }
-
-        public void ResetVelocity()
-        {
-            pendulum.velocity.Set(0,0);
+            pendulum.SetRotation(angle);
         }
 
         public int GetHingeSpriteType()

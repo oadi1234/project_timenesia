@@ -66,6 +66,8 @@ namespace _2_Scripts.Player.Animation.model
             SetIncorrectHingeStateList();
         }
 
+        //TODO this actually might be easier to do with skinning editor sprite tool, by just adding bones.
+        // Tbh this works though and it might be less computation intensive than the bones.
         private void PopulateHairPivots()
         {
             //Idle state
@@ -308,6 +310,7 @@ namespace _2_Scripts.Player.Animation.model
             _incorrectStateList.Add(AC.StaffAttackAirDown1);
             _incorrectStateList.Add(AC.StaffAttackAirDown2);
             _incorrectStateList.Add(AC.StaffAttackAirUp);
+            _incorrectStateList.Add(AC.StaffHeavyAttack);
             _incorrectStateList.Add(AC.SpellcastStaffHeavy);
             _incorrectStateList.Add(AC.SpellcastStaffAoE);
             
