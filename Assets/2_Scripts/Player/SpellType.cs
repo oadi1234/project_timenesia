@@ -1,4 +1,4 @@
-namespace _2_Scripts.Player.Animation.model
+namespace _2_Scripts.Player
 {
     public enum SpellType
     {

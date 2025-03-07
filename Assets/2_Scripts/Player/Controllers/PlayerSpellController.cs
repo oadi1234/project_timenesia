@@ -1,53 +1,52 @@
+using System;
 using UnityEngine;
 
-//Renamed from AttackController to SpellController to better show what it does.
 namespace _2_Scripts.Player.Controllers
 {
     public class PlayerSpellController : MonoBehaviour
     {
-        //private Animator animator; //anything related to animator needs to be tweaked or redone. I.e. you cannot simply get Animator component from children.
-        private Spellbook spellbook; // it should not be here. Spells are going to be a distinct thing from normal attacks. Left for now to avoid it crapping all over the compilation
+        private Spellbook spellbook;
         private PlayerInputManager playerInputManager;
         private PlayerMovementController playerMovementController;
-
-        private static readonly int AttackBoltTrigger = Animator.StringToHash("AttackBoltTrigger");
-        private static readonly int AttackSelfAoETrigger = Animator.StringToHash("AttackSelfAoETrigger");
-
-        private void Awake()
-        {
-            //animator = GetComponentInChildren<Animator>();
-
-        }
+        private SpellType spellType;
+        
+        public event Action Spellcasted;
 
         #region Actions
 
-        public void Attack(int spellIndex)
+        public void CastSpell(int spellIndex, bool isCasting)
         {
-            switch (spellIndex)
+            // TODO change switch-case to dictionary<index, spelltype> lookup
+            if (isCasting)
             {
-                case 0:
-                    Attack_Bolt();
-                    break;
-                case 1:
-                    Attack_SelfAoE();
-                    break;
+                switch (spellIndex)
+                {
+                    case 0:
+                        spellType = SpellType.Bolt;
+                        Spellcasted?.Invoke();
+                        break;
+                    case 1:
+                        spellType = SpellType.Aoe;
+                        Spellcasted?.Invoke();
+                        break;
+                    case 2:
+                        spellType = SpellType.Heavy;
+                        Spellcasted?.Invoke();
+                        break;
+                    default:
+                        spellType = SpellType.None;
+                        break;
+                }
             }
-        }
-
-        private void Attack_Bolt()
-        {
-            //animator.SetTrigger(AttackBoltTrigger);
-        }
-
-        private void Attack_SelfAoE()
-        {
-            //animator.SetTrigger(AttackSelfAoETrigger);
         }
 
         public void Test(int spellIndex)
         {
             switch (spellIndex)
             {
+                // TODO I know this is testing stuff, but now PMC is a bit unreliable for facing direction check.
+                //  I think there are cases where movement controller thinks it looks left, while sprite does not.
+                //  alternatively use a similar logic like in AnimationHandler.cs:43
                 case 0:
                     spellbook.CastFireBall(playerMovementController.IsFacingLeft() ? -1 : 1);
                     break;
@@ -55,10 +54,14 @@ namespace _2_Scripts.Player.Controllers
                     spellbook.CastEyeBall(playerMovementController.IsFacingLeft() ? -1 : 1);
                     break;
             }
-            playerInputManager.CastingAnimationFinished();
             playerInputManager.SetInputEnabled(true);
         }
 
         #endregion
+        
+        public SpellType GetSpellType()
+        {
+            return spellType;
+        }
     }
 }

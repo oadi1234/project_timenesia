@@ -16,7 +16,7 @@ namespace _2_Scripts.Player.Animation.model
         public static readonly int RunStart = Animator.StringToHash("sylvia_run_start_l");
         public static readonly int Dash = Animator.StringToHash("sylvia_dash_l");
         public static readonly int DashEnd = Animator.StringToHash("sylvia_dash_end_l");
-        public static readonly int Descent = Animator.StringToHash("sylvia_descent_l");
+        public static readonly int Descend = Animator.StringToHash("sylvia_descent_l");
         public static readonly int Ascend = Animator.StringToHash("sylvia_ascend_l");
         public static readonly int DoubleJump = Animator.StringToHash("sylvia_double_jump_l");
         public static readonly int HurtHeavy = Animator.StringToHash("sylvia_hurt_heavy_l");

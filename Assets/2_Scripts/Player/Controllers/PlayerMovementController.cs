@@ -59,7 +59,6 @@ namespace _2_Scripts.Player.Controllers
 
         //private Dictionary<AbilityName, bool> abilities;
         private PlayerEffort effort;
-        private IEnumerator blockInputCoroutine;
         private IEnumerator dashVariableReverserCoroutine;
         private IEnumerator inputStrengthCoroutine;
         private IEnumerator airHangCoroutine;
@@ -71,6 +70,7 @@ namespace _2_Scripts.Player.Controllers
         public event Action Dashed;
         public event Action DoubleJumped;
         public event Action<bool> Flipped;
+        public event Action DashEnd;
 
         #endregion
 
@@ -101,10 +101,6 @@ namespace _2_Scripts.Player.Controllers
             Brake();
             DoAttackLunge();
 
-            //animator.SetBool("isGrounded", isGrounded); // TODO there is a need for a general animation controller, it should not be done in movement. Remove after implementation of that.
-            //animator.SetBool("wallSliding", isWallSliding);
-            // _animator.SetFloat("Hurt", _hurtTime);
-
             if (timeAfterJumpPressed > 0)
             {
                 timeAfterJumpPressed -= Time.fixedDeltaTime;
@@ -129,12 +125,14 @@ namespace _2_Scripts.Player.Controllers
         private void Restart() // TODO remove from here - movement controller should not be doing a full restart. Might require something like a PlayerEventController.
         {
             //playerHealth.Restart();
-            StartCoroutine(BlockInputForSeconds(2f));
+            // StartCoroutine(BlockInputForSeconds(2f));
             Initialize();
         }
 
         #region Getters
 
+        // UNRELIABLE FOR CHECKING ACTUAL SPRITE DIRECTION. Consult things like AnimationHandler.cs:43 to check how to
+        // find where the sprite is looking.
         public bool IsFacingLeft()
         {
             return facingLeft;
@@ -142,12 +140,17 @@ namespace _2_Scripts.Player.Controllers
 
         public float GetXVelocity()
         {
+            return rigidBody2D.velocity.x;
+        }
+
+        public float GetXVelocityVector()
+        {
             return velocityVector.x;
         }
 
         public float GetYVelocity()
         {
-            return velocityVector.y;
+            return rigidBody2D.velocity.y;
         }
 
         public float GetTotalVelocity()
@@ -244,11 +247,11 @@ namespace _2_Scripts.Player.Controllers
             rigidBody2D.AddForce(-brakeVector);
         }
 
-        public void Jump(bool jump, bool keyHeld)
+        public void Jump(bool jump, bool keyHeld, bool moveSkillInputEnabled)
         {
             //TODO: It would be good to make it so that the jump buffers slightly or even that when jump is held the character keeps jumping.
             // Double jump takes precedence over the buffer.
-            if (jump && !isGrounded && isWallTouching && GetAbilityFlag(AbilityName.WallJump))
+            if (jump && !isGrounded && isWallTouching && GetAbilityFlag(AbilityName.WallJump) && moveSkillInputEnabled)
             {
                 WallJump();
             }
@@ -256,7 +259,7 @@ namespace _2_Scripts.Player.Controllers
             {
                 GroundJump();
             }
-            else if (jump && !isDoubleJumping && GetAbilityFlag(AbilityName.DoubleJump))
+            else if (jump && !isDoubleJumping && GetAbilityFlag(AbilityName.DoubleJump) && moveSkillInputEnabled)
             {
                 DoubleJump();
             }
@@ -279,9 +282,8 @@ namespace _2_Scripts.Player.Controllers
             {
                 Dashed?.Invoke();
                 SetVariablesWhenDashing(move);
-                blockInputCoroutine = BlockInputForSeconds(AC.DashDuration);
+                playerInputManager.BlockInput(AC.DashDuration);
                 dashVariableReverserCoroutine = ReverseDashVariablesAfterSeconds(AC.DashDuration);
-                StartCoroutine(blockInputCoroutine);
                 StartCoroutine(dashVariableReverserCoroutine);
             }
         }
@@ -366,10 +368,6 @@ namespace _2_Scripts.Player.Controllers
             {
                 facingLeft = !facingLeft;
                 Flipped?.Invoke(facingLeft);
-                // Vector3 scale = transform.localScale;
-                // scale.x *= -1;
-                // transform.localScale = scale;
-                //TODO: refactor this: flip shouldn't flip whole game object, but only a sprite as this can generate mess
             }
         }
 
@@ -383,7 +381,7 @@ namespace _2_Scripts.Player.Controllers
         {
             //TODO: Change the script to work sort of like RigidBody.AddExplosionForce, so the knockback happens away from its source always
             // https://stackoverflow.com/questions/34250868/unity-addexplosionforce-to-2d
-            StartCoroutine(BlockInputForSeconds(PlayerConstants.Instance.knockbackTime));
+            playerInputManager.BlockInput(PlayerConstants.Instance.knockbackTime);
             var sign = ((Convert.ToInt32(facingLeft) << 1) - 1);
             velocityVector = Vector2.zero;
             rigidBody2D.velocity = velocityVector;
@@ -425,13 +423,6 @@ namespace _2_Scripts.Player.Controllers
         #endregion Movement
 
         #region Waiters
-        
-        private IEnumerator BlockInputForSeconds(float seconds)
-        {
-            playerInputManager.SetInputEnabled(false);
-            yield return new WaitForSecondsRealtime(seconds);
-            playerInputManager.SetInputEnabled(true);
-        }
 
         private IEnumerator ReverseAfterWallJumpAfterSeconds(float seconds)
         {
@@ -522,7 +513,7 @@ namespace _2_Scripts.Player.Controllers
         {
             if (isDashing && isWallTouching)
             {
-                StopCoroutine(blockInputCoroutine);
+                playerInputManager.StopBlockInput();
                 StopCoroutine(dashVariableReverserCoroutine);
                 EndDash();
                 playerInputManager.SetInputEnabled(true);
@@ -650,6 +641,7 @@ namespace _2_Scripts.Player.Controllers
                 startedDashFromWallSlide = false;
             }
             jumpTime = 0f; // set so you can double jump after a dash
+            DashEnd?.Invoke();
         }
 
         private bool UseEffort(int cost)

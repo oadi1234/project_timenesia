@@ -1,4 +1,3 @@
-using System;
 using _2_Scripts.Player.Controllers;
 using UnityEngine;
 using _2_Scripts.Player.Animation.model;
@@ -10,11 +9,11 @@ namespace _2_Scripts.Player.Animation
         [SerializeField] private PlayerMovementController playerMovementController;
 
         [SerializeField] private PlayerInputManager playerInputManager;
+        [SerializeField] private PlayerSpellController playerSpellController;
 
         [SerializeField] private int currentState;
         [SerializeField] private int hurtLayerState;
 
-        private SpellType spellType; 
         private int bufferedState;
         private float currentStateDuration = -1f; //total time of animation
         private float currentStateLockDuration = -1f; // for how long the animation is not changeable
@@ -26,10 +25,13 @@ namespace _2_Scripts.Player.Animation
         private bool doubleJumpedTriggered;
         private bool hurtTriggered;
         private bool attackTriggered;
+        private bool spellTriggered;
         private bool heavyHurtTriggered;
         private bool heavyAttackTriggered;
         private bool inputReceived;
         private bool shouldDoMovementStates = true;
+        private bool endDash = true;
+        private bool restartAnim = false;
         private const float AttackMoveMagnitude = 1f;
         private const float CooldownAfterLanding = 0.2f;
 
@@ -64,6 +66,11 @@ namespace _2_Scripts.Player.Animation
             return !shouldDoMovementStates && currentState != AC.DashEnd;
         }
 
+        public bool ShouldRestartAnim()
+        {
+            return restartAnim;
+        }
+
         private void ClearBufferedState()
         {
             if (bufferedState == currentState)
@@ -90,16 +97,29 @@ namespace _2_Scripts.Player.Animation
                 return PlayState(AC.HurtHeavy, AC.HeavyHurtDuration, AC.HeavyHurtStateLockDuration);
             }
 
-            if (dashTriggered && (currentState != AC.HurtHeavy) == (currentState != AC.HurtLight))
+            if (dashTriggered && (currentState != AC.HurtHeavy) == (currentState != AC.HurtLight) && !endDash)
             {
                 InterruptState();
                 BufferState(AC.DashEnd, AC.DashEndStateLockDuration, AC.DashEndDuration);
                 return PlayState(AC.Dash, AC.DashDuration, AC.DashStateLockDuration);
             }
 
+            if (dashTriggered && (currentState != AC.HurtHeavy) == (currentState != AC.HurtLight) && endDash)
+            {
+                if (currentState == AC.DashEnd)
+                    restartAnim = true;
+                else
+                    return PlayState(AC.DashEnd, AC.DashEndDuration, AC.DashEndStateLockDuration);
+            }
+
             if (currentStateLockDuration > 0f)
             {
-                if (!(currentState == AC.Dash && playerMovementController.GetIsWallSliding()))
+                if (currentState == AC.Dash && endDash)
+                {
+                    InterruptState();
+                    BufferState(AC.DashEnd, AC.DashEndStateLockDuration, AC.DashEndDuration);
+                }
+                else
                     return currentState;
             }
 
@@ -109,7 +129,7 @@ namespace _2_Scripts.Player.Animation
                 shouldDoMovementStates = false;
                 return PlayState(AC.DoubleJump, AC.DoubleJumpDuration, AC.DoubleJumpStateLockDuration);
             }
-            
+
             if (heavyAttackTriggered)
             {
                 InterruptState();
@@ -127,23 +147,23 @@ namespace _2_Scripts.Player.Animation
                 return AC.Wallslide;
             }
 
-            if (currentStateDuration > 0f && !inputReceived)
-            {
-                return currentState;
-            }
-
             if (bufferedState != AC.None)
             {
                 return PlayBufferedState();
             }
 
-            if (spellType != SpellType.None)
+            if (currentStateDuration > 0f && !inputReceived)
             {
-                if (spellType == SpellType.Bolt)
+                return currentState;
+            }
+
+            if (spellTriggered)
+            {
+                if (playerSpellController.GetSpellType() == SpellType.Bolt)
                 {
                     InterruptState();
-                    spellType = SpellType.None;
                     playerMovementController.AirHangForAttacks(AC.StaffSpellcastBoltStateLockDuration, 0.15f);
+                    playerInputManager.BlockMovementSkillInput(AC.StaffSpellcastBoltStateLockDuration);
                     if (playerInputManager.GetYInput() > 0f)
                     {
                         return PlayState(AC.SpellcastStaffBoltUp, AC.StaffSpellcastBoltDuration,
@@ -156,26 +176,28 @@ namespace _2_Scripts.Player.Animation
                             AC.StaffSpellcastBoltStateLockDuration);
                     }
 
-                    return PlayState(AC.SpellcastStaffBolt, AC.StaffSpellcastBoltDuration, AC.StaffSpellcastBoltStateLockDuration);
+                    return PlayState(AC.SpellcastStaffBolt, AC.StaffSpellcastBoltDuration,
+                        AC.StaffSpellcastBoltStateLockDuration);
                 }
 
-                if (spellType == SpellType.Heavy)
+                if (playerSpellController.GetSpellType() == SpellType.Heavy)
                 {
                     InterruptState();
-                    spellType = SpellType.None;
                     playerMovementController.AirHangForAttacks(AC.StaffSpellcastHeavyStateLockDuration, 0f);
                     playerMovementController.AttackLunge(40f);
-                    return PlayState(AC.SpellcastStaffHeavy, AC.StaffSpellcastHeavyDuration, AC.StaffSpellcastHeavyStateLockDuration);
+                    playerInputManager.BlockMovementSkillInput(AC.StaffSpellcastHeavyStateLockDuration);
+                    return PlayState(AC.SpellcastStaffHeavy, AC.StaffSpellcastHeavyDuration,
+                        AC.StaffSpellcastHeavyStateLockDuration);
                 }
-                
-                if (spellType == SpellType.Aoe)
+
+                if (playerSpellController.GetSpellType() == SpellType.Aoe)
                 {
                     InterruptState();
-                    spellType = SpellType.None;
                     playerMovementController.AirHangForAttacks(AC.StaffSpellcastAoeStateLockDuration, 0f);
-                    return PlayState(AC.SpellcastStaffAoE, AC.StaffSpellcastAoeDuration, AC.StaffSpellcastAoeStateLockDuration);
+                    playerInputManager.BlockMovementSkillInput(AC.StaffSpellcastAoeStateLockDuration);
+                    return PlayState(AC.SpellcastStaffAoE, AC.StaffSpellcastAoeDuration,
+                        AC.StaffSpellcastAoeStateLockDuration);
                 }
-                spellType = SpellType.None;
             }
 
             if (attackTriggered && playerInputManager.GetYInput() > 0f)
@@ -263,6 +285,11 @@ namespace _2_Scripts.Player.Animation
                         return PlayState(AC.RunStart, AC.RunStartDuration, 0f);
                     }
 
+                    if (currentState == AC.RunStop)
+                    {
+                        InterruptState();
+                    }
+
                     if (currentStateDuration > 0f)
                     {
                         return AC.RunStart;
@@ -274,7 +301,7 @@ namespace _2_Scripts.Player.Animation
                 if (!playerMovementController.GetIsGrounded() && playerMovementController.GetYVelocity() < 0f)
                 {
                     InterruptState();
-                    return AC.Descent;
+                    return AC.Descend;
                 }
 
                 if (!playerMovementController.GetIsGrounded() && playerMovementController.GetYVelocity() >= 0f)
@@ -333,13 +360,11 @@ namespace _2_Scripts.Player.Animation
         {
             playerMovementController.DoubleJumped += () => { doubleJumpedTriggered = true; };
             playerMovementController.Dashed += () => { dashTriggered = true; };
+            playerMovementController.DashEnd += () => { endDash = true; };
+            playerSpellController.Spellcasted += () => { spellTriggered = true; };
             playerInputManager.Attacked += () => { attackTriggered = true; };
             playerInputManager.InputReceived += () => { inputReceived = true; };
             playerInputManager.HeavyAttack += () => { heavyAttackTriggered = true; };
-            
-            // TODO the thing below will not be how it will be handled. Ultimately playerSpellController will send
-            //  actual spell type.
-            playerInputManager.Spellcasted += (spell) => { spellType = (SpellType) spell; };
         }
 
         private void ResetLogic()
@@ -349,6 +374,9 @@ namespace _2_Scripts.Player.Animation
             doubleJumpedTriggered = false;
             hurtTriggered = false;
             inputReceived = false;
+            spellTriggered = false;
+            endDash = false;
+            restartAnim = false;
             if (hurtDuration < 0f)
             {
                 hurtLayerState = AC.HurtNone;
@@ -364,6 +392,9 @@ namespace _2_Scripts.Player.Animation
         #endregion
 
 
+        // TODO while these are now unused, those are de facto all the weapons I would like to have in game.
+        //  They will need to be used later on in the state handler for weapon and spellcasts. For now, by default
+        //  the main weapon is the staff.
         private enum WeaponState
         {
             Staff,

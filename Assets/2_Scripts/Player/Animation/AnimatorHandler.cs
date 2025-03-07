@@ -37,9 +37,14 @@ namespace _2_Scripts.Player.Animation
             if (animator.HasState(0, stateHandler.GetCurrentState()))
                 animator.CrossFade(stateHandler.GetCurrentState(), 0, 0);
             else animator.CrossFade(AC.None, 0, 0);
+            if (stateHandler.ShouldRestartAnim())
+                animator.Play(stateHandler.GetCurrentState(), 0, 0);
+            
             lastState = stateHandler.GetCurrentState();
         }
         
+        //TODO expose actual facing direction so it can be used by other things. It might require a bit of architectural
+        // magic, as animationHandler is relatively low in hierarchy compared to stuff like SpellControllers.
         private void SetFacingDirection()
         {
             if (!stateHandler.LockXFlip())
@@ -52,11 +57,6 @@ namespace _2_Scripts.Player.Animation
             {
                 spriteRenderer.flipX = !facingLeft;
             }
-        }
-
-        public bool IsFacingLeft()
-        {
-            return facingLeft;
         }
     }
 }
