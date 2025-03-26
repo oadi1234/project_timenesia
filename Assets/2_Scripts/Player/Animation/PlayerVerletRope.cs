@@ -19,7 +19,6 @@ namespace _2_Scripts.Player.Animation
 
         private Vector2 gravityVector = Vector2.zero;
         private float currentTimer = 0f;
-        private float freezeSimulationTimer = 0f;
 
         void Awake()
         {
@@ -37,11 +36,20 @@ namespace _2_Scripts.Player.Animation
             else
                 currentTimer = 0f;
 
-            SimulateRope();
-            DoSegmentRotation();
-            AttachPosAndRotationToTransform();
-            CalculateGravityVector();
-            HandleFlip();
+            if (!animationPivot.IsInNonRopeState())
+            {
+                SimulateRope();
+                DoSegmentRotation();
+                AttachPosAndRotationToTransform();
+                CalculateGravityVector();
+                HandleFlip();
+            }
+            else
+            {
+                SetExitAngle();
+                ResetDistances();
+                ResetVelocity();
+            }
         }
 
         private void SimulateRope()
@@ -57,15 +65,14 @@ namespace _2_Scripts.Player.Animation
             }
 
             segments[0].oldPosition = segments[0].currentPosition;
-            segments[0].transform.position = RotatePointOnFirstSegment();
             segments[0].currentPosition = RotatePointOnFirstSegment();
+            segments[0].transform.position = segments[0].currentPosition;
 
             for (int i = 0; i < constraintSteps; i++)
             {
                 ApplyConstraints();
             }
         }
-
 
         private void DoSegmentRotation()
         {
@@ -137,6 +144,32 @@ namespace _2_Scripts.Player.Animation
 
                 segments[i + 1] = second;
             }
+        }
+
+        private void ResetDistances()
+        {
+            for (int i = 1; i < segments.Count; i++)
+            {
+                segments[i].SetLocalPositionToStartingLocalCoordinates();
+                segments[i].rotation = 0f;
+                segments[i].transform.localRotation = Quaternion.identity;
+            }
+        }
+
+        private void ResetVelocity()
+        {
+            for (int i = 1; i < segments.Count; i++)
+            {
+                segments[i].currentPosition = segments[i].transform.position;
+                segments[i].oldPosition = segments[i].currentPosition;
+            }
+        }
+
+        private void SetExitAngle()
+        {
+            segments[0].rotation = animationPivot.GetExitAngle();
+            segments[0].transform.rotation = Quaternion.AngleAxis(segments[0].rotation + (playerMovementController.IsFacingLeft() ? 0 : 180), playerMovementController.IsFacingLeft() ? Vector3.forward : Vector3.back);
+            segments[0].transform.position = animationPivot.GetPivot();
         }
 
         private void DoAmbientRotation(ref float angle, int i)

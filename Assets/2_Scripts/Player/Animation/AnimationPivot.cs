@@ -11,7 +11,6 @@ namespace _2_Scripts.Player.Animation
         [SerializeField] private Animator bodyAnimator;
         private RopeSpriteStateHandler ropeSpriteStateHandler;
 
-        private int state; //affected animation state
         private Vector2 pivot;
         private int frame;
 
@@ -45,6 +44,16 @@ namespace _2_Scripts.Player.Animation
         public Vector2 GetPivot()
         {
             return (Vector2)transform.position + pivot;
+        }
+
+        public bool IsInNonRopeState()
+        {
+            return PivotPerState.Instance.IsNonRopeState(playerAnimationStateHandler.GetCurrentState());
+        }
+
+        public float GetExitAngle()
+        {
+            return PivotPerState.Instance.GetExitAngle(playerAnimationStateHandler.GetCurrentState());
         }
     }
 }

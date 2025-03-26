@@ -27,8 +27,7 @@ namespace _2_Scripts.Player.Animation.model
         private readonly Dictionary<int, Dictionary<int, Vector2>> hairPivotFramesPerState;
         
         //angle to which rope object bones should switch when exiting incorrect state
-        private readonly Dictionary<int, float> cloakExitStateBoneAngle;
-        private readonly Dictionary<int, float> hairExitStateBoneAngle;
+        private readonly Dictionary<int, float> exitStateBoneAngle;
         
         private static HashSet<int> _nonRopeStateList;
 
@@ -61,14 +60,39 @@ namespace _2_Scripts.Player.Animation.model
             return _nonRopeStateList.Contains(state);
         }
 
+        public float GetExitAngle(int animationState)
+        {
+            return exitStateBoneAngle.GetValueOrDefault(animationState, 0);
+        }
+
         public PivotPerState()
         {
             cloakPivotFramesPerState = new Dictionary<int, Dictionary<int, Vector2>>();
             hairPivotFramesPerState = new Dictionary<int, Dictionary<int, Vector2>>();
+            exitStateBoneAngle = new Dictionary<int, float>();
             PopulateCloakPivots();
             PopulateHairPivots();
 
+            PopulateExitAngles();
+
             SetIncorrectHingeStateList();
+        }
+
+        private void PopulateExitAngles()
+        {
+            exitStateBoneAngle.Add(AC.DoubleJump, -103f);
+            exitStateBoneAngle.Add(AC.Dash, 300f);
+            exitStateBoneAngle.Add(AC.DashEnd, 260f);
+            exitStateBoneAngle.Add(AC.StaffAttack1, -60f);
+            exitStateBoneAngle.Add(AC.StaffAttack2, -90f);
+            exitStateBoneAngle.Add(AC.StaffAttackAir1, 230f);
+            exitStateBoneAngle.Add(AC.StaffAttackAir2, -27f);
+            exitStateBoneAngle.Add(AC.StaffAttackAirDown1, 25f);
+            exitStateBoneAngle.Add(AC.StaffAttackAirDown2, 250f);
+            exitStateBoneAngle.Add(AC.StaffAttackAirUp, 247f);
+            exitStateBoneAngle.Add(AC.StaffHeavyAttack, 260f);
+            exitStateBoneAngle.Add(AC.SpellcastStaffHeavy, -97f);
+            exitStateBoneAngle.Add(AC.SpellcastStaffAoE, -90f);
         }
         
         private void PopulateHairPivots()

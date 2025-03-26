@@ -71,6 +71,11 @@ namespace _2_Scripts.Player.Animation
             return restartAnim;
         }
 
+        public float GetCurrentStateDuration()
+        {
+            return currentStateDuration;
+        }
+
         private void ClearBufferedState()
         {
             if (bufferedState == currentState)
