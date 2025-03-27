@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class FlatGroundChecker : MonoBehaviour
@@ -54,10 +55,7 @@ public class FlatGroundChecker : MonoBehaviour
         {
             return true;
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
 
     public bool IsOnSlope()
@@ -134,14 +132,12 @@ public class FlatGroundChecker : MonoBehaviour
         {
             return true;
         }
-        else if (hitBottomLeft)
+        if (hitBottomLeft)
         {
             return true;
         }
-        else
-        {
-            return false;
-        }
+        
+        return false;
     }
 
     private float CalculateSlope(RaycastHit2D raycast)

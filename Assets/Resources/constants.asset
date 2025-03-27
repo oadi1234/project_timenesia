@@ -20,15 +20,15 @@ MonoBehaviour:
   ceilingCheckRadius: 0.1
   wallCheckRay: 0.2
   maxJumpTime: 0.2
-  jumpVerticalSpeed: 19
+  jumpVerticalSpeed: 25
   dashSpeed: 25
   doubleJumpPersistenceModifier: 1
   postWallJumpSpeedModifier: 1.1
-  wallJumpPersistenceModifier: 0.2
+  wallJumpPersistenceModifier: 0.5
   moveSpeed: 10
   dashCooldown: 0.6
   maxHorizontalSpeed: 25
   maxVerticalSpeed: 19
-  initialJumpForce: 10
+  initialJumpForce: 15
   doubleJumpForce: 3
   wallSlideSpeed: -4.5

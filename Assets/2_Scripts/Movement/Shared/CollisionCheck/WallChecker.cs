@@ -13,10 +13,13 @@ public class WallChecker : MonoBehaviour
 
     [SerializeField]
     private float _wallAngleThreshold = 5f;
+    
+    [SerializeField]
+    private BoxCollider2D _boxCollider;
+    
 
     private RaycastHit2D _hitFrontTop;
     private RaycastHit2D _hitFrontBottom;
-    private BoxCollider2D _boxCollider;
     private Bounds boxBounds;
     private Vector2 frontTopColliderCorner;
     private Vector2 frontBottomColliderCorner;
@@ -32,8 +35,6 @@ public class WallChecker : MonoBehaviour
     private float _rightPositionX;
     private float _leftPositionX;
     private float centerPositionY;
-    private float centerPositionX;
-    private float topPositionY;
     private float bottomPositionY;
 
     private bool _touchingWall;
@@ -46,14 +47,10 @@ public class WallChecker : MonoBehaviour
 
         float correction = 0.01f;
 
-        _boxCollider = GetComponent<BoxCollider2D>();
-
         _rightPositionX = _boxCollider.bounds.max.x + correction;
-        topPositionY = _boxCollider.bounds.max.y + correction;
         bottomPositionY = _boxCollider.bounds.min.y - correction;
         _leftPositionX = _boxCollider.bounds.min.x - correction;
-
-        centerPositionX = _boxCollider.bounds.center.x;
+        
         centerPositionY = _boxCollider.bounds.center.y;
     }
 
@@ -91,12 +88,12 @@ public class WallChecker : MonoBehaviour
             {
                 _bottomLeftHit = Physics2D.Raycast(new Vector2(_leftPositionX, bottomPositionY), Vector2.left, _wallCheckRay);
                 _centerLeftHit = Physics2D.Raycast(new Vector2(_leftPositionX, centerPositionY), Vector2.left, _wallCheckRay);
-                if (_bottomLeftHit.collider != null && _bottomLeftHit.collider.tag == "Walls" && Mathf.Abs(Vector2.Angle(_bottomLeftHit.normal, Vector2.up) - 90) < _wallAngleThreshold)
+                if (_bottomLeftHit.collider != null && _bottomLeftHit.collider.CompareTag("Walls") && Mathf.Abs(Vector2.Angle(_bottomLeftHit.normal, Vector2.up) - 90) < _wallAngleThreshold)
                 {
                     _touchingWall = true;
                     _touchingWallLeft = true;
                 }
-                else if(_centerLeftHit.collider!=null && _centerLeftHit.collider.tag == "Walls" && Mathf.Abs(Vector2.Angle(_centerLeftHit.normal, Vector2.up) - 90) < _wallAngleThreshold)
+                else if(_centerLeftHit.collider!=null && _centerLeftHit.collider.CompareTag("Walls") && Mathf.Abs(Vector2.Angle(_centerLeftHit.normal, Vector2.up) - 90) < _wallAngleThreshold)
                 {
                     _touchingWall = true;
                     _touchingWallLeft = true;
@@ -107,12 +104,12 @@ public class WallChecker : MonoBehaviour
                 _bottomRightHit = Physics2D.Raycast(new Vector2(_rightPositionX, bottomPositionY), Vector2.right, _wallCheckRay);
                 _centerRightHit = Physics2D.Raycast(new Vector2(_rightPositionX, centerPositionY), Vector2.right, _wallCheckRay);
 
-                if (_bottomRightHit.collider != null && _bottomRightHit.collider.tag == "Walls" && (Mathf.Abs(Vector2.Angle(_bottomRightHit.normal, Vector2.up) - 90) < _wallAngleThreshold))
+                if (_bottomRightHit.collider != null && _bottomRightHit.collider.CompareTag("Walls") && (Mathf.Abs(Vector2.Angle(_bottomRightHit.normal, Vector2.up) - 90) < _wallAngleThreshold))
                 {
                     _touchingWall = true;
                     _touchingWallLeft = false;
                 }
-                else if(_centerRightHit.collider !=null && _centerRightHit.collider.tag == "Walls" && Mathf.Abs(Vector2.Angle(_centerRightHit.normal, Vector2.up) - 90) < _wallAngleThreshold) 
+                else if(_centerRightHit.collider !=null && _centerRightHit.collider.CompareTag("Walls") && Mathf.Abs(Vector2.Angle(_centerRightHit.normal, Vector2.up) - 90) < _wallAngleThreshold) 
                 {
                     _touchingWall = true;
                     _touchingWallLeft = false;

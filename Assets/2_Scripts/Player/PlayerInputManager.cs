@@ -1,4 +1,5 @@
-using _2_Scripts.Model;
+using System;
+using System.Collections;
 using _2_Scripts.Player.Controllers;
 using UnityEngine;
 
@@ -7,119 +8,212 @@ namespace _2_Scripts.Player
     public class PlayerInputManager : MonoBehaviour
     {
         public PlayerMovementController playerMovementController;
-        public PlayerAttackController playerAttackController;
+        
+        public PlayerSpellController playerSpellController;
+
         public WeaponController weaponController;
 
-        float _xInput = 0f;
-        float _yInput = 0f;
-        float _yInputForCombos = 0f;
-        bool _isInputEnabled = true;
-        bool _jumpPressed = false;
-        bool _jumpKeyHold = false;
-        bool _spellAttack = false;
-        bool _weaponAttack = false;
-        bool _dashPressed = false;
-        int _spellIndex = -1;
+        private float xInput;
+        private float yInput;
+        private bool isInputEnabled = true;
+        private bool isMoveSkillInputEnabled = true;
+        private bool jumpPressed;
+        private bool jumpKeyHold;
+        private bool attackHeld = false;
+        private bool attacking = false;
+        private bool dashPressed;
+        private bool concentrationHeld;
+        private bool inputReceived = false;
+        private bool isSpellcasting = false;
+        private int spellIndex = -1;
+        private float chargeTime = 0f;
+        private float chargeCooldown = 0f;
+        private const float ChargeInputDuration = 2f;
 
-        private bool _castingAnimationInProgress = false;
-        public bool IsInputEnabled => _isInputEnabled;
+        public event Action Attacked;
+        public event Action InputReceived;
+        public event Action HeavyAttack;
+        
+        private IEnumerator blockInputCoroutine;
+        private IEnumerator blockMovementSkillInputCoroutine;
 
         // Update is called once per frame
         void Update()
         {
-            _xInput = Input.GetAxisRaw("Horizontal");
-            _yInput = Input.GetAxisRaw("Vertical");
+            xInput = Input.GetAxisRaw("Horizontal");
+            yInput = Input.GetAxisRaw("Vertical");
+
+            if (attackHeld && chargeCooldown <= 0f)
+                chargeTime += Time.deltaTime;
+            if (chargeCooldown > 0f)
+                chargeCooldown -= Time.deltaTime;
+            
+            
+            if (Input.GetButtonDown("Concentration"))
+                concentrationHeld = true;
+            if (Input.GetButtonUp("Concentration"))
+                concentrationHeld = false;
+
+            if (Input.GetAxisRaw("Horizontal") != 0f)
+            {
+                inputReceived = true;
+            }
+
             if (Input.GetButtonDown("Jump"))
             {
-                _jumpPressed = true;
-                _jumpKeyHold = true;
+                jumpPressed = true;
+                jumpKeyHold = true;
+                inputReceived = true;
             }
             else if (Input.GetButtonUp("Jump"))
             {
-                _jumpKeyHold = false;
+                jumpKeyHold = false;
             }
 
-            if (Input.GetButtonDown("Fire1") && !_castingAnimationInProgress)
+            // TODO left like this for now, even though it bypasses blockInput. Once spell controller is worked out
+            //  logic will need to be adjusted accordingly.
+            if (Input.GetButtonDown("Spell1"))
             {
-                _spellAttack = true;
-                _spellIndex = 0;
-            }
-            if (Input.GetButtonDown("Fire2") && !_castingAnimationInProgress)
-            {
-                _spellAttack = true;
-                _spellIndex = 1;
-            }
-
-            if (Input.GetButtonDown("Fire3"))
-            {
-                _yInputForCombos = _yInput;
-                _weaponAttack = true;
-            }
-            if(Input.GetButtonDown("Dash"))
-            {
-                _dashPressed = true;
+                CastSpell(0);
+                 //TODO this might need some tweaking as to what is being sent
+                // also for now the PlayerAnimationStateHandler handles this event, but in the future it should be rerouted
+                // through some spellhandler class like thing, like the PlayerSpellController here.
             }
 
-            if (Input.GetButtonDown("SwitchWeapon"))
+            if (Input.GetButtonUp("Spell2"))
             {
-                weaponController.QuickChangeWeapon();
+                CastSpell(1);
+            }
+
+            if (Input.GetButtonUp("Spell3"))
+            {
+                CastSpell(2);
+            }
+
+            if (Input.GetButtonDown("Attack"))
+            {
+                attackHeld = true;
+                attacking = true;
+                inputReceived = true;
+            }
+
+            if (Input.GetButtonUp("Attack"))
+            {
+
+                chargeTime = 0f;
+                attackHeld = false;
+            }
+
+            if (Input.GetButtonDown("Dash"))
+            {
+                dashPressed = true;
+                inputReceived = true;
             }
         }
 
         private void FixedUpdate()
         {
-            if (_isInputEnabled)
-            { 
-                if (_spellAttack)
+            if (isInputEnabled)
+            {
+                playerMovementController.Move(xInput * Time.fixedDeltaTime * 50);
+                playerMovementController.Jump(jumpPressed, jumpKeyHold, isMoveSkillInputEnabled);
+                if (isMoveSkillInputEnabled)
+                    playerMovementController.Dash(dashPressed, xInput);
+                playerSpellController.CastSpell(spellIndex, isSpellcasting);
+                if (inputReceived)
                 {
-                    playerAttackController.Attack(_spellIndex);
-                    _castingAnimationInProgress = true;
-                    _spellAttack = false;
-                    _spellIndex = -1;
+                    InputReceived?.Invoke();
                 }
-                else if (_weaponAttack)
-                {
-                    weaponController.Attack(GetDirectionOfCombo());
-                    _weaponAttack = false;
-                }
-                else
-                {
-                    //time.fixeddeltatime below is used to adjust movement for occasional lag, if it ever happens. It might be unnecessary.
-                    //on normal run xInput*fixedDeltaTime is 0.02, so I multiply it by 50 to normalize it to 1. Makes movement speed easier to set in constants.
-                    // TODO: This will most likely require adjustment if a time slow effects are implemented.
-                    playerMovementController.Move(_xInput * Time.fixedDeltaTime * 50);
-                    playerMovementController.Jump(_jumpPressed, _jumpKeyHold);
-                    playerMovementController.Dash(_dashPressed, _xInput);
 
-                    _jumpPressed = false;
-                    _dashPressed = false;
+                // TODO move logic like action invocation to player attack controller
+                if (attacking)
+                {
+                    if (chargeTime >= ChargeInputDuration)
+                        HeavyAttack?.Invoke();
+                    else
+                        Attacked?.Invoke();
                 }
             }
             else
             {
-                _xInput = 0;
-                _jumpKeyHold = false;
-                _jumpPressed = false;
+                xInput = 0;
             }
+
+            ResetLogic();
         }
 
-        private Direction GetDirectionOfCombo()
+        public void SetInputEnabled(bool isEnabled)
         {
-            return _yInputForCombos == 0
-                ? (playerMovementController.IsFacingLeft() ? Direction.LEFT : Direction.RIGHT)
-                : _yInputForCombos > 0
-                    ? Direction.UP
-                    : Direction.DOWN;
+            isInputEnabled = isEnabled;
         }
 
-        public void SetInputEnabled(bool enable)
+        public float GetXInput()
         {
-            _isInputEnabled = enable;
+            return xInput;
         }
 
-        public void CastingAnimationFinished()
+        public float GetYInput()
         {
-            _castingAnimationInProgress = false;
+            return yInput;
+        }
+
+        public bool IsConcentrating()
+        {
+            return isInputEnabled && concentrationHeld;
+        }
+
+        public void SetChargeCooldown(float seconds)
+        {
+            chargeCooldown = seconds;
+        }
+
+        public void BlockInput(float seconds)
+        {
+            blockInputCoroutine = BlockInputForSeconds(seconds);
+            StartCoroutine(blockInputCoroutine);
+        }
+
+        public void BlockMovementSkillInput(float seconds)
+        {
+            blockMovementSkillInputCoroutine = BlockMoveSkillInputForSeconds(seconds);
+            StartCoroutine(blockMovementSkillInputCoroutine);
+        }
+
+        public void StopBlockInput()
+        {
+            StopCoroutine(blockInputCoroutine);
+        }
+        
+        // moved from playerMovementController to here, since it makes more sense for input related things to be handled here.
+        private IEnumerator BlockInputForSeconds(float seconds)
+        {
+            isInputEnabled = false;
+            yield return new WaitForSeconds(seconds); // might need to be realTime, but if we are to use Time.scale then this takes it into account.
+            isInputEnabled = true;
+        }
+        
+        private IEnumerator BlockMoveSkillInputForSeconds(float seconds)
+        {
+            isMoveSkillInputEnabled = false;
+            yield return new WaitForSeconds(seconds); // might need to be realTime, but if we are to use Time.scale then this takes it into account.
+            isMoveSkillInputEnabled = true;
+        }
+
+        private void ResetLogic()
+        {
+            jumpPressed = false;
+            dashPressed = false;
+            inputReceived = false;
+            isSpellcasting = false;
+            attacking = false;
+            spellIndex = -1;
+        }
+
+        private void CastSpell(int index)
+        {
+            inputReceived = true;
+            isSpellcasting = true;
+            spellIndex = index;
         }
     }
 }
