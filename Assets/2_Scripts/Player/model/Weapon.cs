@@ -6,6 +6,10 @@ namespace _2_Scripts.Model
         Sword = 2,
         Rod = 3,
         Orb = 4,
-        Wand = 5
+        Daggerwand = 5,
+        Musket,
+        Pistol,
+        Unarmed,
+        None
     }
 }

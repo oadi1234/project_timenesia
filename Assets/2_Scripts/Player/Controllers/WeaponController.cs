@@ -37,7 +37,7 @@ namespace _2_Scripts.Player.Controllers
                         break;
                     case Weapon.Orb:
                         break;
-                    case Weapon.Wand:
+                    case Weapon.Daggerwand:
                         _currentWeapon = staff;
                         break;
                     default:
@@ -60,7 +60,7 @@ namespace _2_Scripts.Player.Controllers
                     break;
                 case Weapon.Orb:
                     break;
-                case Weapon.Wand:
+                case Weapon.Daggerwand:
                     _currentWeapon = wand;
                     break;
                 default:

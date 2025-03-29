@@ -879,6 +879,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3106427668422968683, guid: be2e71d11b11bea44bafffd8e8dbabe4, type: 3}
+      propertyPath: moveParticles
+      value: 
+      objectReference: {fileID: 5763267779433736180, guid: 5e7be1549256d4d4e827be37dec656bb, type: 3}
     - target: {fileID: 4502648273593359070, guid: be2e71d11b11bea44bafffd8e8dbabe4, type: 3}
       propertyPath: effortBar
       value: 
@@ -898,40 +902,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5819309414079763486, guid: be2e71d11b11bea44bafffd8e8dbabe4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1075397284}
-    - targetCorrespondingSourceObject: {fileID: 8290436690591664898, guid: be2e71d11b11bea44bafffd8e8dbabe4, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 911097262}
   m_SourcePrefab: {fileID: 100100000, guid: be2e71d11b11bea44bafffd8e8dbabe4, type: 3}
---- !u!1 &911097260 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8290436690591664898, guid: be2e71d11b11bea44bafffd8e8dbabe4, type: 3}
-  m_PrefabInstance: {fileID: 911097259}
-  m_PrefabAsset: {fileID: 0}
---- !u!50 &911097261 stripped
-Rigidbody2D:
-  m_CorrespondingSourceObject: {fileID: 1485584808382092926, guid: be2e71d11b11bea44bafffd8e8dbabe4, type: 3}
-  m_PrefabInstance: {fileID: 911097259}
-  m_PrefabAsset: {fileID: 0}
---- !u!232 &911097262
-DistanceJoint2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 911097260}
-  m_Enabled: 1
-  serializedVersion: 4
-  m_EnableCollision: 0
-  m_ConnectedRigidBody: {fileID: 911097261}
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_BreakAction: 3
-  m_AutoConfigureConnectedAnchor: 0
-  m_Anchor: {x: 0, y: 0}
-  m_ConnectedAnchor: {x: 0, y: 0}
-  m_AutoConfigureDistance: 1
-  m_Distance: 1.2580259
-  m_MaxDistanceOnly: 0
 --- !u!1 &1075397272 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5819309414079763486, guid: be2e71d11b11bea44bafffd8e8dbabe4, type: 3}

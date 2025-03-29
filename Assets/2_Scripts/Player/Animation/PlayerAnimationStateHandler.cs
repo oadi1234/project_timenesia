@@ -395,22 +395,5 @@ namespace _2_Scripts.Player.Animation
         }
 
         #endregion
-
-
-        // TODO while these are now unused, those are de facto all the weapons I would like to have in game.
-        //  They will need to be used later on in the state handler for weapon and spellcasts. For now, by default
-        //  the main weapon is the staff.
-        private enum WeaponState
-        {
-            Staff,
-            Orb,
-            Daggerwand,
-            Sword,
-            Rod,
-            Musket,
-            Pistol,
-            Unarmed,
-            None
-        }
     }
 }

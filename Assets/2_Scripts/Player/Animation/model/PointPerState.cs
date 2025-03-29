@@ -3,20 +3,19 @@ using UnityEngine;
 
 namespace _2_Scripts.Player.Animation.model
 {
-    //class for storing and getting location information on where in a given frame of animation cloak or hair should attach.
-    // this one definitely needs to be changed to a json file
+    //class for storing and getting location information on where in a given frame of animation certain things should attach.
     [CreateAssetMenu(fileName = "pivotPerFrame", menuName = "ScriptableObjects/PivotConstants", order = 1)]
-    public class PivotPerState : ScriptableObject
+    public class PointPerState : ScriptableObject
     {
-        static PivotPerState _instance;
+        static PointPerState _instance;
 
-        public static PivotPerState Instance
+        public static PointPerState Instance
         {
             get
             {
                 if (!_instance)
                 {
-                    _instance = Resources.Load<PivotPerState>("pivotPerFrame");
+                    _instance = Resources.Load<PointPerState>("pivotPerFrame");
                 }
 
                 return _instance;
@@ -65,7 +64,7 @@ namespace _2_Scripts.Player.Animation.model
             return exitStateBoneAngle.GetValueOrDefault(animationState, 0);
         }
 
-        public PivotPerState()
+        public PointPerState()
         {
             cloakPivotFramesPerState = new Dictionary<int, Dictionary<int, Vector2>>();
             hairPivotFramesPerState = new Dictionary<int, Dictionary<int, Vector2>>();
