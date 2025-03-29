@@ -50,7 +50,7 @@ namespace _2_Scripts.Unity
                 {
                     return;
                 }
-                else if (changed.newValue is GameObject gameObject
+                if (changed.newValue is GameObject gameObject
                          || changed.newValue is Component component && (gameObject = component.gameObject))
                 {
                     objectField.value = FirstValidOrDefault(gameObject);

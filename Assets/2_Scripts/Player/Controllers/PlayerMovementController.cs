@@ -131,8 +131,8 @@ namespace _2_Scripts.Player.Controllers
 
         #region Getters
 
-        // UNRELIABLE FOR CHECKING ACTUAL SPRITE DIRECTION. Consult things like AnimationHandler.cs:43 to check how to
-        // find where the sprite is looking.
+        // UNRELIABLE FOR CHECKING ACTUAL SPRITE DIRECTION. Consult things like AnimatorHandler.cs:SetFacingDirection() 
+        // to check how to find where the sprite is looking.
         public bool IsFacingLeft()
         {
             return facingLeft;

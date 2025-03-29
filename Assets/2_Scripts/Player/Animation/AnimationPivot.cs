@@ -27,11 +27,11 @@ namespace _2_Scripts.Player.Animation
                           bodyAnimator.GetCurrentAnimatorClipInfo(0)[0].clip.frameRate);
             if (ropeSpriteStateHandler.GetHingeSpriteType() == 1)
             {
-                pivot = PivotPerState.Instance.GetHairPivotLocation(playerAnimationStateHandler.GetCurrentState(),
+                pivot = PointPerState.Instance.GetHairPivotLocation(playerAnimationStateHandler.GetCurrentState(),
                     frame);
             }
             else
-                pivot = PivotPerState.Instance.GetCloakPivotLocation(playerAnimationStateHandler.GetCurrentState(),
+                pivot = PointPerState.Instance.GetCloakPivotLocation(playerAnimationStateHandler.GetCurrentState(),
                     frame);
 
             if (!playerMovementController.IsFacingLeft())
@@ -48,12 +48,12 @@ namespace _2_Scripts.Player.Animation
 
         public bool IsInNonRopeState()
         {
-            return PivotPerState.Instance.IsNonRopeState(playerAnimationStateHandler.GetCurrentState());
+            return PointPerState.Instance.IsNonRopeState(playerAnimationStateHandler.GetCurrentState());
         }
 
         public float GetExitAngle()
         {
-            return PivotPerState.Instance.GetExitAngle(playerAnimationStateHandler.GetCurrentState());
+            return PointPerState.Instance.GetExitAngle(playerAnimationStateHandler.GetCurrentState());
         }
     }
 }

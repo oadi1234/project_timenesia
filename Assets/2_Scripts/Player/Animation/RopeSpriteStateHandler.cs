@@ -25,7 +25,7 @@ namespace _2_Scripts.Player.Animation
         private int GetState()
         {
             // Check if currently playing animation has a rope element
-            if (PivotPerState.Instance.IsNonRopeState(playerAnimationStateHandler.GetCurrentState()))
+            if (PointPerState.Instance.IsNonRopeState(playerAnimationStateHandler.GetCurrentState()))
             {
                 currentStateDuration = 0f;
                 return AC.None;

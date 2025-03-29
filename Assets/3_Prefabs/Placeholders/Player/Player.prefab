@@ -742,6 +742,37 @@ MonoBehaviour:
   _stateHandler: {fileID: 8498187196400931344}
   playerMovementController: {fileID: 5552875086602648877}
   shouldHandleRotation: 1
+--- !u!1 &4118780818022408306
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 657856308355781004}
+  m_Layer: 8
+  m_Name: temp
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &657856308355781004
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4118780818022408306}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.979, y: -1.669, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2536242551349520735}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4707729290595137242
 GameObject:
   m_ObjectHideFlags: 0
@@ -1076,6 +1107,7 @@ Transform:
   m_Children:
   - {fileID: 8371041965786480306}
   - {fileID: 6154274985939824754}
+  - {fileID: 657856308355781004}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &8310182073524561793
@@ -1624,6 +1656,7 @@ GameObject:
   - component: {fileID: 9146228268623601172}
   - component: {fileID: 4186998982857507569}
   - component: {fileID: 6257906616973301969}
+  - component: {fileID: 3106427668422968683}
   m_Layer: 8
   m_Name: BodySprite
   m_TagString: Untagged
@@ -1734,6 +1767,22 @@ MonoBehaviour:
   _stateHandler: {fileID: 8498187196400931344}
   playerMovementController: {fileID: 5552875086602648877}
   shouldHandleRotation: 1
+--- !u!114 &3106427668422968683
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8360183228284639160}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcd79080c9faaea4e82a48bbb117812d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerMovementController: {fileID: 5552875086602648877}
+  stepParticles: {fileID: 5763267779433736180, guid: 5e7be1549256d4d4e827be37dec656bb, type: 3}
+  heavyStompParticles: {fileID: 263261225388098809, guid: e650e9bf2dcf32647872255700fb5a2a, type: 3}
+  fallingTimeThreshold: 0.6
 --- !u!1 &8884814348694100374
 GameObject:
   m_ObjectHideFlags: 0
