@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using _2_Scripts.Model;
+using _2_Scripts.Player.Statistics;
 using UnityEngine;
 
-namespace _2___Scripts.UI
+namespace _2_Scripts.UI.Elements.HUD
 {
-    public class HealthBar : MonoBehaviour
+    public class HealthBar : MonoBehaviour, IPlayerBar
     {
         [SerializeField]
         private GameObject healthPoint;
@@ -19,19 +20,21 @@ namespace _2___Scripts.UI
         private int maxHealth = 0;
         private int currentHealth = 0;
         private int oldMaxHealth = 0;
-        private float positionX = 0f;
-        private float positionY = 0f;
+        private readonly float positionX = 0f;
+        private readonly float positionY = 0f;
 
         private List<HealthType> healthType;
+        private List<Animator> animators;
         private List<GameObject> renderedHealth;
 
         public void Initialize()
         {
-            healthType = new();
-            renderedHealth = new();
+            healthType = new List<HealthType>();
+            renderedHealth = new List<GameObject>();
+            animators = new List<Animator>();
         }
 
-        public void SetCurrentHealth(int health)
+        public void SetCurrent(int health)
         {
             if (health >= maxHealth)
             {
@@ -52,7 +55,7 @@ namespace _2___Scripts.UI
         }
         public void SetHealthAnimation(HealthType type, int index)
         {
-            Animator animator = renderedHealth[index].GetComponent<Animator>();
+            Animator animator = animators[index];
             SetCurrentHealthToFalse(animator, index);
             SwitchToBooleanBasedOnType(animator, true, type);
 
@@ -90,7 +93,7 @@ namespace _2___Scripts.UI
             SwitchToBooleanBasedOnType(animator, false, element);
         }
 
-        public void SetMaxHealth(int newMaxHealth)
+        public void SetMax(int newMaxHealth)
         {
             maxHealth = newMaxHealth;
 
@@ -107,30 +110,23 @@ namespace _2___Scripts.UI
                 for (int i = oldMaxHealth-1; i >= maxHealth; i--)
                 {
                     Destroy(renderedHealth[i].gameObject);
+                    animators.RemoveAt(i);
                     renderedHealth.RemoveAt(i);
                 }
             }
             oldMaxHealth = maxHealth;
-            SetCurrentHealth(newMaxHealth);
+            SetCurrent(newMaxHealth);
         }
 
         private void GenerateNewPoint(int i)
         {
             healthType.Add(HealthType.Empty);
-            GameObject imageObject = Instantiate(healthPoint);
+            GameObject imageObject = Instantiate(healthPoint, healthBar, true);
             imageObject.name = "HealthBead" + i;
             RectTransform trans = imageObject.GetComponent<RectTransform>();
-            imageObject.transform.SetParent(healthBar);
+            animators.Add(imageObject.GetComponent<Animator>());
             trans.localScale = Vector2.one * scale;
             trans.anchoredPosition = new Vector3(positionX + (i * 20 * scale), positionY, -10);
-            //if (i % 2 != 0)
-            //{
-            //    trans.anchoredPosition = new Vector3(positionX + (i * 20 * scale), positionY, -10);
-            //}
-            //else
-            //{
-            //    trans.anchoredPosition = new Vector3(positionX + (i * 20 * scale), positionY - (10 * scale), -10);
-            //}
             trans.sizeDelta = new Vector2(42, 42);
             imageObject.transform.SetParent(healthBar);
 

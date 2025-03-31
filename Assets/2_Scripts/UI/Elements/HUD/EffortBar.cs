@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using _2_Scripts.Global;
+using _2_Scripts.Player.Statistics;
 using UnityEngine;
 
 namespace _2_Scripts.UI.Elements.HUD
 {
-    public class EffortBar : MonoBehaviour
+    public class EffortBar : MonoBehaviour, IPlayerBar
     {
         [SerializeField]
         private GameObject manaPoint;
@@ -30,6 +31,7 @@ namespace _2_Scripts.UI.Elements.HUD
         private int maxEffort;
         private int spellCapacity;
         private List<GameObject> renderedMana;
+        private List<Animator> animators;
         private List<GameObject> renderedBackground;
 
         public void Initialize()
@@ -42,6 +44,7 @@ namespace _2_Scripts.UI.Elements.HUD
             currentEffort = 0;
             oldSpellCapacity = 0;
             oldMaxEffort = 0;
+            animators = new List<Animator>();
         }
 
         public void SetSpellCapacity(int capacity)
@@ -72,7 +75,7 @@ namespace _2_Scripts.UI.Elements.HUD
             }
         }
 
-        public void SetMaxEffort(int effort, bool shouldRefill = true)
+        public void SetMax(int effort)
         {
             maxEffort = effort;
 
@@ -88,6 +91,7 @@ namespace _2_Scripts.UI.Elements.HUD
                 for (int i = oldMaxEffort - 1; i >= maxEffort; i--)
                 {
                     Destroy(renderedMana[i]);
+                    animators.RemoveAt(i);
                     renderedMana.RemoveAt(i);
                     effortType.RemoveAt(i);
                     if(i+1<spellCapacity)
@@ -98,11 +102,9 @@ namespace _2_Scripts.UI.Elements.HUD
             }
 
             oldMaxEffort = maxEffort;
-            if(shouldRefill)
-                SetCurrentEffort(effort);
         }
 
-        public void SetCurrentEffort(int mana)
+        public void SetCurrent(int mana)
         {
             if (mana >= maxEffort)
             {
@@ -132,7 +134,7 @@ namespace _2_Scripts.UI.Elements.HUD
 
         public void SetEffortAnimation(EffortType element, int index)
         {
-            Animator animator = renderedMana[index].GetComponent<Animator>();
+            Animator animator = animators[index];
             SetCurrentElementToFalse(animator, index);
             SwitchBooleanBasedOnElement(animator, true, element);
 
@@ -190,10 +192,9 @@ namespace _2_Scripts.UI.Elements.HUD
 
         private void GenerateNewBackgroundPoint(int i) //used only for notches really.
         {
-            GameObject imageObject = Instantiate(backgroundPoint);
+            GameObject imageObject = Instantiate(backgroundPoint, manaBar, true);
             imageObject.name = "EffortNotch" + i;
             RectTransform trans = imageObject.GetComponent<RectTransform>();
-            imageObject.transform.SetParent(manaBar);
             trans.localScale = Vector2.one * scale;
             trans.anchoredPosition = new Vector3(positionX / 2 - 30 + (i * 26 * scale), positionY, -10);
             trans.sizeDelta = new Vector2(28, 28);
@@ -203,14 +204,14 @@ namespace _2_Scripts.UI.Elements.HUD
         private void GenerateNewPoint(int i)
         {
             effortType.Add(EffortType.Empty);
-            GameObject imageObject = Instantiate(manaPoint);
+            GameObject imageObject = Instantiate(manaPoint, manaBar, true);
             imageObject.name = "EffortPoint" + i;
-            RectTransform trans = imageObject.GetComponent<RectTransform>();
-            imageObject.transform.SetParent(manaBar);
-            trans.localScale = Vector2.one * scale;
-            trans.anchoredPosition = new Vector3(positionX/2 - 30 + (i * 26 * scale), positionY, -10);
+            RectTransform rectTransform = imageObject.GetComponent<RectTransform>();
+            animators.Add(imageObject.GetComponent<Animator>());
+            rectTransform.localScale = Vector2.one * scale;
+            rectTransform.anchoredPosition = new Vector3(positionX/2 - 30 + (i * 26 * scale), positionY, -10);
 
-            trans.sizeDelta = new Vector2(28, 28);
+            rectTransform.sizeDelta = new Vector2(28, 28);
         
             renderedMana.Add(imageObject);
         }

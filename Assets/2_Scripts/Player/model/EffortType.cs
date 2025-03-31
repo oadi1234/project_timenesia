@@ -1,4 +1,4 @@
-//TODO very old code. There should really only be Empty, Matter, Entropy, Mind, Rune and Kinesis here.
+//TODO very old code. There should really only be Empty, Aether, Entropy, Mind, Rune and Kinesis here.
 public enum EffortType
 {
     Empty = 0,
@@ -10,7 +10,7 @@ public enum EffortType
     Muscle,
     Curse,
     Time,
-    Matter = 1,
+    Aether = 1,
     Entropy = 2,
     Mind = 3,
     Rune = 4,

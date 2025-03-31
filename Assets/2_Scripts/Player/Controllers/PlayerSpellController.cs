@@ -16,7 +16,7 @@ namespace _2_Scripts.Player.Controllers
 
         public void CastSpell(int spellIndex, bool isCasting)
         {
-            // TODO change switch-case to dictionary<index, spelltype> lookup
+            // TODO change switch-case to dictionary<index, spelltype> lookup, it might be more easily expandable.
             if (isCasting)
             {
                 switch (spellIndex)

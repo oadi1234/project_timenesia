@@ -26,7 +26,10 @@ namespace _2_Scripts.Player.Animation
         {
             animator = GetComponent<Animator>();
             spriteRenderer = GetComponent<SpriteRenderer>();
-            playerMovementController.Flipped += (facingLeftParam) => { this.facingLeft = facingLeftParam; };
+            if (playerMovementController)
+            {
+                playerMovementController.Flipped += (facingLeftParam) => { this.facingLeft = facingLeftParam; };
+            }
         }
 
         // Update is called once per frame

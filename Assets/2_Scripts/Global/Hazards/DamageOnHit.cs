@@ -1,4 +1,5 @@
-using _2_Scripts.Enemies.Attacks;
+using _2_Scripts.Global.Health;
+using _2_Scripts.Global.Health.EnemyAttack;
 using _2_Scripts.Player;
 using UnityEngine;
 
@@ -13,7 +14,7 @@ namespace _2_Scripts.Global.Hazards
 
         private void Start()
         {
-            Params = new Hurt {DamageDealt = 1, IFramesGiven = 2f};
+            Params = new DamageParameters {DamageDealt = 1, IFramesGiven = 2f};
             AttackName = attackName;
         }
 
@@ -21,7 +22,7 @@ namespace _2_Scripts.Global.Hazards
         {
             if (other.gameObject.layer == (int) Layers.Player)
             {
-                OnAttack(this);
+                OnPlayerHit(this);
                 if (persistent) return;
 
                 gameObject.SetActive(false);
@@ -37,7 +38,7 @@ namespace _2_Scripts.Global.Hazards
         {
             if (other.gameObject.layer == (int) Layers.Player)
             {
-                OnAttack(this);
+                OnPlayerHit(this);
                 if (persistent) return;
                 
                 gameObject.SetActive(false);

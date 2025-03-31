@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace _2_Scripts.Model
+namespace _2_Scripts.Player.model
 {
     internal class Spell
     {

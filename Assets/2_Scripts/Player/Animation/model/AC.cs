@@ -41,7 +41,7 @@ namespace _2_Scripts.Player.Animation.model
         public static readonly int SpellcastStaffHeavy = Animator.StringToHash("sylvia_spellcast_staff_heavy_l");
         public static readonly int SpellcastStaffAoE = Animator.StringToHash("sylvia_spellcast_staff_aoe_l");
         public static readonly int StaffConcentration = Animator.StringToHash("sylvia_staff_concentration_l");
-        
+
         //Cloak & hair
         public static readonly int HingeIdle = Animator.StringToHash("Idle");
         public static readonly int HingeStartMove = Animator.StringToHash("Start-move");
@@ -58,6 +58,12 @@ namespace _2_Scripts.Player.Animation.model
         //Blinking frames
         public static readonly int HurtBlink = Animator.StringToHash("player_hurt_blink");
         public static readonly int HurtNone = Animator.StringToHash("player_hurt_none");
+
+        #endregion
+
+        #region attack_effects
+
+        public static readonly int StaffBasicSwoosh = Animator.StringToHash("staff_basic_swoosh");
 
         #endregion
 
@@ -82,6 +88,7 @@ namespace _2_Scripts.Player.Animation.model
         public const float StaffConcentrationDuration = 6f / 12f;
 
         public const float StaffHeavyAttackDuration = 10f / 12f;
+
         //cloak durations
         public const float CloakStopMoveDuration = 10f / 12f;
         public const float CloakIdleDuration = 1f / 12f;
@@ -91,7 +98,7 @@ namespace _2_Scripts.Player.Animation.model
         #endregion
 
         #region animation_state_locks
-        
+
         public const float DashEndStateLockDuration = 0f;
         public const float DashStateLockDuration = 8f / 24f;
         public const float DoubleJumpStateLockDuration = 0f;
@@ -102,13 +109,6 @@ namespace _2_Scripts.Player.Animation.model
         public const float StaffSpellcastHeavyStateLockDuration = 11f / 12f;
         public const float StaffAttackStateLockDuration = 4f / 12f;
         public const float StaffHeavyAttackStateLockDuration = 9f / 12f;
-
-        #endregion
-
-        #region pivot_points
-
-        //all of the pivot points in cloak and hair animation is stored in here.
-        // they are created when constructor is called. Preferably move this whole info to a json file
 
         #endregion
     }

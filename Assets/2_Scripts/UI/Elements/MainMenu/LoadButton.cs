@@ -1,5 +1,4 @@
 using System;
-using _2___Scripts.UI;
 using _2_Scripts.Global.SaveSystem.SaveDataSchemas;
 using _2_Scripts.UI.Elements.HUD;
 using TMPro;
@@ -31,8 +30,8 @@ namespace _2_Scripts.UI.Elements.MainMenu
 
         public void Initialize()
         {
-            healthBar.SetMaxHealth(savePreview.MaxHealth);
-            effortBar.SetMaxEffort(savePreview.MaxEffort);
+            healthBar.SetMax(savePreview.MaxHealth);
+            effortBar.SetMax(savePreview.MaxEffort);
             effortBar.SetSpellCapacity(savePreview.SpellCapacity);
             // TODO set button image.
             text.text = directoryName; // TODO in the future set the text to something better, like the scene name. For now its convenient for debugging.
@@ -47,8 +46,8 @@ namespace _2_Scripts.UI.Elements.MainMenu
         private void OnDisable()
         {
             StopAllCoroutines();
-            healthBar.SetCurrentHealth(0);
-            effortBar.SetCurrentEffort(0);
+            healthBar.SetCurrent(0);
+            effortBar.SetCurrent(0);
         }
 
         public void Click()

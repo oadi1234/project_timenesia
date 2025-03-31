@@ -4,6 +4,7 @@ using _2_Scripts.Spells;
 using _2_Scripts.UI.Elements.HUD;
 using Spells;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace _2_Scripts.Player.Statistics
 {
@@ -15,7 +16,7 @@ namespace _2_Scripts.Player.Statistics
 
         public float regenInterval = 0.8f; // TODO set this depending on the chosen difficulty, or allow concentrations to change it. Might get moved to PlayerAbilityAndStats or something like it.
         public int effortPerInterval = 1;
-        public EffortBar effortBar;
+        [FormerlySerializedAs("effortPlayerBar")] public EffortBar effortBar;
         public EffortType[] castCombination;
         // private List<Spell> preparedSpells;
         private List<BaseSpell> preparedSpells;
@@ -48,27 +49,6 @@ namespace _2_Scripts.Player.Statistics
             {
                 CastSpell();
             }
-
-            //else
-            //{
-            //    if (Input.GetKeyDown(KeyCode.H))
-            //    {
-            //        CastSpell(0);
-            //    }
-            //    if (Input.GetKeyDown(KeyCode.J))
-            //    {
-            //        CastSpell(1);
-            //    }
-            //    if (Input.GetKeyDown(KeyCode.K))
-            //    {
-            //        UseEffort(3);
-            //    }
-
-            //    if (Input.GetKeyUp(KeyCode.H))
-            //    {
-            //        UseEffort(lastPreparedSpellManaCost);
-            //    }
-            //}
         }
 
         private void Initialize()
@@ -77,7 +57,7 @@ namespace _2_Scripts.Player.Statistics
             spellCapacity = GameDataManager.Instance.currentGameData.SpellCapacity;
             currentEffort = 0;
             effortBar.Initialize();
-            effortBar.SetMaxEffort(maxEffort, false);
+            effortBar.SetMax(maxEffort);
             effortBar.SetSpellCapacity(spellCapacity);
             castCombination = new EffortType[maxEffort];
             for (int i = 0; i < castCombination.Length; i++)
@@ -188,7 +168,7 @@ namespace _2_Scripts.Player.Statistics
                 return false;
             else
                 currentEffort -= cost;
-            effortBar.SetCurrentEffort(currentEffort);
+            effortBar.SetCurrent(currentEffort);
             effortBar.CleanManaSources();
             return true;
         }
@@ -205,7 +185,7 @@ namespace _2_Scripts.Player.Statistics
             currentEffort += amount;
             if (currentEffort > maxEffort)
                 currentEffort = maxEffort;
-            effortBar.SetCurrentEffort(currentEffort);
+            effortBar.SetCurrent(currentEffort);
         }
     }
 }

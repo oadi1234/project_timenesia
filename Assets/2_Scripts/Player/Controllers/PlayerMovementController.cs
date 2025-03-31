@@ -117,16 +117,11 @@ namespace _2_Scripts.Player.Controllers
             }
         }
 
-        private void Initialize()
-        {
-            ResetPosition(startingPosition);
-        }
-
-        private void Restart() // TODO remove from here - movement controller should not be doing a full restart. Might require something like a PlayerEventController.
+        private void Respawn() // Changed name from Restart to Respawn, as I presume it was supposed to set position after falling into a pit etc.?
         {
             //playerHealth.Restart();
             // StartCoroutine(BlockInputForSeconds(2f));
-            Initialize();
+            ResetPosition(startingPosition); //change to "last safe position"
         }
 
         #region Getters
@@ -609,7 +604,6 @@ namespace _2_Scripts.Player.Controllers
             flipCooldown = 0f;
             groundAttackTimer = 0f;
             startedDashFromWallSlide = isWallSliding;
-            // if (startedDashFromWallSlide) facingLeft = !facingLeft;
             velocityVector.Set(
                 PlayerConstants.Instance.dashSpeed *
                 ((Convert.ToInt32(move < 0.01f && move > -0.01f ? !facingLeft : (move > 0) == !isWallSliding) << 1) - 1),
@@ -634,7 +628,6 @@ namespace _2_Scripts.Player.Controllers
             rigidBody2D.gravityScale = tempValue;
             rigidBody2D.sharedMaterial = _allFriction;
             canDash = isGrounded || isWallTouching;
-            currentDashCooldown = 0f;
             if (startedDashFromWallSlide)
             {
                 isDoubleJumping = false;

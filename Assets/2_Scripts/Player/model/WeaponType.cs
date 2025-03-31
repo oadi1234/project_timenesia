@@ -1,6 +1,6 @@
-namespace _2_Scripts.Model
+namespace _2_Scripts.Player.model
 {
-    public enum Weapon
+    public enum WeaponType
     {
         Staff = 1,
         Sword = 2,

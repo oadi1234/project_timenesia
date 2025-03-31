@@ -3,6 +3,7 @@ using System.Collections;
 using _2_Scripts.ExtensionMethods;
 using _2_Scripts.Global;
 using _2_Scripts.Model;
+using _2_Scripts.Player.model;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -28,16 +29,16 @@ namespace _2_Scripts.Player.Controllers
             else
                 switch (_currentWeapon.WeaponType)
                 {
-                    case Weapon.Staff:
+                    case WeaponType.Staff:
                         _currentWeapon = wand;
                         break;
-                    case Weapon.Sword:
+                    case WeaponType.Sword:
                         break;
-                    case Weapon.Rod:
+                    case WeaponType.Rod:
                         break;
-                    case Weapon.Orb:
+                    case WeaponType.Orb:
                         break;
-                    case Weapon.Daggerwand:
+                    case WeaponType.Daggerwand:
                         _currentWeapon = staff;
                         break;
                     default:
@@ -47,20 +48,20 @@ namespace _2_Scripts.Player.Controllers
                 }
         }
 
-        public void ChangeWeapon(Weapon weapon)
+        public void ChangeWeapon(WeaponType weaponType)
         {
-            switch (weapon)
+            switch (weaponType)
             {
-                case Weapon.Staff:
+                case WeaponType.Staff:
                     _currentWeapon = staff;
                     break;
-                case Weapon.Sword:
+                case WeaponType.Sword:
                     break;
-                case Weapon.Rod:
+                case WeaponType.Rod:
                     break;
-                case Weapon.Orb:
+                case WeaponType.Orb:
                     break;
-                case Weapon.Daggerwand:
+                case WeaponType.Daggerwand:
                     _currentWeapon = wand;
                     break;
                 default:

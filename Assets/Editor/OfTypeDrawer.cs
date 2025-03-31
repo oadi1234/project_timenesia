@@ -1,14 +1,18 @@
 using System.Linq;
-using _2_Scripts.Unity.InternalBridge;
+using Editor.InternalBridge;
+#if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
+#endif
+
 //Taken from CaseyHofland on unity forums: https://discussions.unity.com/t/reference-interfaces-in-editor-workaround/896967
 // Thanks a lot.
 
-namespace _2_Scripts.Unity
+namespace Editor
 {
+#if UNITY_EDITOR
     [CustomPropertyDrawer(typeof(OfTypeAttribute))]
     public class OfTypeDrawer : PropertyDrawer
     {
@@ -71,4 +75,5 @@ namespace _2_Scripts.Unity
                 gameObject.GetComponents<Component>().FirstOrDefault(IsValid);
         }
     }
+#endif
 }
