@@ -11,8 +11,6 @@ namespace _2_Scripts.Player
         
         public PlayerSpellController playerSpellController;
 
-        public WeaponController weaponController;
-
         private float xInput;
         private float yInput;
         private bool isInputEnabled = true;

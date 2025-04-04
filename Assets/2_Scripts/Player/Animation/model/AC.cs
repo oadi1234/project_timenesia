@@ -8,6 +8,7 @@ namespace _2_Scripts.Player.Animation.model
      */
     public static class AC
     {
+        public const float SingleFrame = 1f / 12f;
         #region character_animation_hash
 
         public static readonly int Idle = Animator.StringToHash("sylvia_idle_l");
@@ -22,6 +23,19 @@ namespace _2_Scripts.Player.Animation.model
         public static readonly int HurtHeavy = Animator.StringToHash("sylvia_hurt_heavy_l");
         public static readonly int HurtLight = Animator.StringToHash("sylvia_hurt_light_l");
         public static readonly int Wallslide = Animator.StringToHash("sylvia_wallslide_l");
+
+        //Cloak & hair
+        public static readonly int RopeIdle = Animator.StringToHash("Idle");
+        public static readonly int RopeStartMove = Animator.StringToHash("Start-move");
+        public static readonly int RopeStopMove = Animator.StringToHash("Stop-move");
+        public static readonly int RopeMove = Animator.StringToHash("Move");
+
+        //None animation (empty sprite) for certain states
+        public static readonly int None = Animator.StringToHash("none");
+
+        #endregion
+
+        #region weapon animations
 
         //Staves
         public static readonly int StaffAttackAirDown1 = Animator.StringToHash("sylvia_staff_air_attack_down_1");
@@ -41,15 +55,6 @@ namespace _2_Scripts.Player.Animation.model
         public static readonly int SpellcastStaffHeavy = Animator.StringToHash("sylvia_spellcast_staff_heavy_l");
         public static readonly int SpellcastStaffAoE = Animator.StringToHash("sylvia_spellcast_staff_aoe_l");
         public static readonly int StaffConcentration = Animator.StringToHash("sylvia_staff_concentration_l");
-
-        //Cloak & hair
-        public static readonly int HingeIdle = Animator.StringToHash("Idle");
-        public static readonly int HingeStartMove = Animator.StringToHash("Start-move");
-        public static readonly int HingeStopMove = Animator.StringToHash("Stop-move");
-        public static readonly int HingeMove = Animator.StringToHash("Move");
-
-        //None animation (empty sprite) for certain states
-        public static readonly int None = Animator.StringToHash("none");
 
         #endregion
 

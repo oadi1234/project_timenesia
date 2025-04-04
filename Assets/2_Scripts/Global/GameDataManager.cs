@@ -7,6 +7,7 @@ using _2_Scripts.Global.SaveSystem;
 using _2_Scripts.Global.SaveSystem.SaveDataSchemas;
 using _2_Scripts.Model;
 using _2_Scripts.Player;
+using _2_Scripts.Player.model;
 using _2_Scripts.Scenes;
 using _2_Scripts.UI.Elements.HUD;
 using _2_Scripts.UI.Elements.MainMenu;

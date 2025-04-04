@@ -1,6 +1,5 @@
 using _2_Scripts.Player.model;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace _2_Scripts.Player
 {

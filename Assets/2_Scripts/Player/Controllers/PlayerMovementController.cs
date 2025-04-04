@@ -285,6 +285,7 @@ namespace _2_Scripts.Player.Controllers
 
         private void GroundJump()
         {
+            currentCoyoteTime = 0f;
             timeAfterJumpPressed =
                 PlayerConstants.Instance
                     .jumpGroundCheckCooldown; //a cooldown made to avoid setting values on being grounded a short while after jumping.
@@ -312,6 +313,7 @@ namespace _2_Scripts.Player.Controllers
 
         private void DoubleJump()
         {
+            currentCoyoteTime = 0f;
             isWallJumping =
                 false; //reset the flag so wall jumping penalty for KeyHoldAscendWhileJumping does not apply.
             isDoubleJumping = true;
@@ -587,6 +589,7 @@ namespace _2_Scripts.Player.Controllers
 
         private void SetVariablesWhenWallJumping()
         {
+            currentCoyoteTime = 0f;
             rigidBody2D.velocity = new Vector2(0, 0);
             isWallJumping = true;
             isJumping = true;

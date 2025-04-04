@@ -38,20 +38,20 @@ namespace _2_Scripts.Player.Animation
             
             if (playerMovementController.GetTotalVelocity() < 2f)
             {
-                if (hingeObjectState == AC.HingeMove)
+                if (hingeObjectState == AC.RopeMove)
                 {
-                    return PlayState(AC.HingeStopMove, AC.CloakStopMoveDuration);
+                    return PlayState(AC.RopeStopMove, AC.CloakStopMoveDuration);
                 }
-                return AC.HingeIdle;
+                return AC.RopeIdle;
             }
 
             if (playerMovementController.GetTotalVelocity() > 2f)
             {
-                if (hingeObjectState == AC.HingeIdle)
+                if (hingeObjectState == AC.RopeIdle)
                 {
-                    return PlayState(AC.HingeStartMove, AC.CloakStartMoveDuration);
+                    return PlayState(AC.RopeStartMove, AC.CloakStartMoveDuration);
                 }
-                return AC.HingeMove;
+                return AC.RopeMove;
             }
 
             return AC.None;

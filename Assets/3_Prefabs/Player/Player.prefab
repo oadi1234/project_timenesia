@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 4590196232832602620}
   - component: {fileID: 5997275684401152136}
   - component: {fileID: 4485852084555297747}
-  - component: {fileID: 663987529783823179}
   m_Layer: 8
   m_Name: WeaponSprite
   m_TagString: Untagged
@@ -123,19 +122,6 @@ MonoBehaviour:
   _stateHandler: {fileID: 8498187196400931344}
   playerMovementController: {fileID: 5552875086602648877}
   shouldHandleRotation: 1
---- !u!114 &663987529783823179
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 982322730170500321}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfda76b7707eee24d9d4dc3808a7af63, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  staffAttackZone: {fileID: 2294329008803909729, guid: ae1d6333a6005e34eae585d15dd816e1, type: 3}
 --- !u!1 &1454504603569855483
 GameObject:
   m_ObjectHideFlags: 0
@@ -1067,6 +1053,7 @@ GameObject:
   - component: {fileID: 8234275702413379607}
   - component: {fileID: 9032211203397379358}
   - component: {fileID: 2494811495003499475}
+  - component: {fileID: 7534517964016221707}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -1150,7 +1137,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.1}
+  m_Offset: {x: 0, y: -0.2646854}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 1}
@@ -1161,7 +1148,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.5, y: 3}
+  m_Size: {x: 0.5, y: 2.6706293}
   m_EdgeRadius: 0
 --- !u!114 &4502648273593359070
 MonoBehaviour:
@@ -1242,7 +1229,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerMovementController: {fileID: 5552875086602648877}
   playerSpellController: {fileID: 8234275702413379607}
-  weaponController: {fileID: 0}
 --- !u!114 &4947023237333374663
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1318,6 +1304,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 583b2d3349dabd94eacef3d2337d8a6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7534517964016221707
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5819309414079763486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9dbcaad203441fab6d0b270e70281b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &6415780986274217343
@@ -1626,6 +1624,7 @@ GameObject:
   - component: {fileID: 4186998982857507569}
   - component: {fileID: 6257906616973301969}
   - component: {fileID: 3106427668422968683}
+  - component: {fileID: 9197145415943239521}
   m_Layer: 8
   m_Name: BodySprite
   m_TagString: Untagged
@@ -1752,6 +1751,19 @@ MonoBehaviour:
   stepParticles: {fileID: 5763267779433736180, guid: 5e7be1549256d4d4e827be37dec656bb, type: 3}
   heavyStompParticles: {fileID: 263261225388098809, guid: e650e9bf2dcf32647872255700fb5a2a, type: 3}
   fallingTimeThreshold: 0.6
+--- !u!114 &9197145415943239521
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8360183228284639160}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfda76b7707eee24d9d4dc3808a7af63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  staffAttackZone: {fileID: 2294329008803909729, guid: ae1d6333a6005e34eae585d15dd816e1, type: 3}
 --- !u!1 &8884814348694100374
 GameObject:
   m_ObjectHideFlags: 0

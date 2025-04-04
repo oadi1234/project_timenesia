@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2510001408479837319}
   m_Layer: 20
   m_Name: StaffAttack
-  m_TagString: Untagged
+  m_TagString: PlayerAttack
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -41,7 +41,7 @@ PolygonCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2294329008803909729}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -63,7 +63,7 @@ PolygonCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -100,6 +100,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d526f5d278b7c9b44a0c94d634008a1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  polyCollider2D: {fileID: 7365478102939762796}
 --- !u!1 &7374724946491461680
 GameObject:
   m_ObjectHideFlags: 0

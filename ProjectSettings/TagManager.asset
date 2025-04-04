@@ -7,6 +7,7 @@ TagManager:
   - Walls
   - LoadingArea
   - Sight
+  - PlayerAttack
   layers:
   - Default
   - TransparentFX
@@ -17,9 +18,9 @@ TagManager:
   - Spell
   - PlayerIFrame
   - Player
-  - HurtSource
+  - 
   - Enemy
-  - Weapon
+  - 
   - Wall
   - Collision
   - Ceiling

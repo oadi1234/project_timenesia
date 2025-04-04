@@ -10,9 +10,7 @@ namespace _2_Scripts.Global
         Spell = 5,
         PlayerIFrame = 7,
         Player = 8,
-        HurtSource = 9,
         Enemy = 10,
-        Weapon = 11,
         Wall = 12,
         Collision = 13,
         Ceiling = 14,
@@ -20,6 +18,7 @@ namespace _2_Scripts.Global
         EnemyNavigation = 16,
         Interactables = 17,
         Hazard = 18,
-        SafeGroundCheckpoint = 19
+        SafeGroundCheckpoint = 19,
+        PlayerAttack = 20
     }
 }
