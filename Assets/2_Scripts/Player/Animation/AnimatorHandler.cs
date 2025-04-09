@@ -31,8 +31,7 @@ namespace _2_Scripts.Player.Animation
                 playerMovementController.Flipped += (facingLeftParam) => { this.facingLeft = facingLeftParam; };
             }
         }
-
-        // Update is called once per frame
+        
         void Update()
         {
             if (shouldHandleRotation)
@@ -46,8 +45,6 @@ namespace _2_Scripts.Player.Animation
             lastState = stateHandler.GetCurrentState();
         }
         
-        //TODO expose actual facing direction so it can be used by other things. It might require a bit of architectural
-        // magic, as animationHandler is relatively low in hierarchy compared to stuff like SpellControllers.
         private void SetFacingDirection()
         {
             if (!stateHandler.LockXFlip())

@@ -32,8 +32,8 @@ namespace _2_Scripts.Player.Controllers
         {
             //TODO this parameter should also be used when casting spells for simplicity - the logic will need to be adjusted
             currentDamage = currentWeapon.damage *
-                            (playerMovementController.GetIsGrounded() ? currentWeapon.groundDamageMult : 1);
-            currentKnockbackForce = currentWeapon.knockbackStrength * (playerMovementController.GetIsGrounded() ? currentWeapon.groundDamageMult : 1);
+                            (playerMovementController.IsGrounded() ? currentWeapon.groundDamageMult : 1);
+            currentKnockbackForce = currentWeapon.knockbackStrength * (playerMovementController.IsGrounded() ? currentWeapon.groundDamageMult : 1);
         }
 
         public WeaponType GetWeaponType()

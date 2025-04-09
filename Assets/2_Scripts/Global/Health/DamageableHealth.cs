@@ -62,12 +62,10 @@ namespace _2_Scripts.Global.Health
         private void SpawnText()
         {
             //debug only for build&run, but quite fun.
-            if (textController)
-            {
-                textControllerInstance = Instantiate(textController, transform.position + Vector3.up, Quaternion.identity);
-                textControllerInstance.ShowText();
-                StartCoroutine(DestroyText(textControllerInstance));
-            }
+            if (!textController) return;
+            textControllerInstance = Instantiate(textController, transform.position + Vector3.up, Quaternion.identity);
+            textControllerInstance.ShowText();
+            StartCoroutine(DestroyText(textControllerInstance));
         }
 
         private IEnumerator DestroyText(TextController instance)

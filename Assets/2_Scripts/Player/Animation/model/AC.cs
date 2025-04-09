@@ -45,6 +45,7 @@ namespace _2_Scripts.Player.Animation.model
         public static readonly int StaffAttack1 = Animator.StringToHash("sylvia_staff_attack_l_1");
         public static readonly int StaffAttack2 = Animator.StringToHash("sylvia_staff_attack_l_2");
         public static readonly int StaffAttackAirUp = Animator.StringToHash("sylvia_staff_air_attack_up");
+        public static readonly int StaffWallslideAttack = Animator.StringToHash("sylvia_staff_wallslide_attack");
         public static readonly int StaffHeavyAttack = Animator.StringToHash("sylvia_staff_heavy_attack_l");
         public static readonly int SpellcastStaffBolt = Animator.StringToHash("sylvia_spellcast_staff_bolt_l");
         public static readonly int SpellcastStaffBoltUp = Animator.StringToHash("sylvia_spellcast_staff_bolt_up_l");

@@ -96,7 +96,7 @@ namespace _2_Scripts.Player.Animation
 
         private void CalculateGravityVector()
         {
-            gravityVector.x = -(playerMovementController.GetXVelocity() + (playerMovementController.GetIsWallSliding()
+            gravityVector.x = -(playerMovementController.GetXVelocity() + (playerMovementController.IsWallSliding()
                 ? playerMovementController.GetXVelocityVector()
                 : 1f)) * 0.125f * (-gravityStrength);
             gravityVector.y = gravityStrength + playerMovementController.GetYVelocity() * 0.25f * gravityStrength +

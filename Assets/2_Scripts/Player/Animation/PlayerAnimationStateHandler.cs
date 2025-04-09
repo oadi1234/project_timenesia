@@ -1,9 +1,7 @@
-using System.Collections.Generic;
 using _2_Scripts.Player.Controllers;
 using UnityEngine;
 using _2_Scripts.Player.Animation.model;
 using _2_Scripts.Player.Animation.model.weaponData;
-using _2_Scripts.Player.model;
 
 namespace _2_Scripts.Player.Animation
 {
@@ -27,6 +25,7 @@ namespace _2_Scripts.Player.Animation
         private float timeOnGround = 0f;
         private bool dashTriggered;
         private bool doubleJumpedTriggered;
+        private bool wallJumpedTriggered;
         private bool hurtTriggered;
         private bool attackTriggered;
         private bool spellTriggered;
@@ -56,7 +55,7 @@ namespace _2_Scripts.Player.Animation
             if (currentStateDuration > 0f) currentStateDuration -= Time.deltaTime;
             if (currentStateLockDuration > 0f) currentStateLockDuration -= Time.deltaTime;
             if (hurtDuration > 0f) hurtDuration -= Time.deltaTime;
-            if (playerMovementController.GetIsGrounded()) timeOnGround += Time.deltaTime;
+            if (playerMovementController.IsGrounded()) timeOnGround += Time.deltaTime;
             else timeOnGround = 0f;
             ClearBufferedState();
             currentState = GetState();
@@ -74,6 +73,7 @@ namespace _2_Scripts.Player.Animation
         {
             return !shouldDoMovementStates && currentState != AC.DashEnd;
         }
+        
 
         public bool ShouldRestartAnim()
         {
@@ -120,7 +120,7 @@ namespace _2_Scripts.Player.Animation
                 else
                     return PlayState(AC.DashEnd, AC.DashEndDuration, AC.DashEndStateLockDuration);
             }
-
+            
             if (currentStateLockDuration > 0f)
             {
                 if (currentState == AC.Dash && endDash)
@@ -128,12 +128,25 @@ namespace _2_Scripts.Player.Animation
                     InterruptState();
                     BufferState(AC.DashEnd, AC.DashEndDuration, AC.DashEndStateLockDuration);
                 }
-                else if (currentState == AC.DoubleJump)
+                else if (ShouldInterruptGroundAttack(
+                             weaponStateAnimationData.GetForState(WeaponAnimationState.AttackGround)))
                 {
-                    Debug.Log("beb");
+                    InterruptState();
+                    playerMovementController.ResetAttackLunge();
+                }
+                else if (ShouldInterruptDoubleJump())
+                {
+                    InterruptState();
+                    shouldDoMovementStates = true;
                 }
                 else
                     return currentState;
+            }
+
+            if (ShouldInterruptDoubleJump())
+            {
+                InterruptState();
+                shouldDoMovementStates = true;
             }
 
             if (doubleJumpedTriggered)
@@ -154,7 +167,7 @@ namespace _2_Scripts.Player.Animation
                 return PlayState(tempAnimData);
             }
 
-            if (playerMovementController.GetIsWallSliding())
+            if (playerMovementController.IsWallSliding() && !attackTriggered)
             {
                 InterruptState();
                 return AC.Wallslide;
@@ -197,7 +210,7 @@ namespace _2_Scripts.Player.Animation
                     InterruptState();
                     tempAnimData = weaponStateAnimationData.GetForState(WeaponAnimationState.SpellHeavy);
                     playerMovementController.AirHangForAttacks(tempAnimData.animationLockDuration, 0f);
-                    playerMovementController.AttackLunge(40f);
+                    //TODO do spell lunge after delay here
                     playerInputManager.BlockMovementSkillInput(tempAnimData.animationLockDuration);
                     return PlayState(tempAnimData);
                 }
@@ -214,6 +227,14 @@ namespace _2_Scripts.Player.Animation
 
             if (attackTriggered)
             {
+                if (playerMovementController.IsWallSliding())
+                {
+                    InterruptState();
+                    tempAnimData = weaponStateAnimationData.GetForState(WeaponAnimationState.Wallsliding);
+                    shouldDoMovementStates = false;
+                    playerMovementController.AdjustInputMoveStrength(tempAnimData.animationLockDuration, AttackMoveMagnitude);
+                    return PlayState(tempAnimData);
+                }
                 if (playerInputManager.GetYInput() > 0f)
                 {
                     InterruptState();
@@ -224,18 +245,18 @@ namespace _2_Scripts.Player.Animation
                     return PlayState(tempAnimData);
                 }
 
-                if (playerMovementController.GetIsGrounded() && playerInputManager.GetYInput() == 0f)
+                if (playerMovementController.IsGrounded() && playerInputManager.GetYInput() == 0f)
                 {
                     InterruptState();
                     tempAnimData = weaponStateAnimationData.GetForState(WeaponAnimationState.AttackGround);
                     shouldDoMovementStates = false;
                     playerMovementController.AdjustInputMoveStrength(tempAnimData.animationLockDuration,
                         AttackMoveMagnitude);
-                    playerMovementController.AttackLunge(15f);
+                    playerMovementController.AttackLunge(1f, AC.StaffAttackStateLockDuration);
                     return PlayState(tempAnimData);
                 }
 
-                if (!playerMovementController.GetIsGrounded() && playerInputManager.GetYInput() < 0f)
+                if (!playerMovementController.IsGrounded() && playerInputManager.GetYInput() < 0f)
                 {
                     InterruptState();
                     tempAnimData = weaponStateAnimationData.GetForState(WeaponAnimationState.AttackDown);
@@ -245,7 +266,7 @@ namespace _2_Scripts.Player.Animation
                     return PlayState(tempAnimData);
                 }
 
-                if (!playerMovementController.GetIsGrounded())
+                if (!playerMovementController.IsGrounded())
                 {
                     InterruptState();
                     tempAnimData = weaponStateAnimationData.GetForState(WeaponAnimationState.AttackAir);
@@ -258,13 +279,13 @@ namespace _2_Scripts.Player.Animation
 
             // If jumped during ground attack animation. Also has other attacks and double jump there to avoid skipping the animation.
             if (!shouldDoMovementStates && (currentState != AC.DoubleJump) && !IsGroundAttackState() &&
-                !playerMovementController.GetIsGrounded())
+                !playerMovementController.IsGrounded())
             {
                 InterruptState();
                 shouldDoMovementStates = true;
             }
 
-            if (playerMovementController.GetIsGrounded() && playerInputManager.IsConcentrating() &&
+            if (playerMovementController.IsGrounded() && playerInputManager.IsConcentrating() &&
                 playerMovementController.GetXVelocity() == 0f && timeOnGround > CooldownAfterLanding)
             {
                 tempAnimData = weaponStateAnimationData.GetForState(WeaponAnimationState.Concentration);
@@ -274,7 +295,7 @@ namespace _2_Scripts.Player.Animation
             if (shouldDoMovementStates || !(currentStateDuration > 0f))
             {
                 animStage = 0;
-                if (playerMovementController.GetIsGrounded() && playerInputManager.GetXInput() == 0f)
+                if (playerMovementController.IsGrounded() && playerInputManager.GetXInput() == 0f)
                 {
                     if (currentState == AC.Run)
                     {
@@ -288,7 +309,7 @@ namespace _2_Scripts.Player.Animation
                     return AC.Idle;
                 }
 
-                if (playerMovementController.GetIsGrounded() && playerInputManager.GetXInput() != 0f)
+                if (playerMovementController.IsGrounded() && playerInputManager.GetXInput() != 0f)
                 {
                     if (currentState == AC.Idle)
                     {
@@ -309,13 +330,13 @@ namespace _2_Scripts.Player.Animation
                     return AC.Run;
                 }
 
-                if (!playerMovementController.GetIsGrounded() && playerMovementController.GetYVelocity() < 0f)
+                if (!playerMovementController.IsGrounded() && playerMovementController.GetYVelocity() < 0f)
                 {
                     InterruptState();
                     return AC.Descend;
                 }
 
-                if (!playerMovementController.GetIsGrounded() && playerMovementController.GetYVelocity() >= 0f)
+                if (!playerMovementController.IsGrounded() && playerMovementController.GetYVelocity() >= 0f)
                 {
                     InterruptState();
                     return AC.Ascend;
@@ -341,6 +362,29 @@ namespace _2_Scripts.Player.Animation
         {
             if (bufferedState == AC.DashEnd)
                 shouldDoMovementStates = false;
+        }
+
+        private bool ShouldInterruptGroundAttack(AnimationData animData)
+        {
+            return IsStateHashInAnimationDataChain(currentState, animData) &&
+                   !playerMovementController.IsGrounded();
+        }
+
+        private bool ShouldInterruptDoubleJump()
+        {
+            return currentState == AC.DoubleJump && wallJumpedTriggered;
+        }
+
+        private bool IsStateHashInAnimationDataChain(int animationStateHash, AnimationData animData)
+        {
+            while (animData != null)
+            {
+                if (animationStateHash == animData.animationStateHash)
+                    return true;
+                animData = animData.chainsInto;
+            }
+
+            return false;
         }
 
         private int PlayState(AnimationData data)
@@ -393,13 +437,14 @@ namespace _2_Scripts.Player.Animation
             return bufferedState;
         }
 
-        #region event_handling
+        #region event_registering
 
         private void RegisterEvents()
         {
             playerMovementController.DoubleJumped += () => { doubleJumpedTriggered = true; };
             playerMovementController.Dashed += () => { dashTriggered = true; };
             playerMovementController.DashEnd += () => { endDash = true; };
+            playerMovementController.WallJumped += () => { wallJumpedTriggered = true; };
             playerSpellController.Spellcasted += () => { spellTriggered = true; };
             playerInputManager.Attacked += () => { attackTriggered = true; };
             playerInputManager.InputReceived += () => { inputReceived = true; };
@@ -411,6 +456,7 @@ namespace _2_Scripts.Player.Animation
             attackTriggered = false;
             dashTriggered = false;
             doubleJumpedTriggered = false;
+            wallJumpedTriggered = false;
             hurtTriggered = false;
             inputReceived = false;
             spellTriggered = false;

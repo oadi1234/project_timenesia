@@ -25,13 +25,13 @@ namespace _2_Scripts.Player.Particles
             CalculateDirection();
             if (playerMovementController.GetYVelocity() < 0f)
                 fallingTime += Time.fixedDeltaTime;
-            if (fallingTime > fallingTimeThreshold && playerMovementController.GetIsGrounded())
+            if (fallingTime > fallingTimeThreshold && playerMovementController.IsGrounded())
             {
                 SpawnHeavyStompParticles();
             }
 
-            if (playerMovementController.GetYVelocity() > 0f || playerMovementController.GetIsWallSliding() ||
-                playerMovementController.GetIsGrounded())
+            if (playerMovementController.GetYVelocity() > 0f || playerMovementController.IsWallSliding() ||
+                playerMovementController.IsGrounded())
                 fallingTime = 0f;
         }
 

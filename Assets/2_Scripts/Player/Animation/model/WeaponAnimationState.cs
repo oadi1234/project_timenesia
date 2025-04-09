@@ -14,6 +14,7 @@ namespace _2_Scripts.Player.Animation.model
         SpellAoE = 9,
         SpellHeavy = 10,
         SpellBuff = 11,
+        Wallsliding = 12,
         Concentration
     }
 }

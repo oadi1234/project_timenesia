@@ -16,7 +16,7 @@ public class CameraScript : MonoBehaviour
 
     [SerializeField] private Transform limitRight;
 
-    private float smooth = 5f;
+    private float smooth = 3f;
 
     private float x = 0;
     private float y = 0;

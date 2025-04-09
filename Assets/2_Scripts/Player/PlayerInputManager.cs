@@ -113,10 +113,10 @@ namespace _2_Scripts.Player
         {
             if (isInputEnabled)
             {
-                playerMovementController.Move(xInput * Time.fixedDeltaTime * 50);
+                playerMovementController.Move(xInput);
                 playerMovementController.Jump(jumpPressed, jumpKeyHold, isMoveSkillInputEnabled);
                 if (isMoveSkillInputEnabled)
-                    playerMovementController.Dash(dashPressed, xInput);
+                    playerMovementController.Dash(dashPressed);
                 playerSpellController.CastSpell(spellIndex, isSpellcasting);
                 if (inputReceived)
                 {

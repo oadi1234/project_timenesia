@@ -68,6 +68,10 @@ namespace _2_Scripts.Player.Animation.model.weaponData
                     WeaponAnimationState.SpellAoE,
                     new AnimationData(AC.SpellcastStaffAoE, AC.StaffSpellcastAoeDuration,
                         AC.StaffSpellcastAoeStateLockDuration)
+                },
+                {
+                    WeaponAnimationState.Wallsliding,
+                    new AnimationData(AC.StaffWallslideAttack, AC.StaffAttackDuration, AC.StaffAttackStateLockDuration)
                 }
             };
         }
