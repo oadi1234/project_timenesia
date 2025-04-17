@@ -78,14 +78,12 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -1.9937041, y: 2.58018}
-      - {x: -2.7328157, y: 2.0176325}
+    - - {x: -2.7328157, y: 2.0176325}
       - {x: -3.249817, y: 1.4323225}
       - {x: -3.597675, y: 0.4609646}
       - {x: -3.600589, y: -0.34733385}
       - {x: -3.2273848, y: -1.4036528}
       - {x: -2.728211, y: -1.9913937}
-      - {x: -1.9977803, y: -2.5121279}
       - {x: 0.014872551, y: 0.015468031}
   m_UseDelaunayMesh: 0
 --- !u!114 &2510001408479837319
@@ -101,6 +99,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   polyCollider2D: {fileID: 7365478102939762796}
+  attackHandler: {fileID: 0}
 --- !u!1 &7374724946491461680
 GameObject:
   m_ObjectHideFlags: 0

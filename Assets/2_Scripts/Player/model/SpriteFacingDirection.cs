@@ -8,7 +8,7 @@ namespace _2_Scripts.Player.model
         
         protected int Direction = 1;
         
-        private void Awake()
+        public virtual void Awake()
         {
             spriteRenderer = GetComponent<SpriteRenderer>();
         }

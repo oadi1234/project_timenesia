@@ -10,9 +10,14 @@ namespace _2_Scripts.Player.Statistics
 {
     public class PlayerHealth : MonoBehaviour
     {
+        [SerializeField] private ParticleSystem damageParticles;
         private int maxHealth;
         private int currentHealth;
         private PlayerMovementController playerMovementController;
+        private float timescaleTimer = 0f;
+        private bool hasIFrames = false;
+
+        private ParticleSystem damageParticlesInstance;
 
         [SerializeField] private HealthBar healthBar;
 
@@ -43,7 +48,9 @@ namespace _2_Scripts.Player.Statistics
 
         private void TakeDamage(DamageParameters damageParameters)
         {
-            playerMovementController.Knockback(damageParameters.KnockbackStrength);
+            playerMovementController.HurtKnockback(damageParameters.KnockbackStrength, damageParameters.DamageSourcePosition);
+            damageParticlesInstance = Instantiate(damageParticles, transform.position, Quaternion.identity);
+            SlowDownTime();
             if (damageParameters.IFramesGiven >= 0f)
             {
                 StartCoroutine(ApplyIFrames(damageParameters.IFramesGiven));
@@ -55,6 +62,25 @@ namespace _2_Scripts.Player.Statistics
                 // TODO play death animation here. Then load game.
             }
             healthBar.SetCurrent(currentHealth);
+        }
+
+        private void SlowDownTime()
+        {
+            Time.timeScale = 0;
+            StartCoroutine(RestoreTimeFlowOverTime());
+        }
+
+        private IEnumerator RestoreTimeFlowOverTime()
+        {
+            yield return new WaitForSecondsRealtime(0.1f);
+            timescaleTimer = 2f;
+            while (Time.timeScale < 1f)
+            {
+                timescaleTimer += Time.fixedDeltaTime;
+                Time.timeScale = Mathf.MoveTowards(Time.timeScale, 1, timescaleTimer * 0.01f);
+                
+                yield return null;
+            }
         }
 
         public void IncreaseHealth(int amount)
@@ -78,11 +104,18 @@ namespace _2_Scripts.Player.Statistics
             //TODO play heal animation on the health bar here.
         }
 
+        public bool HasIFrames()
+        {
+            return hasIFrames;
+        }
+
         private IEnumerator ApplyIFrames(float iFrame)
         {
             gameObject.layer = (int)Layers.PlayerIFrame;
+            hasIFrames = true;
             yield return new WaitForSeconds(iFrame);
             gameObject.layer = (int)Layers.Player;
+            hasIFrames = false;
         }
     }
 }

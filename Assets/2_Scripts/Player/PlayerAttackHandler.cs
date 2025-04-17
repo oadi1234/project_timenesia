@@ -1,3 +1,4 @@
+using _2_Scripts.Player.Controllers;
 using _2_Scripts.Player.model;
 using UnityEngine;
 
@@ -6,11 +7,18 @@ namespace _2_Scripts.Player
     public class PlayerAttackHandler : SpriteFacingDirection
     {
         [SerializeField] private GameObject staffAttackZone;
+        [SerializeField] private PlayerMovementController playerMovementController;
 
         // TODO logic for attacking.
         private WeaponType currentWeaponType;
 
         private GameObject staffAttackZoneInstance;
+
+        public override void Awake()
+        {
+            base.Awake();
+            staffAttackZone.GetComponent<WeaponAttackHandler>().attackHandler = this;
+        }
 
         private void Update()
         {
@@ -23,6 +31,7 @@ namespace _2_Scripts.Player
             staffAttackZoneInstance.transform.localScale = new Vector3(Direction, 1, 1);
             staffAttackZoneInstance.transform.position = new Vector3(transform.position.x,
                 transform.position.y + 0.67f, 0);
+            staffAttackZoneInstance.GetComponent<WeaponAttackHandler>().SetAttackDirection(Direction>0?Vector2.left:Vector2.right);
         }
 
         public void SpawnAttackStaffUp()
@@ -31,6 +40,7 @@ namespace _2_Scripts.Player
             staffAttackZoneInstance.transform.position =
                 new Vector3(transform.position.x, transform.position.y + 0.3f, 0f);
             staffAttackZoneInstance.transform.rotation = Quaternion.Euler(0, 0, -90);
+            staffAttackZoneInstance.GetComponent<WeaponAttackHandler>().SetAttackDirection(Vector2.up);
         }
 
         public void SpawnAttackStaffDown()
@@ -39,6 +49,7 @@ namespace _2_Scripts.Player
             staffAttackZoneInstance.transform.position = new Vector3(transform.position.x - 0.5f * Direction,
                 transform.position.y + 0.8f, 0f);
             staffAttackZoneInstance.transform.rotation = Quaternion.Euler(0, 0, 90);
+            staffAttackZoneInstance.GetComponent<WeaponAttackHandler>().SetAttackDirection(Vector2.down);
         }
         public void SpawnAttackStaffDown2()
         {
@@ -46,6 +57,12 @@ namespace _2_Scripts.Player
             staffAttackZoneInstance.transform.position = new Vector3(transform.position.x,
                 transform.position.y + 0.8f, 0f);
             staffAttackZoneInstance.transform.rotation = Quaternion.Euler(0, 0, 90);
+            staffAttackZoneInstance.GetComponent<WeaponAttackHandler>().SetAttackDirection(Vector2.down);
+        }
+
+        public void HandleAttackKnockback(float strength, Vector2 direction)
+        {
+            playerMovementController.AttackKnockback(strength, direction);
         }
     }
 }

@@ -9,6 +9,6 @@ namespace _2_Scripts.Player.model
         public float damage = 10;
         public float groundDamageMult = 1.5f; //damage when standing on ground. Since it "stops" character a bit it should be stronger.
         public float spellDamageMult = 1f;
-        public float knockbackStrength = 0.5f;
+        public float knockbackStrength = 1f;
     }
 }

@@ -390,6 +390,7 @@ MonoBehaviour:
   playerMovementController: {fileID: 5552875086602648877}
   playerInputManager: {fileID: 8358465365214595313}
   playerSpellController: {fileID: 8234275702413379607}
+  playerHealth: {fileID: 7834630345329486682}
   currentState: 0
   hurtLayerState: 0
 --- !u!114 &6831096059973611052
@@ -1178,6 +1179,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbc94886cff2882429fc7a517b9a8b78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damageParticles: {fileID: 744363689729818977, guid: a450a2e5e2f830b439e8461fa3eb584d, type: 3}
   healthBar: {fileID: 0}
 --- !u!114 &5552875086602648877
 MonoBehaviour:
@@ -1191,7 +1193,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c32907915b05cb947aa9f5b183c218d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _wallCheckMarker: {fileID: 8371041965786480306}
+  wallCheckMarker: {fileID: 0}
 --- !u!114 &3927247622581000598
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1206,7 +1208,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   whatIsGround:
     serializedVersion: 2
-    m_Bits: 61495
+    m_Bits: 12343
   boxCollider: {fileID: 4043263262267373838}
   groundCheckMarker: {fileID: 8371041965786480306}
   groundedCheckRay: 0.1
@@ -1759,6 +1761,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   staffAttackZone: {fileID: 2294329008803909729, guid: ae1d6333a6005e34eae585d15dd816e1, type: 3}
+  playerMovementController: {fileID: 5552875086602648877}
 --- !u!1 &8884814348694100374
 GameObject:
   m_ObjectHideFlags: 0

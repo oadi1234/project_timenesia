@@ -62,6 +62,11 @@ namespace _2_Scripts.Player.Animation
             return hingeObjectState;
         }
 
+        public int GetCurrentHurtState()
+        {
+            return playerAnimationStateHandler.GetCurrentHurtState();
+        }
+
         public bool LockXFlip()
         {
             //it might be necessary to add something here in the future, when dealing with hurt anims for example.

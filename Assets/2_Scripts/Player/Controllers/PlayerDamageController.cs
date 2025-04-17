@@ -30,7 +30,6 @@ namespace _2_Scripts.Player.Controllers
         
         private void FixedUpdate()
         {
-            //TODO this parameter should also be used when casting spells for simplicity - the logic will need to be adjusted
             currentDamage = currentWeapon.damage *
                             (playerMovementController.IsGrounded() ? currentWeapon.groundDamageMult : 1);
             currentKnockbackForce = currentWeapon.knockbackStrength * (playerMovementController.IsGrounded() ? currentWeapon.groundDamageMult : 1);
@@ -41,7 +40,7 @@ namespace _2_Scripts.Player.Controllers
             return currentWeapon.type;
         }
 
-        // TODO commented out because this functionality might be more complicated in the future.
+        // TODO commented out because this is basically unused for now and might be somewhere else
         // public void ChangeWeapon(WeaponType weaponType)
         // {
         //     switch (weaponType)

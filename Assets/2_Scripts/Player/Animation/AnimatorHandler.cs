@@ -39,6 +39,10 @@ namespace _2_Scripts.Player.Animation
             if (animator.HasState(0, stateHandler.GetCurrentState()))
                 animator.CrossFade(stateHandler.GetCurrentState(), 0, 0);
             else animator.CrossFade(AC.None, 0, 0);
+
+            if (animator.HasState(1, stateHandler.GetCurrentHurtState()))
+                animator.Play(stateHandler.GetCurrentHurtState(), 1, 0);
+            
             if (stateHandler.ShouldRestartAnim())
                 animator.Play(stateHandler.GetCurrentState(), 0, 0);
             

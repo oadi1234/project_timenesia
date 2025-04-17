@@ -14,7 +14,7 @@ namespace _2_Scripts.Player.Controllers
     {
         #region variables
 
-        [SerializeField] private Transform _wallCheckMarker;
+        [SerializeField] private Transform wallCheckMarker;
 
         private bool isDoubleJumping;
         private bool canDash; //only one dash midair.
@@ -30,6 +30,7 @@ namespace _2_Scripts.Player.Controllers
         private bool isDashing;
         private bool startedDashFromWallSlide = false;
         private bool airHangOngoing = false;
+        private bool isLightHurtKnockedback = false;
 
         private bool inputJump;
         private bool inputJumpHeld;
@@ -49,9 +50,14 @@ namespace _2_Scripts.Player.Controllers
         private float moveX;
         private float moveY;
 
+        private float attackKnockbackX;
+        private float attackKnockbackY;
+
+        private float hurtKnockbackX;
+        private float hurtKnockbackY;
+
         private Rigidbody2D rigidBody2D;
         private Vector2 velocityVector = Vector2.zero;
-        private Vector2 brakeVector = Vector2.zero;
         private Vector2 startingPosition;
         private GroundChecker groundChecker;
 
@@ -156,6 +162,11 @@ namespace _2_Scripts.Player.Controllers
             return isWallSliding;
         }
 
+        public bool IsKnockedBackLight()
+        {
+            return isLightHurtKnockedback;
+        }
+
         private bool GetAbilityFlag(AbilityName abilityName)
         {
             return GameDataManager.Instance.IsAbilityUnlocked(abilityName);
@@ -190,23 +201,27 @@ namespace _2_Scripts.Player.Controllers
                 StartCoroutine(dashVariableReverserCoroutine);
             }
         }
-        
+
         private void SetPosition(Vector3 position)
         {
             velocityVector = Vector2.zero;
             gameObject.transform.position = position;
         }
 
-        public void Knockback(float knockbackStrength)
+        public void HurtKnockback(float knockbackStrength, Vector3 damageSourcePosition)
         {
-            //TODO: Change the script to work sort of like RigidBody.AddExplosionForce, so the knockback happens away from its source always
-            // https://stackoverflow.com/questions/34250868/unity-addexplosionforce-to-2d
             playerInputManager.BlockInput(PlayerConstants.Instance.knockbackTime);
-            var sign = ((Convert.ToInt32(facingLeft) << 1) - 1);
-            moveX = knockbackStrength * sign;
-            moveY = knockbackStrength * 0.8f;
+            hurtKnockbackX = (transform.position.x - damageSourcePosition.x) * knockbackStrength*4;
+            hurtKnockbackY = (transform.position.y - damageSourcePosition.y) * knockbackStrength + 1f;
+            playerInputManager.BlockInput(AC.LightHurtDuration);
+            StartCoroutine(PerformLightHurtKnockback(AC.LightHurtDuration));
+        }
 
-            // TODO slow time for a while here when hit
+        public void AttackKnockback(float knockbackStrength, Vector2 direction)
+        {
+            direction *= knockbackStrength;
+            attackKnockbackX = direction.x * 0.4f;
+            attackKnockbackY = direction.y;
         }
 
         public void AttackLunge(float speed, float timer)
@@ -248,6 +263,15 @@ namespace _2_Scripts.Player.Controllers
         #endregion
 
         #region Waiters
+
+        private IEnumerator PerformLightHurtKnockback(float seconds)
+        {
+            isLightHurtKnockedback = true;
+            yield return new WaitForSeconds(seconds);
+            isLightHurtKnockedback = false;
+            hurtKnockbackX = 0;
+            hurtKnockbackY = 0;
+        }
 
         private IEnumerator ReverseAfterWallJumpAfterSeconds(float seconds)
         {
@@ -424,7 +448,7 @@ namespace _2_Scripts.Player.Controllers
                     ((Convert.ToInt32(inputX is < 0.01f and > -0.01f ? !facingLeft : (inputX > 0) == !isWallSliding) <<
                       1) - 1);
             moveY = 0f;
-            DoFlip();
+            DoFlip(moveX);
         }
 
         private void KeepVelocityYAtZeroWhenDashing()
@@ -457,29 +481,46 @@ namespace _2_Scripts.Player.Controllers
 
         private void AssignVelocityVector()
         {
-            if (!isDashing)
+            if (!isDashing && !isLightHurtKnockedback)
             {
-                HandleMovement();
-                HandleJumping();
+                if (!isWallJumping)
+                    HandleMovement();
+                if (!airHangOngoing)
+                    HandleJumping();
+            }
+            else if (isLightHurtKnockedback)
+            {
+                HandleHurtKnockback();
             }
 
             velocityVector.Set(
                 moveX, moveY);
             rigidBody2D.velocity = velocityVector;
+            ResetAttackKnockback();
+        }
+
+        private void HandleHurtKnockback()
+        {
+            moveX = hurtKnockbackX = Mathf.MoveTowards(hurtKnockbackX, 0, PlayerConstants.Instance.moveSpeed * 0.2f);
+            moveY = hurtKnockbackY = Mathf.MoveTowards(hurtKnockbackY, -6f, PlayerConstants.Instance.moveSpeed * 0.2f);
+            DoFlip(-moveX);
         }
 
         private void HandleMovement()
         {
-            moveY = airHangOngoing
-                ? Mathf.MoveTowards(moveY, -1f, PlayerConstants.Instance.maxVerticalSpeed * 0.1f)
-                : rigidBody2D.velocity.y;
+            if (attackKnockbackY > 0)
+                moveY = attackKnockbackY;
+            else if (airHangOngoing)
+                moveY = Mathf.MoveTowards(moveY, -1f, PlayerConstants.Instance.maxVerticalSpeed * 0.1f);
+            else
+                moveY = rigidBody2D.velocity.y;
 
             if (!Mathf.Approximately(inputX, 0))
                 moveX = Mathf.MoveTowards(moveX, inputX * PlayerConstants.Instance.moveSpeed,
-                    PlayerConstants.Instance.moveSpeed * 0.25f);
+                    PlayerConstants.Instance.moveSpeed * 0.25f) + attackKnockbackX;
             else
             {
-                moveX = Mathf.MoveTowards(moveX, 0, PlayerConstants.Instance.moveSpeed * 0.1f);
+                moveX = Mathf.MoveTowards(moveX, 0, PlayerConstants.Instance.moveSpeed * 0.1f) + attackKnockbackX;
             }
 
             if (!isJumping && isGrounded && !isOnSlope)
@@ -498,31 +539,19 @@ namespace _2_Scripts.Player.Controllers
                 moveY = movingTowardsWallOnSlope ? -1f : groundChecker.slopeNormalPerpendicular.y * -moveX;
             }
 
-            else if (!isGrounded)
+            else if (!isGrounded && isWallSliding && !airHangOngoing)
             {
-                if (isWallSliding && !airHangOngoing)
-                {
-                    moveY = PlayerConstants.Instance.wallSlideSpeed;
-                }
-                else if (isWallJumping && facingLeft)
-                {
-                    moveX = Mathf.Min(moveX, rigidBody2D.velocity.x);
-                }
-                else if (isWallJumping && !facingLeft)
-                {
-                    moveX = Mathf.Max(moveX, rigidBody2D.velocity.x);
-                }
+                moveY = PlayerConstants.Instance.wallSlideSpeed;
             }
 
-            DoFlip();
+
+            DoFlip(inputX);
 
             HandleSlipperySlopes();
         }
 
         private void HandleJumping()
         {
-            //TODO: It would be good to make it so that the jump buffers slightly or even that when jump is held the character keeps jumping.
-            // Double jump takes precedence over the buffer.
             if (inputJump && !isGrounded && isWallTouching && GetAbilityFlag(AbilityName.WallJump) &&
                 inputMovementSkillEnabled)
             {
@@ -549,8 +578,8 @@ namespace _2_Scripts.Player.Controllers
                 LoseVelocityAfterJumping();
             }
         }
-        
-        
+
+
         private void KeyHoldAscendWhileJumping()
         {
             jumpTime += Time.fixedDeltaTime +
@@ -612,15 +641,15 @@ namespace _2_Scripts.Player.Controllers
             moveY = rigidBody2D.velocity.y * 0.8f; //reduces floatiness.
             jumpTime = PlayerConstants.Instance.maxJumpTime;
         }
-        
-        
-        private void DoFlip()
+
+
+        private void DoFlip(float direction)
         {
-            if (moveX > 0 && facingLeft)
+            if (direction > 0 && facingLeft)
             {
                 Flip();
             }
-            else if (moveX < 0 && !facingLeft)
+            else if (direction < 0 && !facingLeft)
             {
                 Flip();
             }
@@ -632,6 +661,11 @@ namespace _2_Scripts.Player.Controllers
             Flipped?.Invoke(facingLeft);
         }
 
+        private void ResetAttackKnockback()
+        {
+            attackKnockbackX = 0;
+            attackKnockbackY = 0;
+        }
 
         #endregion
     }

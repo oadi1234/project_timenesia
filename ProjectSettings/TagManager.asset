@@ -15,16 +15,16 @@ TagManager:
   - 
   - Water
   - UI
-  - Spell
+  - 
   - PlayerIFrame
   - Player
   - 
   - Enemy
   - 
   - Wall
-  - Collision
-  - Ceiling
-  - OneWayGround
+  - Trigger
+  - 
+  - 
   - EnemyNavigation
   - Interactables
   - Hazard

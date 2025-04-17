@@ -36,6 +36,7 @@ namespace _2_Scripts.Global.Health
         {
             if (other.gameObject.layer == (int) Layers.PlayerAttack)
             {
+                // other.GetComponent<WeaponAttackHandler>();
                 currentHealth -= PlayerDamageController.currentDamage;
                 OnHit();
                 if (currentHealth <= 0)
@@ -85,7 +86,7 @@ namespace _2_Scripts.Global.Health
             }
         }
 
-        public virtual void Death()
+        private void Death()
         {
             // default behaviour, should be overriden when necessary (spawn death clutter etc)
             Destroy(gameObject);

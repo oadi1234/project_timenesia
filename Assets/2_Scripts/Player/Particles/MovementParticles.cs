@@ -17,9 +17,6 @@ namespace _2_Scripts.Player.Particles
 
         private float fallingTime = 0f;
 
-        //helper variable to avoid generating new vectors all the time. Probably a not-needed addition
-        private Vector3 position = Vector3.zero;
-
         private void FixedUpdate()
         {
             CalculateDirection();
@@ -90,16 +87,14 @@ namespace _2_Scripts.Player.Particles
 
         private void InstantiateParticles(float xPos, float yPos, float sizeMult)
         {
-            position.Set(transform.position.x + xPos * Direction, transform.position.y + yPos,
+            var vector = new Vector3(transform.position.x + xPos * Direction, transform.position.y + yPos,
                 transform.position.z);
             stepParticlesInstance = Instantiate(stepParticles,
-                position,
+                vector,
                 Quaternion.identity);
-            if (sizeMult != 1f)
-            {
-                var main = stepParticlesInstance.main;
-                main.startSizeMultiplier = 0.5f;
-            }
+            if (Mathf.Approximately(sizeMult, 1f)) return;
+            var main = stepParticlesInstance.main;
+            main.startSizeMultiplier = 0.5f;
         }
     }
 }

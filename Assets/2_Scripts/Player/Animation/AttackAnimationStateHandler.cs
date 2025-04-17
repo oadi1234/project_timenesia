@@ -8,6 +8,11 @@ public class AttackAnimationStateHandler : MonoBehaviour, IStateHandler
         return AC.StaffBasicSwoosh;
     }
 
+    public int GetCurrentHurtState()
+    {
+        return AC.None;
+    }
+
     public bool LockXFlip()
     {
         return false;

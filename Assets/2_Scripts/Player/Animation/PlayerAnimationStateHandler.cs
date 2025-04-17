@@ -2,6 +2,7 @@ using _2_Scripts.Player.Controllers;
 using UnityEngine;
 using _2_Scripts.Player.Animation.model;
 using _2_Scripts.Player.Animation.model.weaponData;
+using _2_Scripts.Player.Statistics;
 
 namespace _2_Scripts.Player.Animation
 {
@@ -11,6 +12,7 @@ namespace _2_Scripts.Player.Animation
 
         [SerializeField] private PlayerInputManager playerInputManager;
         [SerializeField] private PlayerSpellController playerSpellController;
+        [SerializeField] private PlayerHealth playerHealth;
 
         [SerializeField] private int currentState;
         [SerializeField] private int hurtLayerState;
@@ -21,8 +23,8 @@ namespace _2_Scripts.Player.Animation
         private float currentStateLockDuration = -1f; // for how long the animation is not changeable
         private float bufferedStateDuration = -1f;
         private float bufferedStateLockDuration = -1f;
-        private float hurtDuration = -1f;
         private float timeOnGround = 0f;
+        private float iFrameTimer = 0f;
         private bool dashTriggered;
         private bool doubleJumpedTriggered;
         private bool wallJumpedTriggered;
@@ -54,7 +56,6 @@ namespace _2_Scripts.Player.Animation
             if (currentStateDuration < 0f && !shouldDoMovementStates) shouldDoMovementStates = true;
             if (currentStateDuration > 0f) currentStateDuration -= Time.deltaTime;
             if (currentStateLockDuration > 0f) currentStateLockDuration -= Time.deltaTime;
-            if (hurtDuration > 0f) hurtDuration -= Time.deltaTime;
             if (playerMovementController.IsGrounded()) timeOnGround += Time.deltaTime;
             else timeOnGround = 0f;
             ClearBufferedState();
@@ -67,6 +68,11 @@ namespace _2_Scripts.Player.Animation
         public int GetCurrentState()
         {
             return currentState;
+        }
+
+        public int GetCurrentHurtState()
+        {
+            return hurtLayerState;
         }
 
         public bool LockXFlip()
@@ -92,17 +98,23 @@ namespace _2_Scripts.Player.Animation
         {
             //being hurt can happen regardless of animation state locks - it is the highest priority animation
             //Technically speaking it can happen even while being hurt, but it shouldn't due to invulnerability frames.
-            if (hurtTriggered && currentState != AC.HurtLight)
+            if (playerHealth.HasIFrames())
+            {
+                hurtLayerState = AC.HurtBlink;
+            }
+            else
+            {
+                hurtLayerState = AC.HurtNone;
+            }
+            if (playerMovementController.IsKnockedBackLight() && currentState != AC.HurtLight)
             {
                 InterruptState();
-                hurtLayerState = AC.HurtBlink;
                 return PlayState(AC.HurtLight, AC.LightHurtDuration, AC.LightHurtStateLockDuration);
             }
 
             if (heavyHurtTriggered && currentState != AC.HurtHeavy)
             {
                 InterruptState();
-                hurtLayerState = AC.HurtBlink;
                 return PlayState(AC.HurtHeavy, AC.HeavyHurtDuration, AC.HeavyHurtStateLockDuration);
             }
 
@@ -462,10 +474,6 @@ namespace _2_Scripts.Player.Animation
             spellTriggered = false;
             endDash = false;
             restartAnim = false;
-            if (hurtDuration < 0f)
-            {
-                hurtLayerState = AC.HurtNone;
-            }
         }
 
         private bool IsGroundAttackState()
