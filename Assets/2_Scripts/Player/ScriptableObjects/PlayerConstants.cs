@@ -40,6 +40,7 @@ namespace _2_Scripts.Player.ScriptableObjects
         public float wallSlideSpeed = -4.5f;
         public float attackObstacleKnockback = 28f;
         public float attackWallKnockback = 10f;
+        public float staffLungeMagnitude = 32f;
 
         //private float _glideSpeed = 5f; //Unused for now
         //private float _crouchSpeed = 0.3f; //unused for now, but might get some use later

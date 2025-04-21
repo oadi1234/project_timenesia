@@ -221,8 +221,7 @@ namespace _2_Scripts.Player.Animation
                 {
                     InterruptState();
                     tempAnimData = weaponStateAnimationData.GetForState(WeaponAnimationState.SpellHeavy);
-                    playerMovementController.AirHangForAttacks(tempAnimData.animationLockDuration, 0f);
-                    //TODO do spell lunge after delay here
+                    playerMovementController.AirHangForAttacks(tempAnimData.animationHangDuration, 0f);
                     playerInputManager.BlockMovementSkillInput(tempAnimData.animationLockDuration);
                     return PlayState(tempAnimData);
                 }
@@ -293,6 +292,7 @@ namespace _2_Scripts.Player.Animation
             if (!shouldDoMovementStates && (currentState != AC.DoubleJump) && !IsGroundAttackState() &&
                 !playerMovementController.IsGrounded())
             {
+                
                 InterruptState();
                 shouldDoMovementStates = true;
             }
@@ -478,8 +478,8 @@ namespace _2_Scripts.Player.Animation
 
         private bool IsGroundAttackState()
         {
-            return (currentState != AC.StaffAttack1) ==
-                   (currentState != AC.StaffAttack2);
+            return IsStateHashInAnimationDataChain(currentState, 
+                weaponStateAnimationData.GetForState(WeaponAnimationState.AttackGround));
         }
 
         #endregion

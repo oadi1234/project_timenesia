@@ -117,5 +117,12 @@ namespace _2_Scripts.Player.Animation.model
         public const float StaffHeavyAttackStateLockDuration = 9f / 12f;
 
         #endregion
+        
+        #region timers
+
+        public const float StaffHeavySpellcastLungeTimer = 6f / 12f;
+        public const float StaffHeavySpellcastHangTimer = 10f / 12f;
+
+        #endregion
     }
 }

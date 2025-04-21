@@ -35,15 +35,17 @@ namespace _2_Scripts.Player.Controllers
         private bool inputJump;
         private bool inputJumpHeld;
         private bool inputMovementSkillEnabled;
+        private bool isOnVerticalLunge = false;
 
         private float currentCoyoteTime;
         private float timeAfterJumpPressed; //cooldown for setting variables after pressing jump.
         private float currentDashCooldown;
         private float jumpTime = 0f;
         private float movementMagnitudeMultiplier = 1f;
-        private float groundAttackTimer;
+        private float attackTimer;
         private float preLungeTimer;
-        private float lungeSpeed = 1f;
+        private float lungeSpeedX = 1f;
+        private float lungeSpeedY = 0f;
         private float normalGravity;
 
         private float inputX;
@@ -107,8 +109,7 @@ namespace _2_Scripts.Player.Controllers
             IsOnSlope();
             CheckIfShouldStopDash();
             KeepVelocityYAtZeroWhenDashing();
-            // Brake();
-            DoAttackLunge();
+            Lunge();
 
             if (timeAfterJumpPressed > 0)
             {
@@ -119,6 +120,8 @@ namespace _2_Scripts.Player.Controllers
             {
                 currentDashCooldown -= Time.fixedDeltaTime;
             }
+
+            isOnVerticalLunge = !Mathf.Approximately(lungeSpeedY, 0);
 
             AssignVelocityVector();
         }
@@ -211,7 +214,7 @@ namespace _2_Scripts.Player.Controllers
         public void HurtKnockback(float knockbackStrength, Vector3 damageSourcePosition)
         {
             playerInputManager.BlockInput(PlayerConstants.Instance.knockbackTime);
-            hurtKnockbackX = (transform.position.x - damageSourcePosition.x) * knockbackStrength*4;
+            hurtKnockbackX = (transform.position.x - damageSourcePosition.x) * knockbackStrength * 4;
             hurtKnockbackY = (transform.position.y - damageSourcePosition.y) * knockbackStrength + 1f;
             playerInputManager.BlockInput(AC.LightHurtDuration);
             StartCoroutine(PerformLightHurtKnockback(AC.LightHurtDuration));
@@ -224,18 +227,20 @@ namespace _2_Scripts.Player.Controllers
             attackKnockbackY = direction.y;
         }
 
-        public void AttackLunge(float speed, float timer)
+        public void AttackLunge(float speedX, float timer, float speedY = 0f)
         {
-            if (groundAttackTimer <= 0f)
+            if (attackTimer <= 0f)
             {
-                lungeSpeed = speed;
-                groundAttackTimer = timer;
+                lungeSpeedX = speedX;
+                attackTimer = timer;
+                lungeSpeedY = speedY;
             }
         }
 
         public void ResetAttackLunge()
         {
-            groundAttackTimer = 0f;
+            attackTimer = 0f;
+            lungeSpeedY = 0f;
         }
 
         //Not really used right now, but might have some potential in the future?
@@ -368,16 +373,16 @@ namespace _2_Scripts.Player.Controllers
             }
         }
 
-        private void DoAttackLunge()
+        private void Lunge()
         {
-            if (groundAttackTimer > 0f)
+            if (attackTimer > 0f)
             {
-                var sign = ((Convert.ToInt32(!facingLeft) << 1) - 1);
-                Move(lungeSpeed * sign * groundAttackTimer * 2);
-                // rigidBody2D.AddForce(new Vector2(groundAttackTimer * lungeSpeed * sign, 0f),
-                //     ForceMode2D.Impulse);
-                groundAttackTimer -= Time.fixedDeltaTime;
+                var sign = (Convert.ToInt32(!facingLeft) << 1) - 1;
+                Move(lungeSpeedX * sign * attackTimer * 2);
+                attackTimer -= Time.fixedDeltaTime;
             }
+            else
+                lungeSpeedY = 0;
         }
 
         private bool CanWallSlide()
@@ -442,7 +447,7 @@ namespace _2_Scripts.Player.Controllers
             currentDashCooldown = PlayerConstants.Instance.dashCooldown;
             isDashing = true;
             rigidBody2D.gravityScale = 0f;
-            groundAttackTimer = 0f;
+            attackTimer = 0f;
             startedDashFromWallSlide = isWallSliding;
             moveX = PlayerConstants.Instance.dashSpeed *
                     ((Convert.ToInt32(inputX is < 0.01f and > -0.01f ? !facingLeft : (inputX > 0) == !isWallSliding) <<
@@ -510,6 +515,10 @@ namespace _2_Scripts.Player.Controllers
         {
             if (attackKnockbackY > 0)
                 moveY = attackKnockbackY;
+            else if (isOnVerticalLunge)
+            {
+                moveY = lungeSpeedY*attackTimer*2;
+            }
             else if (airHangOngoing)
                 moveY = Mathf.MoveTowards(moveY, -1f, PlayerConstants.Instance.maxVerticalSpeed * 0.1f);
             else
@@ -517,7 +526,7 @@ namespace _2_Scripts.Player.Controllers
 
             if (!Mathf.Approximately(inputX, 0))
                 moveX = Mathf.MoveTowards(moveX, inputX * PlayerConstants.Instance.moveSpeed,
-                    PlayerConstants.Instance.moveSpeed * 0.25f) + attackKnockbackX;
+                    PlayerConstants.Instance.moveSpeed * (attackTimer > 0 ? 1 : 0.25f)) + attackKnockbackX;
             else
             {
                 moveX = Mathf.MoveTowards(moveX, 0, PlayerConstants.Instance.moveSpeed * 0.1f) + attackKnockbackX;
@@ -525,7 +534,7 @@ namespace _2_Scripts.Player.Controllers
 
             if (!isJumping && isGrounded && !isOnSlope)
             {
-                moveY = !nonCoyoteIsGrounded && rigidBody2D.velocity.y > 0.001f ? -10 : moveY;
+                moveY = !nonCoyoteIsGrounded && rigidBody2D.velocity.y > 0.001f && !isOnVerticalLunge ? -10 : moveY;
             }
             else if (!isJumping && isOnSlope && isGrounded)
             {
@@ -546,6 +555,7 @@ namespace _2_Scripts.Player.Controllers
 
 
             DoFlip(inputX);
+
 
             HandleSlipperySlopes();
         }

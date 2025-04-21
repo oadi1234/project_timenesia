@@ -57,7 +57,8 @@ namespace _2_Scripts.Global.Health
         {
             Vector2 direction = (transform.position - PlayerPosition.GetPlayerPosition()).normalized;
             //TODO here now for testing, move to a specific inheritor of damageable health so not all damageable stuff gets knocked back.
-            rb2d.MovePosition(rb2d.position + direction * PlayerDamageController.currentKnockbackForce);
+            if (rb2d)
+                rb2d.MovePosition(rb2d.position + direction * PlayerDamageController.currentKnockbackForce);
         }
 
         private void SpawnText()

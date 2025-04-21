@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3620862465327020836}
   - component: {fileID: 2077765357759080880}
   - component: {fileID: 5456040431369369331}
+  - component: {fileID: 6925118099956889340}
   m_Layer: 10
   m_Name: Charger
   m_TagString: Untagged
@@ -127,7 +128,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68c4b4576a804664ae78998349eb7926, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxHP: 1
+--- !u!114 &6925118099956889340
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2969926974809496996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d6e2f4076784dc28dae369ad2ae72ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 50
+  objectId: 0
+  damageParticles: {fileID: 4093375791685055464, guid: 360516cb5afad5240905d57f519e3dbc, type: 3}
+  textController: {fileID: 0}
 --- !u!1 &5034654243076720787
 GameObject:
   m_ObjectHideFlags: 0

@@ -20,7 +20,7 @@ MonoBehaviour:
   jumpVerticalSpeed: 19
   dashSpeed: 25
   doubleJumpPersistenceModifier: 1
-  postWallJumpSpeedModifier: 1.1
+  postWallJumpSpeedModifier: 1.2
   wallJumpPersistenceModifier: 0.5
   moveSpeed: 10
   dashCooldown: 0.6
@@ -29,3 +29,4 @@ MonoBehaviour:
   wallSlideSpeed: -4.5
   attackObstacleKnockback: 28
   attackWallKnockback: 10
+  staffLungeMagnitude: 36

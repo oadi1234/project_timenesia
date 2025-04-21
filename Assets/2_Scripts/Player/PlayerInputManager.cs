@@ -23,9 +23,12 @@ namespace _2_Scripts.Player
         private bool concentrationHeld;
         private bool inputReceived = false;
         private bool isSpellcasting = false;
+        private bool adjustAngleMode = false;
         private int spellIndex = -1;
         private float chargeTime = 0f;
         private float chargeCooldown = 0f;
+        private float angle = 0f;
+        private float angleModeAdjustStrength = 3f;
         private const float ChargeInputDuration = 2f;
 
         public event Action Attacked;
@@ -136,6 +139,10 @@ namespace _2_Scripts.Player
             {
                 xInput = 0;
             }
+            if (adjustAngleMode)
+            {
+                angle+=yInput*angleModeAdjustStrength;
+            }
 
             ResetLogic();
         }
@@ -153,6 +160,31 @@ namespace _2_Scripts.Player
         public float GetYInput()
         {
             return yInput;
+        }
+
+        public float GetAngle()
+        {
+            return Mathf.Clamp(angle, -90f, playerMovementController.IsGrounded() ? 90f : 0f);
+        }
+
+        public void SetAdjustAngleMode(bool value)
+        {
+            adjustAngleMode = value;
+        }
+
+        public void SetAngleModeAdjustStrength(float value)
+        {
+            angleModeAdjustStrength = value;
+        }
+
+        public bool IsAngleMode()
+        {
+            return adjustAngleMode;
+        }
+
+        public void SetAngle(float value)
+        {
+            angle = value;
         }
 
         public bool IsConcentrating()

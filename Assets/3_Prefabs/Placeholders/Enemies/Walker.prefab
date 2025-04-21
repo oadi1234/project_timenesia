@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3620862465327020836}
   - component: {fileID: 2077765357759080880}
   - component: {fileID: 8539675259216471288}
+  - component: {fileID: 1232336443863059895}
   m_Layer: 10
   m_Name: Walker
   m_TagString: Untagged
@@ -128,8 +129,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73d2b746a3c24baebe9b19728dde5c8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxHP: 10
   movingSpeed: 5
+--- !u!114 &1232336443863059895
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2969926974809496996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d6e2f4076784dc28dae369ad2ae72ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 70
+  objectId: 0
+  damageParticles: {fileID: 263261225388098809, guid: e650e9bf2dcf32647872255700fb5a2a, type: 3}
+  textController: {fileID: 0}
 --- !u!1 &3653066383777987346
 GameObject:
   m_ObjectHideFlags: 0

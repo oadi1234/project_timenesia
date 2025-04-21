@@ -20,7 +20,6 @@ namespace _2_Scripts.Player.Statistics
         public EffortType[] castCombination;
         // private List<Spell> preparedSpells;
         private List<BaseSpell> preparedSpells;
-        private int lastPreparedSpellManaCost = -1;
 
         private int currentCastCombinationIndex;
 

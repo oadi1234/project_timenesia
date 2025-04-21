@@ -15,6 +15,7 @@ namespace _2_Scripts.Player.Animation
         private Animator animator;
         private bool facingLeft;
         private int lastState;
+        private bool containsMoreLayers;
 
         public IStateHandler stateHandler
         {
@@ -30,6 +31,8 @@ namespace _2_Scripts.Player.Animation
             {
                 playerMovementController.Flipped += (facingLeftParam) => { this.facingLeft = facingLeftParam; };
             }
+
+            containsMoreLayers = animator.layerCount > 1;
         }
         
         void Update()
@@ -40,8 +43,8 @@ namespace _2_Scripts.Player.Animation
                 animator.CrossFade(stateHandler.GetCurrentState(), 0, 0);
             else animator.CrossFade(AC.None, 0, 0);
 
-            if (animator.HasState(1, stateHandler.GetCurrentHurtState()))
-                animator.Play(stateHandler.GetCurrentHurtState(), 1, 0);
+            if (containsMoreLayers && animator.HasState(1, stateHandler.GetCurrentHurtState()))
+                animator.CrossFade(stateHandler.GetCurrentHurtState(), 0, 1);
             
             if (stateHandler.ShouldRestartAnim())
                 animator.Play(stateHandler.GetCurrentState(), 0, 0);

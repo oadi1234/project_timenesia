@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using _2_Scripts.Player;
+using _2_Scripts.Player.Controllers;
 using UnityEngine;
 
 public class CameraLimitScript : MonoBehaviour
@@ -48,7 +50,7 @@ public class CameraLimitScript : MonoBehaviour
     {
         if (resetsToPlayerOnLeave && collision.gameObject.CompareTag("Player"))
         {
-            CameraScript.Instance.SetFollow(collision.gameObject.transform);
+            CameraScript.Instance.SetFollow(collision.gameObject.GetComponentInChildren<PlayerCameraTarget>().transform);
             CameraScript.Instance.ClearLimits();
         }
     }
