@@ -289,7 +289,7 @@ namespace _2_Scripts.Player.Animation
             }
 
             // If jumped during ground attack animation. Also has other attacks and double jump there to avoid skipping the animation.
-            if (!shouldDoMovementStates && (currentState != AC.DoubleJump) && !IsGroundAttackState() &&
+            if (!shouldDoMovementStates && (currentState != AC.DoubleJump) && IsGroundAttackState() &&
                 !playerMovementController.IsGrounded())
             {
                 

@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using _2_Scripts.Global;
+using _2_Scripts.Player.Animation.GUI;
+using _2_Scripts.Player.model;
 using _2_Scripts.Player.Statistics;
 using UnityEngine;
 
@@ -31,20 +33,19 @@ namespace _2_Scripts.UI.Elements.HUD
         private int maxEffort;
         private int spellCapacity;
         private List<GameObject> renderedMana;
-        private List<Animator> animators;
-        private List<GameObject> renderedBackground;
+        private List<EffortPointStateHandler> effortPointStateHandlers;
+        private EffortPointStateHandler currentEffortPointStateHandler;
 
         public void Initialize()
         {
             maxEffort = GameDataManager.Instance.currentGameData.MaxEffort;
             spellCapacity = GameDataManager.Instance.currentGameData.SpellCapacity;
             renderedMana = new List<GameObject>();
-            renderedBackground = new List<GameObject>();
             effortType = new List<EffortType>();
             currentEffort = 0;
             oldSpellCapacity = 0;
             oldMaxEffort = 0;
-            animators = new List<Animator>();
+            effortPointStateHandlers = new List<EffortPointStateHandler>();
         }
 
         public void SetSpellCapacity(int capacity)
@@ -56,21 +57,13 @@ namespace _2_Scripts.UI.Elements.HUD
                 spellCapacity = 1;
 
             else
-                this.spellCapacity = capacity;
+                spellCapacity = capacity;
 
             if(spellCapacity > oldSpellCapacity)
             {
                 for(int i = oldSpellCapacity; i< spellCapacity; i++)
                 {
                     GenerateNewBackgroundPoint(i);
-                }
-            }
-            else if (oldSpellCapacity > spellCapacity)
-            {
-                for (int i = oldSpellCapacity - 1; i >=spellCapacity; i--)
-                {
-                    Destroy(renderedBackground[i]);
-                    renderedBackground.RemoveAt(i);
                 }
             }
         }
@@ -91,7 +84,7 @@ namespace _2_Scripts.UI.Elements.HUD
                 for (int i = oldMaxEffort - 1; i >= maxEffort; i--)
                 {
                     Destroy(renderedMana[i]);
-                    animators.RemoveAt(i);
+                    effortPointStateHandlers.RemoveAt(i);
                     renderedMana.RemoveAt(i);
                     effortType.RemoveAt(i);
                     if(i+1<spellCapacity)
@@ -110,7 +103,7 @@ namespace _2_Scripts.UI.Elements.HUD
             {
                 for(int i = currentEffort; i < maxEffort; i++)
                 {
-                    SetEffortAnimation(EffortType.Raw, i);
+                    SetEffortType(EffortType.Raw, i);
                 }
                 currentEffort = maxEffort;
             }
@@ -118,7 +111,7 @@ namespace _2_Scripts.UI.Elements.HUD
             {
                 for(int i = currentEffort; i < mana; i++)
                 {
-                    SetEffortAnimation(EffortType.Raw, i);
+                    SetEffortType(EffortType.Raw, i);
                 }
                 currentEffort = mana;
             }
@@ -126,19 +119,25 @@ namespace _2_Scripts.UI.Elements.HUD
             {
                 for (int i = maxEffort - 1; i >= mana; i--)
                 {
-                    SetEffortAnimation(EffortType.Empty, i);
+                    SetEffortType(EffortType.Empty, i);
                 }
                 currentEffort = mana;
             }
         }
 
-        public void SetEffortAnimation(EffortType element, int index)
+        public void SetEffortType(EffortType element, int index)
         {
-            Animator animator = animators[index];
-            SetCurrentElementToFalse(animator, index);
-            SwitchBooleanBasedOnElement(animator, true, element);
+            currentEffortPointStateHandler = effortPointStateHandlers[index];
+            currentEffortPointStateHandler.SetCurrentState(element);
 
             effortType[index] = element;
+        }
+
+        public bool TrySetEffortType(EffortType element, int index)
+        {
+            if (index + 1 > currentEffort) return false;
+            SetEffortType(element, index);
+            return true;
         }
 
         public IEnumerator FillSequentially(float delay)
@@ -146,7 +145,7 @@ namespace _2_Scripts.UI.Elements.HUD
             for (int i = 0; i < maxEffort; i++)
             {
                 yield return new WaitForSeconds(delay);
-                SetEffortAnimation(EffortType.Raw, i);
+                SetEffortType(EffortType.Raw, i);
             }
         }
 
@@ -155,38 +154,7 @@ namespace _2_Scripts.UI.Elements.HUD
             for (int i = 0; i < currentEffort; i++)
             {
                 if(effortType[i] != EffortType.Raw)
-                    SetEffortAnimation(EffortType.Raw, i);
-            }
-        }
-
-        private void SetCurrentElementToFalse(Animator animator, int index)
-        {
-            EffortType element = effortType[index];
-            SwitchBooleanBasedOnElement(animator, false, element);
-        }
-
-        private void SwitchBooleanBasedOnElement(Animator animator, bool boolean, EffortType element)
-        {
-            switch (element)
-            {
-                case EffortType.Empty:
-                    animator.SetBool("empty", boolean);
-                    break;
-                case EffortType.Raw:
-                    animator.SetBool("full", boolean);
-                    break;
-                case EffortType.Fire:
-                    animator.SetBool("fire", boolean);
-                    break;
-                case EffortType.Cold:
-                    animator.SetBool("cold", boolean);
-                    break;
-                case EffortType.Force:
-                    animator.SetBool("force", boolean);
-                    break;
-                case EffortType.Life:
-                    animator.SetBool("life", boolean);
-                    break;
+                    SetEffortType(EffortType.Raw, i);
             }
         }
 
@@ -206,8 +174,8 @@ namespace _2_Scripts.UI.Elements.HUD
             effortType.Add(EffortType.Empty);
             GameObject imageObject = Instantiate(manaPoint, manaBar, true);
             imageObject.name = "EffortPoint" + i;
+            effortPointStateHandlers.Add(imageObject.GetComponent<EffortPointStateHandler>());
             RectTransform rectTransform = imageObject.GetComponent<RectTransform>();
-            animators.Add(imageObject.GetComponent<Animator>());
             rectTransform.localScale = Vector2.one * scale;
             rectTransform.anchoredPosition = new Vector3(positionX/2 - 30 + (i * 26 * scale), positionY, -10);
 
@@ -220,6 +188,5 @@ namespace _2_Scripts.UI.Elements.HUD
         {
             return effortType[index];
         }
-
     }
 }

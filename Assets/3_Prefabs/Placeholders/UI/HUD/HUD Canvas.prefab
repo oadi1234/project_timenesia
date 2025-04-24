@@ -316,6 +316,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 734759203301133384, guid: 20acac928a923a34c8cb62052847ecc1, type: 3}
+      propertyPath: scale
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 4440289906808664705, guid: 20acac928a923a34c8cb62052847ecc1, type: 3}
       propertyPath: m_Name
       value: EffortBar

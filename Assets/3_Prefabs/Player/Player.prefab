@@ -1166,10 +1166,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 132f1e0c3aadbdf498c370670d99484a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  regenInterval: 0.5
+  regenInterval: 1
   effortPerInterval: 1
+  concentrationEffortRegenMultiplier: 2
   effortBar: {fileID: 0}
   castCombination: 
+  inputManager: {fileID: 8358465365214595313}
 --- !u!114 &7834630345329486682
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1232,6 +1234,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerMovementController: {fileID: 5552875086602648877}
   playerSpellController: {fileID: 8234275702413379607}
+  playerEffort: {fileID: 4502648273593359070}
 --- !u!114 &4947023237333374663
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1687,6 +1690,7 @@ GameObject:
   - component: {fileID: 6257906616973301969}
   - component: {fileID: 3106427668422968683}
   - component: {fileID: 9197145415943239521}
+  - component: {fileID: 6797003324129543424}
   m_Layer: 8
   m_Name: BodySprite
   m_TagString: Untagged
@@ -1827,7 +1831,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   staffAttackZone: {fileID: 2294329008803909729, guid: ae1d6333a6005e34eae585d15dd816e1, type: 3}
   playerMovementController: {fileID: 5552875086602648877}
+--- !u!114 &6797003324129543424
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8360183228284639160}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 035565a847965b74dbe8f7b5dbf680c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerMovementController: {fileID: 5552875086602648877}
   playerInputManager: {fileID: 8358465365214595313}
+  playerEffort: {fileID: 4502648273593359070}
 --- !u!1 &8884814348694100374
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using _2_Scripts.Model;
+using _2_Scripts.Player.model;
 using _2_Scripts.Player.Statistics;
 using UnityEngine;
 

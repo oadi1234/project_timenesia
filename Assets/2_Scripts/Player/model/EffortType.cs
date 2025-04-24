@@ -1,18 +1,15 @@
-//TODO very old code. There should really only be Empty, Aether, Entropy, Mind, Rune and Kinesis here.
-public enum EffortType
+namespace _2_Scripts.Player.model
 {
-    Empty = 0,
-    Raw,
-    Fire,
-    Cold,
-    Force,
-    Life,
-    Muscle,
-    Curse,
-    Time,
-    Aether = 1,
-    Entropy = 2,
-    Mind = 3,
-    Rune = 4,
-    Kinesis = 5
+    public enum EffortType
+    {
+        Empty = 0, //used for unset cast combinations
+        Aether = 1,
+        Entropy = 2,
+        Mind = 3,
+        Rune = 4,
+        Kinesis = 5,
+        Raw = 6,
+        NoInput = 100, //used only for setting effort on spellcasting, nothing was set
+        EndOfInput = 101 //used only for setting effort on spellcasting, end of input
+    }
 }

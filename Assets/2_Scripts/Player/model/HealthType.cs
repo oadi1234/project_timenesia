@@ -1,4 +1,4 @@
-namespace _2_Scripts.Model
+namespace _2_Scripts.Player.model
 {
     public enum HealthType
     {

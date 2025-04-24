@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 4862579505821165462}
   - component: {fileID: 4862579505821165461}
   - component: {fileID: 4862579505821165460}
+  - component: {fileID: 955833676883752288}
+  - component: {fileID: 3797442183556931639}
   m_Layer: 5
   m_Name: EffortPoint
   m_TagString: Untagged
@@ -97,3 +99,30 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &955833676883752288
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4862579505821165546}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91b11b72d04f1674d817cd1e500fe0c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _stateHandler: {fileID: 3797442183556931639}
+  playerMovementController: {fileID: 0}
+  shouldHandleRotation: 0
+--- !u!114 &3797442183556931639
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4862579505821165546}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb8325837d2506a42a615d519e66a5cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

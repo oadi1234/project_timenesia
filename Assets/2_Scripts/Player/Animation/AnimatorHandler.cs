@@ -39,9 +39,12 @@ namespace _2_Scripts.Player.Animation
         {
             if (shouldHandleRotation)
                 SetFacingDirection();
+            
             if (animator.HasState(0, stateHandler.GetCurrentState()))
                 animator.CrossFade(stateHandler.GetCurrentState(), 0, 0);
-            else animator.CrossFade(AC.None, 0, 0);
+            else
+                animator.CrossFade(AC.None, 0, 0);
+            
 
             if (containsMoreLayers && animator.HasState(1, stateHandler.GetCurrentHurtState()))
                 animator.CrossFade(stateHandler.GetCurrentHurtState(), 0, 1);

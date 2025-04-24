@@ -40,22 +40,22 @@ namespace _2_Scripts.Player.Controllers
             }
         }
 
-        public void Test(int spellIndex)
-        {
-            switch (spellIndex)
-            {
-                // TODO I know this is testing stuff, but now PMC is a bit unreliable for facing direction check.
-                //  I think there are cases where movement controller thinks it looks left, while sprite does not.
-                //  alternatively use a similar logic like in AnimationHandler.cs:43
-                case 0:
-                    spellbook.CastFireBall(playerMovementController.IsFacingLeft() ? -1 : 1);
-                    break;
-                case 1:
-                    spellbook.CastEyeBall(playerMovementController.IsFacingLeft() ? -1 : 1);
-                    break;
-            }
-            playerInputManager.SetInputEnabled(true);
-        }
+        // public void Test(int spellIndex)
+        // {
+        //     switch (spellIndex)
+        //     {
+        //         // TODO I know this is testing stuff, but now PMC is a bit unreliable for facing direction check.
+        //         //  I think there are cases where movement controller thinks it looks left, while sprite does not.
+        //         //  alternatively use a similar logic like in AnimationHandler.cs:43
+        //         case 0:
+        //             spellbook.CastFireBall(playerMovementController.IsFacingLeft() ? -1 : 1);
+        //             break;
+        //         case 1:
+        //             spellbook.CastEyeBall(playerMovementController.IsFacingLeft() ? -1 : 1);
+        //             break;
+        //     }
+        //     playerInputManager.SetInputEnabled(true);
+        // }
 
         #endregion
         

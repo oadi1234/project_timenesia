@@ -9,6 +9,7 @@ namespace _2_Scripts.Player.Animation.model
     public static class AC
     {
         public const float SingleFrame = 1f / 12f;
+
         #region character_animation_hash
 
         public static readonly int Idle = Animator.StringToHash("sylvia_idle_l");
@@ -29,9 +30,6 @@ namespace _2_Scripts.Player.Animation.model
         public static readonly int RopeStartMove = Animator.StringToHash("Start-move");
         public static readonly int RopeStopMove = Animator.StringToHash("Stop-move");
         public static readonly int RopeMove = Animator.StringToHash("Move");
-
-        //None animation (empty sprite) for certain states
-        public static readonly int None = Animator.StringToHash("none");
 
         #endregion
 
@@ -59,11 +57,23 @@ namespace _2_Scripts.Player.Animation.model
 
         #endregion
 
-        #region hurt_blink_hashes
+        #region hurt_layer
 
         //Blinking frames
         public static readonly int HurtBlink = Animator.StringToHash("player_hurt_blink");
         public static readonly int HurtNone = Animator.StringToHash("player_hurt_none");
+
+        #endregion
+
+        #region effort_points
+
+        public static readonly int Empty = Animator.StringToHash("effort_empty");
+        public static readonly int Aether = Animator.StringToHash("effort_aether");
+        public static readonly int Entropy = Animator.StringToHash("effort_entropy");
+        public static readonly int Kinesis = Animator.StringToHash("effort_kinesis");
+        public static readonly int Mind = Animator.StringToHash("effort_mind");
+        public static readonly int Rune = Animator.StringToHash("effort_rune");
+        public static readonly int Raw = Animator.StringToHash("effort_raw");
 
         #endregion
 
@@ -117,7 +127,14 @@ namespace _2_Scripts.Player.Animation.model
         public const float StaffHeavyAttackStateLockDuration = 9f / 12f;
 
         #endregion
-        
+
+        #region generic
+
+        //None animation. It does nothing, sometimes literally displays nothing. Needed for AnimatorHandler.
+        public static readonly int None = Animator.StringToHash("none");
+
+        #endregion
+
         #region timers
 
         public const float StaffHeavySpellcastLungeTimer = 6f / 12f;

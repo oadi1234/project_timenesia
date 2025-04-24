@@ -10,7 +10,6 @@ namespace _2_Scripts.Player
     {
         [SerializeField] private GameObject staffAttackZone;
         [SerializeField] private PlayerMovementController playerMovementController;
-        [SerializeField] private PlayerInputManager playerInputManager;
 
         // TODO logic for attacking.
         private WeaponType currentWeaponType;
@@ -68,29 +67,6 @@ namespace _2_Scripts.Player
         public void HandleAttackKnockback(float strength, Vector2 direction)
         {
             playerMovementController.AttackKnockback(strength, direction);
-        }
-
-        //TODO move below to spell handler.
-        public void StartAngleMode()
-        {
-            playerInputManager.SetAdjustAngleMode(true);
-        }
-
-        public void DoLungeOnHeavySpellcast()
-        {
-            var angle = playerInputManager.GetAngle();
-            var direction = Quaternion.Euler(0, 0, angle) * Vector3.right;
-
-            playerMovementController.AttackLunge(PlayerConstants.Instance.staffLungeMagnitude * direction.x,
-                AC.StaffHeavySpellcastLungeTimer, direction.y * PlayerConstants.Instance.staffLungeMagnitude);
-            playerInputManager.SetAngleModeAdjustStrength(6f);
-        }
-
-        public void EndAngleMode()
-        {
-            playerInputManager.SetAdjustAngleMode(false);
-            playerInputManager.SetAngle(0f);
-            playerInputManager.SetAngleModeAdjustStrength(3f);
         }
     }
 }
