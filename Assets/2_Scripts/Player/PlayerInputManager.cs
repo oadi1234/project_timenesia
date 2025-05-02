@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using _2_Scripts.Player.Controllers;
 using _2_Scripts.Player.model;
 using _2_Scripts.Player.Statistics;
@@ -13,6 +14,7 @@ namespace _2_Scripts.Player
 
         [SerializeField] private PlayerSpellController playerSpellController;
         [SerializeField] private PlayerEffort playerEffort;
+        [SerializeField] private SpellInventory spellInventory;
 
         private float xInput;
         private float yInput;
@@ -24,11 +26,12 @@ namespace _2_Scripts.Player
         private bool attacking = false;
         private bool dashPressed;
         private bool concentrationHeld;
+        private bool concentrationMode;
         private bool inputReceived = false;
         private bool isSpellcasting = false;
         private bool adjustAngleMode = false;
         private EffortType inputEffortType = EffortType.Raw;
-        private int spellIndex = -1;
+        private List<EffortType> spellIndex = new();
         private float chargeTime = 0f;
         private float chargeCooldown = 0f;
         private float angle = 0f;
@@ -78,13 +81,13 @@ namespace _2_Scripts.Player
                 jumpKeyHold = false;
             }
 
-            if (!concentrationHeld)
+            if (!concentrationMode)
             {
                 // TODO left like this for now, even though it bypasses blockInput. Once spell controller is worked out
                 //  logic will need to be adjusted accordingly.
                 if (Input.GetButtonDown("Spell1"))
                 {
-                    CastSpell(0);
+                    CastSpell(spellInventory.GetSpellAtSlot(1));
                     //TODO this might need some tweaking as to what is being sent
                     // also for now the PlayerAnimationStateHandler handles this event, but in the future it should be rerouted
                     // through some spellhandler class like thing, like the PlayerSpellController here.
@@ -92,12 +95,12 @@ namespace _2_Scripts.Player
 
                 if (Input.GetButtonUp("Spell2"))
                 {
-                    CastSpell(1);
+                    CastSpell(spellInventory.GetSpellAtSlot(2));
                 }
 
                 if (Input.GetButtonUp("Spell3"))
                 {
-                    CastSpell(2);
+                    CastSpell(spellInventory.GetSpellAtSlot(3));
                 }
 
                 if (Input.GetButtonDown("Attack"))
@@ -120,7 +123,7 @@ namespace _2_Scripts.Player
                 inputReceived = true;
             }
 
-            if (concentrationHeld)
+            if (concentrationMode)
             {
                 if (Input.GetButtonDown("EffortInput1"))
                     inputEffortType = EffortType.Aether;
@@ -133,8 +136,6 @@ namespace _2_Scripts.Player
                 if (Input.GetButtonDown("EffortInput5"))
                     inputEffortType = EffortType.Rune;
             }
-
-
         }
 
         private void FixedUpdate()
@@ -142,16 +143,13 @@ namespace _2_Scripts.Player
             if (isInputEnabled)
             {
                 playerEffort.SpellInput(inputEffortType);
-                //TODO move and jump might be possible during concentration in the future.
-                if (!concentrationHeld)
-                {
-                    playerMovementController.Move(xInput);
-                    playerMovementController.Jump(jumpPressed, jumpKeyHold, isMoveSkillInputEnabled);
-                    if (isMoveSkillInputEnabled)
-                        playerMovementController.Dash(dashPressed);
-                    playerSpellController.CastSpell(spellIndex, isSpellcasting);
-                }
-                
+                playerMovementController.Move(xInput);
+                playerMovementController.Jump(jumpPressed, jumpKeyHold, isMoveSkillInputEnabled);
+                if (isMoveSkillInputEnabled)
+                    playerMovementController.Dash(dashPressed);
+                playerSpellController.InputCastSpell(spellIndex, isSpellcasting);
+
+
                 if (inputReceived)
                 {
                     InputReceived?.Invoke();
@@ -211,7 +209,7 @@ namespace _2_Scripts.Player
 
         public void SetConcentration(bool value)
         {
-            concentrationHeld = value;
+            concentrationMode = value;
         }
 
         public bool IsAngleMode()
@@ -227,6 +225,11 @@ namespace _2_Scripts.Player
         public bool IsConcentrating()
         {
             return isInputEnabled && concentrationHeld;
+        }
+
+        public bool IsInConcentrationMode()
+        {
+            return concentrationMode;
         }
 
         public void SetChargeCooldown(float seconds)
@@ -277,15 +280,14 @@ namespace _2_Scripts.Player
             inputReceived = false;
             isSpellcasting = false;
             attacking = false;
-            spellIndex = -1;
             inputEffortType = EffortType.NoInput;
         }
 
-        private void CastSpell(int index)
+        private void CastSpell(List<EffortType> effortCombination)
         {
             inputReceived = true;
             isSpellcasting = true;
-            spellIndex = index;
+            spellIndex = effortCombination;
         }
     }
 }

@@ -887,10 +887,6 @@ PrefabInstance:
       propertyPath: effortBar
       value: 
       objectReference: {fileID: 2123317963}
-    - target: {fileID: 4502648273593359070, guid: be2e71d11b11bea44bafffd8e8dbabe4, type: 3}
-      propertyPath: inputManager
-      value: 
-      objectReference: {fileID: 1075397309}
     - target: {fileID: 5819309414079763486, guid: be2e71d11b11bea44bafffd8e8dbabe4, type: 3}
       propertyPath: m_Name
       value: Player
@@ -899,7 +895,8 @@ PrefabInstance:
       propertyPath: healthBar
       value: 
       objectReference: {fileID: 720583417}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3309146497544349088, guid: be2e71d11b11bea44bafffd8e8dbabe4, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -922,17 +919,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bcdf7231f7acacf438ea276c51a14975, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1075397309 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8358465365214595313, guid: be2e71d11b11bea44bafffd8e8dbabe4, type: 3}
-  m_PrefabInstance: {fileID: 911097259}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1075397272}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f32f3d43469e1ee4e8c05f451d3bea00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1096705405

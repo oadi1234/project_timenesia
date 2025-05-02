@@ -1,67 +1,48 @@
 using System;
+using System.Collections.Generic;
+using _2_Scripts.Player.model;
+using _2_Scripts.Player.Statistics;
 using UnityEngine;
 
 namespace _2_Scripts.Player.Controllers
 {
     public class PlayerSpellController : MonoBehaviour
     {
-        private Spellbook spellbook;
-        private PlayerInputManager playerInputManager;
-        private PlayerMovementController playerMovementController;
+        [SerializeField] private PlayerEffort playerEffort;
         private SpellType spellType;
         
         public event Action Spellcasted;
-
-        #region Actions
-
-        public void CastSpell(int spellIndex, bool isCasting)
+        
+        private void Awake()
         {
-            // TODO change switch-case to dictionary<index, spelltype> lookup, it might be more easily expandable.
-            if (isCasting)
+            playerEffort.SpellCast += CastSpell;
+        }
+
+        private void CastSpell(List<EffortType> effortCombination)
+        {
+            if (playerEffort.UseEffort(effortCombination.Count))
             {
-                switch (spellIndex)
-                {
-                    case 0:
-                        spellType = SpellType.Bolt;
-                        Spellcasted?.Invoke();
-                        break;
-                    case 1:
-                        spellType = SpellType.Aoe;
-                        Spellcasted?.Invoke();
-                        break;
-                    case 2:
-                        spellType = SpellType.Heavy;
-                        Spellcasted?.Invoke();
-                        break;
-                    default:
-                        spellType = SpellType.None;
-                        break;
-                }
+                spellType = Spellbook.Instance.GetSpellData(effortCombination).SpellType;
+                Spellcasted?.Invoke();
             }
         }
 
-        // public void Test(int spellIndex)
-        // {
-        //     switch (spellIndex)
-        //     {
-        //         // TODO I know this is testing stuff, but now PMC is a bit unreliable for facing direction check.
-        //         //  I think there are cases where movement controller thinks it looks left, while sprite does not.
-        //         //  alternatively use a similar logic like in AnimationHandler.cs:43
-        //         case 0:
-        //             spellbook.CastFireBall(playerMovementController.IsFacingLeft() ? -1 : 1);
-        //             break;
-        //         case 1:
-        //             spellbook.CastEyeBall(playerMovementController.IsFacingLeft() ? -1 : 1);
-        //             break;
-        //     }
-        //     playerInputManager.SetInputEnabled(true);
-        // }
-
-        #endregion
+        public void InputCastSpell(List<EffortType> effortCombination, bool isCasting)
+        {
+            if (isCasting)
+            {
+                CastSpell(effortCombination);
+            }
+        }
         
         public SpellType GetSpellType()
         {
             return spellType;
+        }
+
+        public void ClearSpellType()
+        {
+            spellType = SpellType.None;
         }
     }
 }

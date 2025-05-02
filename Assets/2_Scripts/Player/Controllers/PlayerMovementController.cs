@@ -609,8 +609,6 @@ namespace _2_Scripts.Player.Controllers
             isGrounded = false;
 
             moveY = PlayerConstants.Instance.initialJumpForce;
-
-            // rigidBody2D.AddForce(transform.up * PlayerConstants.Instance.initialJumpForce, ForceMode2D.Impulse);
         }
 
         private void WallJump()

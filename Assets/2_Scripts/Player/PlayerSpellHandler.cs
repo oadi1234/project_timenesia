@@ -1,7 +1,6 @@
 using _2_Scripts.Player.Animation.model;
 using _2_Scripts.Player.Controllers;
 using _2_Scripts.Player.ScriptableObjects;
-using _2_Scripts.Player.Statistics;
 using UnityEngine;
 
 namespace _2_Scripts.Player
@@ -10,21 +9,12 @@ namespace _2_Scripts.Player
     {
         [SerializeField] private PlayerMovementController playerMovementController;
         [SerializeField] private PlayerInputManager playerInputManager;
-        [SerializeField] private PlayerEffort playerEffort;
 
         public void Concentrate()
         {
-            //TODO set playerInputManager to concentration mode - no movement, accept keypresses as mana directions
-            //TODO set player effort to concentration mode - increased effort regen
-            //TODO handle on concentration exit logic - either nothing, dud spell (wild magic?) or full spell
+            playerInputManager.SetConcentration(true);
         }
 
-        public void CastSpell()
-        {
-            //TODO read current spell combination from PlayerEffort class
-            // then invoke spellbook with given id i guess
-        }
-    
         public void StartAngleMode()
         {
             playerInputManager.SetAdjustAngleMode(true);

@@ -23,7 +23,6 @@ namespace _2_Scripts.Player.Animation
         private float currentStateLockDuration = -1f; // for how long the animation is not changeable
         private float bufferedStateDuration = -1f;
         private float bufferedStateLockDuration = -1f;
-        private float timeOnGround = 0f;
         private float iFrameTimer = 0f;
         private bool dashTriggered;
         private bool doubleJumpedTriggered;
@@ -38,7 +37,6 @@ namespace _2_Scripts.Player.Animation
         private bool endDash = true;
         private bool restartAnim = false;
         private const float AttackMoveMagnitude = 1f;
-        private const float CooldownAfterLanding = 0.2f;
 
         private WeaponStateAnimationData weaponStateAnimationData;
         private AnimationData tempAnimData;
@@ -56,8 +54,6 @@ namespace _2_Scripts.Player.Animation
             if (currentStateDuration < 0f && !shouldDoMovementStates) shouldDoMovementStates = true;
             if (currentStateDuration > 0f) currentStateDuration -= Time.deltaTime;
             if (currentStateLockDuration > 0f) currentStateLockDuration -= Time.deltaTime;
-            if (playerMovementController.IsGrounded()) timeOnGround += Time.deltaTime;
-            else timeOnGround = 0f;
             ClearBufferedState();
             currentState = GetState();
             ResetLogic();
@@ -199,6 +195,7 @@ namespace _2_Scripts.Player.Animation
             {
                 if (playerSpellController.GetSpellType() == SpellType.Bolt)
                 {
+                    playerSpellController.ClearSpellType();
                     tempAnimData = weaponStateAnimationData.GetForState(WeaponAnimationState.SpellBolt);
                     InterruptState();
 
@@ -219,6 +216,7 @@ namespace _2_Scripts.Player.Animation
 
                 if (playerSpellController.GetSpellType() == SpellType.Heavy)
                 {
+                    playerSpellController.ClearSpellType();
                     InterruptState();
                     tempAnimData = weaponStateAnimationData.GetForState(WeaponAnimationState.SpellHeavy);
                     playerMovementController.AirHangForAttacks(tempAnimData.animationHangDuration, 0f);
@@ -228,6 +226,7 @@ namespace _2_Scripts.Player.Animation
 
                 if (playerSpellController.GetSpellType() == SpellType.Aoe)
                 {
+                    playerSpellController.ClearSpellType();
                     InterruptState();
                     tempAnimData = weaponStateAnimationData.GetForState(WeaponAnimationState.SpellAoE);
                     playerMovementController.AirHangForAttacks(tempAnimData.animationLockDuration, 0f);
@@ -298,7 +297,7 @@ namespace _2_Scripts.Player.Animation
             }
 
             if (playerMovementController.IsGrounded() && playerInputManager.IsConcentrating() &&
-                playerMovementController.GetXVelocity() == 0f && timeOnGround > CooldownAfterLanding)
+                Mathf.Abs(playerMovementController.GetXVelocity())< 0.01f)
             {
                 tempAnimData = weaponStateAnimationData.GetForState(WeaponAnimationState.Concentration);
                 return tempAnimData.animationStateHash;

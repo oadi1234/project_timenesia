@@ -389,7 +389,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerMovementController: {fileID: 5552875086602648877}
   playerInputManager: {fileID: 8358465365214595313}
-  playerSpellController: {fileID: 8234275702413379607}
+  playerSpellController: {fileID: 885311555864196186}
   playerHealth: {fileID: 7834630345329486682}
   currentState: 0
   hurtLayerState: 0
@@ -1051,12 +1051,12 @@ GameObject:
   - component: {fileID: 8358465365214595313}
   - component: {fileID: 4947023237333374663}
   - component: {fileID: 1076761775819341326}
-  - component: {fileID: 3309146497544349088}
-  - component: {fileID: 8234275702413379607}
   - component: {fileID: 9032211203397379358}
   - component: {fileID: 2494811495003499475}
   - component: {fileID: 7534517964016221707}
   - component: {fileID: 3396986318612368268}
+  - component: {fileID: 885311555864196186}
+  - component: {fileID: 3561813563974818167}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -1233,8 +1233,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerMovementController: {fileID: 5552875086602648877}
-  playerSpellController: {fileID: 8234275702413379607}
+  playerSpellController: {fileID: 885311555864196186}
   playerEffort: {fileID: 4502648273593359070}
+  spellInventory: {fileID: 3561813563974818167}
 --- !u!114 &4947023237333374663
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1259,32 +1260,6 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5819309414079763486}
   m_Enabled: 1
---- !u!114 &3309146497544349088
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5819309414079763486}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3785cf468724ba74eb06e4b1fea3a30d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  FireBall: {fileID: 24862557987798301, guid: d486759283fbf644ab872bddaf7fbea4, type: 3}
-  EyeBall: {fileID: 24862557987798301, guid: 3f44ea509d35f534c8bcc977cddfd1a0, type: 3}
---- !u!114 &8234275702413379607
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5819309414079763486}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 40f4b1deefb5c614a8812791ef7015f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &9032211203397379358
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1334,6 +1309,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerCameraTransform: {fileID: 5649646264646535439}
+--- !u!114 &885311555864196186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5819309414079763486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40f4b1deefb5c614a8812791ef7015f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerEffort: {fileID: 4502648273593359070}
+--- !u!114 &3561813563974818167
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5819309414079763486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a9e4c73d6a8ba14ca6dce57bdff167c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5939638241855016702
 GameObject:
   m_ObjectHideFlags: 0
@@ -1845,7 +1845,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerMovementController: {fileID: 5552875086602648877}
   playerInputManager: {fileID: 8358465365214595313}
-  playerEffort: {fileID: 4502648273593359070}
 --- !u!1 &8884814348694100374
 GameObject:
   m_ObjectHideFlags: 0
