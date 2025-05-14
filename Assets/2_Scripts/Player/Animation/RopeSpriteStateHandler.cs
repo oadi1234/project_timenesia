@@ -7,19 +7,26 @@ namespace _2_Scripts.Player.Animation
     public class RopeSpriteStateHandler : MonoBehaviour, IStateHandler
     {
         [SerializeField] private PlayerMovementController playerMovementController;
+        [SerializeField] private PlayerVerletRope playerVerletRope;
         [SerializeField] private HingeSpriteType hingeSpriteType;
         [SerializeField] private PlayerAnimationStateHandler playerAnimationStateHandler;
 
         private int hingeObjectState;
         private int bufferedState;
         private float currentStateDuration;
-        
+        private float lockMoveTimer = 0f;
 
-        void Update()
+
+        private void Update()
         {
             if (currentStateDuration > 0f) currentStateDuration -= Time.deltaTime;
 
             hingeObjectState = GetState();
+        }
+
+        private void FixedUpdate()
+        {
+            if (lockMoveTimer > 0f) lockMoveTimer -= Time.fixedDeltaTime;
         }
 
         private int GetState()
@@ -36,22 +43,22 @@ namespace _2_Scripts.Player.Animation
                 return hingeObjectState;
             }
             
-            if (playerMovementController.GetTotalVelocity() < 2f)
-            {
-                if (hingeObjectState == AC.RopeMove)
-                {
-                    return PlayState(AC.RopeStopMove, AC.CloakStopMoveDuration);
-                }
-                return AC.RopeIdle;
-            }
-
-            if (playerMovementController.GetTotalVelocity() > 2f)
+            if (ShouldStartOrKeepMoving())
             {
                 if (hingeObjectState == AC.RopeIdle)
                 {
                     return PlayState(AC.RopeStartMove, AC.CloakStartMoveDuration);
                 }
                 return AC.RopeMove;
+            }
+            
+            if (ShouldStopOrKeepIdling())
+            {
+                if (hingeObjectState == AC.RopeMove)
+                {
+                    return PlayState(AC.RopeStopMove, AC.CloakStopMoveDuration);
+                }
+                return AC.RopeIdle;
             }
 
             return AC.None;
@@ -79,6 +86,11 @@ namespace _2_Scripts.Player.Animation
             return false;
         }
 
+        public void SetMoveTimer(float time)
+        {
+            lockMoveTimer = time;
+        }
+
         private int PlayState(int state, float stateDuration)
         {
             currentStateDuration = stateDuration;
@@ -89,11 +101,15 @@ namespace _2_Scripts.Player.Animation
         {
             return (int) hingeSpriteType;
         }
-        
-        private void SetFacingDirection()
+
+        private bool ShouldStartOrKeepMoving()
         {
-            transform.localScale = new Vector3(transform.localScale.x, playerMovementController.IsFacingLeft() ? 1 : -1,
-                transform.localScale.z);
+            return playerMovementController.GetTotalVelocity() > 2f || lockMoveTimer > 0;
+        }
+
+        private bool ShouldStopOrKeepIdling()
+        {
+            return playerMovementController.GetTotalVelocity() < 2f;
         }
 
         private enum HingeSpriteType

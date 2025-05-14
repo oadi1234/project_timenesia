@@ -1,6 +1,6 @@
+using System;
 using System.Collections;
 using _2_Scripts.Global;
-using _2_Scripts.Global.Health;
 using _2_Scripts.Global.Health.EnemyAttack;
 using _2_Scripts.Player.Controllers;
 using _2_Scripts.UI.Elements.HUD;
@@ -18,6 +18,8 @@ namespace _2_Scripts.Player.Statistics
         private bool hasIFrames = false;
 
         private ParticleSystem damageParticlesInstance;
+
+        public event Action Damaged;
 
         [SerializeField] private HealthBar healthBar;
 
@@ -48,6 +50,7 @@ namespace _2_Scripts.Player.Statistics
 
         private void TakeDamage(DamageParameters damageParameters)
         {
+            Damaged?.Invoke();
             playerMovementController.HurtKnockback(damageParameters.KnockbackStrength, damageParameters.DamageSourcePosition);
             damageParticlesInstance = Instantiate(damageParticles, transform.position, Quaternion.identity);
             SlowDownTime();

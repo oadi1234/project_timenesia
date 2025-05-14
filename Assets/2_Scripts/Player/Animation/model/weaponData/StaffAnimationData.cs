@@ -26,10 +26,24 @@ namespace _2_Scripts.Player.Animation.model.weaponData
                 AC.StaffAttackStateLockDuration);
             attackDown1.SetChainsInto(ref attackDown2);
 
+            var buffShortStart = new AnimationData(AC.StaffBuffStart, AC.BuffStartDuration, AC.BuffStartDuration);
+            var buffShortOngoing = new AnimationData(AC.StaffBuffOngoing, AC.BuffShortDuration, AC.BuffShortDuration);
+            var buffEnd = new AnimationData(AC.StaffBuffEnd, AC.BuffEndDuration, AC.StaffBuffEndStateLockDuration);
+            buffShortOngoing.SetChainsInto(ref buffEnd);
+            buffShortStart.SetChainsInto(ref buffShortOngoing);
+
+            var concentrationStart = new AnimationData(AC.StaffConcentrationStart, AC.StaffConcentrationStartDuration, 0f);
+            var concentrationOngoing = new AnimationData(AC.StaffConcentration, AC.StaffConcentrationDuration, 0f);
+            var concentrationEnd = new AnimationData(AC.StaffConcentrationEnd, AC.StaffConcentrationEndDuration, 0f);
+            concentrationOngoing.SetChainsInto(ref concentrationEnd);
+            concentrationStart.SetChainsInto(ref concentrationOngoing);
+
             AnimationPerWeapon = new Dictionary<WeaponAnimationState, AnimationData>()
             {
                 { WeaponAnimationState.AttackGround, groundAttack1 },
                 { WeaponAnimationState.AttackAir, airAttack1 },
+                { WeaponAnimationState.SpellShortBuff, buffShortStart },
+                { WeaponAnimationState.Concentration, concentrationStart },
                 {
                     WeaponAnimationState.AttackUp,
                     new AnimationData(AC.StaffAttackAirUp, AC.StaffAttackUpDuration, AC.StaffAttackStateLockDuration)
@@ -56,8 +70,8 @@ namespace _2_Scripts.Player.Animation.model.weaponData
                         AC.StaffSpellcastBoltStateLockDuration)
                 },
                 {
-                    WeaponAnimationState.Concentration,
-                    new AnimationData(AC.StaffConcentration, AC.StaffConcentrationDuration, 0f)
+                    WeaponAnimationState.ConcentrationStart,
+                    new AnimationData(AC.StaffConcentrationStart, AC.StaffConcentrationStartDuration, 0f)
                 },
                 {
                     WeaponAnimationState.SpellHeavy,

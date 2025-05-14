@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using _2_Scripts.Player.model;
 using _2_Scripts.Player.Statistics;
+using _2_Scripts.Spells;
 using UnityEngine;
 
 namespace _2_Scripts.Player.Controllers
@@ -10,24 +11,32 @@ namespace _2_Scripts.Player.Controllers
     {
         [SerializeField] private PlayerEffort playerEffort;
         private SpellType spellType;
+        private BaseSpell currentSpellcast;
         
-        public event Action Spellcasted;
+        public event Action<SpellType> Spellcasted;
         
         private void Awake()
         {
             playerEffort.SpellCast += CastSpell;
         }
 
+        public void InvokeSpell()
+        {
+            currentSpellcast.CastHandler();
+        }
+
         private void CastSpell(List<EffortType> effortCombination)
         {
             if (playerEffort.UseEffort(effortCombination.Count))
             {
-                spellType = Spellbook.Instance.GetSpellData(effortCombination).SpellType;
-                Spellcasted?.Invoke();
+                // Debug.Break();
+                currentSpellcast = Spellbook.Instance.GetSpellData(effortCombination);
+                spellType = currentSpellcast.SpellType;
+                Spellcasted?.Invoke(spellType);
             }
         }
 
-        public void InputCastSpell(List<EffortType> effortCombination, bool isCasting)
+        public void CastHotkeySpell(List<EffortType> effortCombination, bool isCasting)
         {
             if (isCasting)
             {

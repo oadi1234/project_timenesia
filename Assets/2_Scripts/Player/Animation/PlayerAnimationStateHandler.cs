@@ -23,11 +23,9 @@ namespace _2_Scripts.Player.Animation
         private float currentStateLockDuration = -1f; // for how long the animation is not changeable
         private float bufferedStateDuration = -1f;
         private float bufferedStateLockDuration = -1f;
-        private float iFrameTimer = 0f;
         private bool dashTriggered;
         private bool doubleJumpedTriggered;
         private bool wallJumpedTriggered;
-        private bool hurtTriggered;
         private bool attackTriggered;
         private bool spellTriggered;
         private bool heavyHurtTriggered;
@@ -36,10 +34,12 @@ namespace _2_Scripts.Player.Animation
         private bool shouldDoMovementStates = true;
         private bool endDash = true;
         private bool restartAnim = false;
+        private bool buffOngoing = false;
         private const float AttackMoveMagnitude = 1f;
 
         private WeaponStateAnimationData weaponStateAnimationData;
         private AnimationData tempAnimData;
+        private AnimationData bufferedData;
 
 
         void Awake()
@@ -75,7 +75,7 @@ namespace _2_Scripts.Player.Animation
         {
             return !shouldDoMovementStates && currentState != AC.DashEnd;
         }
-        
+
 
         public bool ShouldRestartAnim()
         {
@@ -102,6 +102,7 @@ namespace _2_Scripts.Player.Animation
             {
                 hurtLayerState = AC.HurtNone;
             }
+
             if (playerMovementController.IsKnockedBackLight() && currentState != AC.HurtLight)
             {
                 InterruptState();
@@ -128,7 +129,7 @@ namespace _2_Scripts.Player.Animation
                 else
                     return PlayState(AC.DashEnd, AC.DashEndDuration, AC.DashEndStateLockDuration);
             }
-            
+
             if (currentStateLockDuration > 0f)
             {
                 if (currentState == AC.Dash && endDash)
@@ -136,7 +137,7 @@ namespace _2_Scripts.Player.Animation
                     InterruptState();
                     BufferState(AC.DashEnd, AC.DashEndDuration, AC.DashEndStateLockDuration);
                 }
-                else if (ShouldInterruptGroundAttack(
+                else if (ShouldInterruptGroundAttackAnimation(
                              weaponStateAnimationData.GetForState(WeaponAnimationState.AttackGround)))
                 {
                     InterruptState();
@@ -146,6 +147,11 @@ namespace _2_Scripts.Player.Animation
                 {
                     InterruptState();
                     shouldDoMovementStates = true;
+                }
+                else if (ShouldInterruptBuffAnimation(
+                             weaponStateAnimationData.GetForState(WeaponAnimationState.SpellShortBuff)))
+                {
+                    InterruptState();
                 }
                 else
                     return currentState;
@@ -181,6 +187,11 @@ namespace _2_Scripts.Player.Animation
                 return AC.Wallslide;
             }
 
+            if (bufferedData != null)
+            {
+                return PlayBufferedData();
+            }
+
             if (bufferedState != AC.None)
             {
                 return PlayBufferedState();
@@ -193,6 +204,7 @@ namespace _2_Scripts.Player.Animation
 
             if (spellTriggered)
             {
+                playerInputManager.SetConcentration(false);
                 if (playerSpellController.GetSpellType() == SpellType.Bolt)
                 {
                     playerSpellController.ClearSpellType();
@@ -233,6 +245,21 @@ namespace _2_Scripts.Player.Animation
                     playerInputManager.BlockMovementSkillInput(tempAnimData.animationLockDuration);
                     return PlayState(tempAnimData);
                 }
+
+                if (playerSpellController.GetSpellType() == SpellType.Buff)
+                {
+                    playerSpellController.ClearSpellType();
+                    InterruptState();
+                    tempAnimData = weaponStateAnimationData.GetForState(WeaponAnimationState.SpellShortBuff);
+                    bufferedData = tempAnimData;
+                    if (currentState == weaponStateAnimationData.GetForState(WeaponAnimationState.Concentration)
+                            .chainsInto.animationStateHash)
+                        bufferedData = bufferedData.chainsInto;
+
+                    return PlayBufferedData();
+                }
+
+                return PlayState(AC.None, 0, 0);
             }
 
             if (attackTriggered)
@@ -242,9 +269,11 @@ namespace _2_Scripts.Player.Animation
                     InterruptState();
                     tempAnimData = weaponStateAnimationData.GetForState(WeaponAnimationState.Wallsliding);
                     shouldDoMovementStates = false;
-                    playerMovementController.AdjustInputMoveStrength(tempAnimData.animationLockDuration, AttackMoveMagnitude);
+                    playerMovementController.AdjustInputMoveStrength(tempAnimData.animationLockDuration,
+                        AttackMoveMagnitude);
                     return PlayState(tempAnimData);
                 }
+
                 if (playerInputManager.GetYInput() > 0f)
                 {
                     InterruptState();
@@ -288,19 +317,32 @@ namespace _2_Scripts.Player.Animation
             }
 
             // If jumped during ground attack animation. Also has other attacks and double jump there to avoid skipping the animation.
-            if (!shouldDoMovementStates && (currentState != AC.DoubleJump) && IsGroundAttackState() &&
+            if (!shouldDoMovementStates && currentState != AC.DoubleJump && IsGroundAttackState() &&
                 !playerMovementController.IsGrounded())
             {
-                
                 InterruptState();
                 shouldDoMovementStates = true;
             }
 
             if (playerMovementController.IsGrounded() && playerInputManager.IsConcentrating() &&
-                Mathf.Abs(playerMovementController.GetXVelocity())< 0.01f)
+                Mathf.Abs(playerMovementController.GetXVelocity()) < 0.05f)
             {
                 tempAnimData = weaponStateAnimationData.GetForState(WeaponAnimationState.Concentration);
-                return tempAnimData.animationStateHash;
+                if ((currentState == tempAnimData.animationStateHash && currentStateDuration <= 0f) || animStage == 1)
+                    animStage = 1;
+
+                else
+                    animStage = 0;
+
+                return PlayStateWithSetStage(tempAnimData);
+            }
+
+            if (!playerInputManager.IsConcentrating() && tempAnimData == weaponStateAnimationData
+                    .GetForState(WeaponAnimationState.Concentration))
+            {
+                tempAnimData = weaponStateAnimationData.GetLastInChain(WeaponAnimationState.Concentration);
+                animStage = 0;
+                return PlayState(tempAnimData);
             }
 
             if (shouldDoMovementStates || !(currentStateDuration > 0f))
@@ -364,6 +406,7 @@ namespace _2_Scripts.Player.Animation
 
         private void InterruptState()
         {
+            bufferedData = null;
             currentStateDuration = -1f;
             currentStateLockDuration = -1f;
             bufferedState = AC.None;
@@ -375,7 +418,18 @@ namespace _2_Scripts.Player.Animation
                 shouldDoMovementStates = false;
         }
 
-        private bool ShouldInterruptGroundAttack(AnimationData animData)
+        private bool ShouldInterruptBuffAnimation(AnimationData animationData)
+        {
+            return IsStateHashInAnimationDataChain(currentState, animationData)
+                   && (
+                       !playerMovementController.IsGrounded()
+                       || playerMovementController.GetTotalVelocity() > 0.05f
+                       || attackTriggered
+                       || !buffOngoing
+                   );
+        }
+
+        private bool ShouldInterruptGroundAttackAnimation(AnimationData animData)
         {
             return IsStateHashInAnimationDataChain(currentState, animData) &&
                    !playerMovementController.IsGrounded();
@@ -398,14 +452,30 @@ namespace _2_Scripts.Player.Animation
             return false;
         }
 
+        private int PlayStateWithSetStage(AnimationData data)
+        {
+            // this method plays the current animation stage, found in the chain of AnimationData
+            var i = 0;
+            while (i != animStage)
+            {
+                if (data.chainsInto == null)
+                    break;
+                data = data.chainsInto;
+                i++;
+            }
+
+            return PlayState(data.animationStateHash, data.animationDuration, data.animationLockDuration, false);
+        }
+
         private int PlayState(AnimationData data)
         {
-            var state = data.animationStateHash;
+            // this method automatically advances stage once a button related to chained animation is pressed
+            // var state = data.animationStateHash;
             var i = 0;
 
             while (true)
             {
-                if (data.chainsInto == null || data.chainsInto.animationStateHash == state)
+                if (data.chainsInto == null) // || data.chainsInto.animationStateHash == state)
                 {
                     animStage = 0;
                     break;
@@ -433,11 +503,22 @@ namespace _2_Scripts.Player.Animation
             return state;
         }
 
+        // Buffering state only works with locked animations.
         private void BufferState(int state, float stateDuration, float lockDuration)
         {
             bufferedStateDuration = stateDuration;
             bufferedStateLockDuration = lockDuration;
             bufferedState = state;
+        }
+
+        private int PlayBufferedData()
+        {
+            if (currentStateDuration > 0f)
+                return bufferedData.animationStateHash;
+            tempAnimData = bufferedData;
+            bufferedData = bufferedData.chainsInto;
+            return PlayState(tempAnimData.animationStateHash, tempAnimData.animationDuration,
+                tempAnimData.animationLockDuration);
         }
 
         private int PlayBufferedState()
@@ -456,7 +537,11 @@ namespace _2_Scripts.Player.Animation
             playerMovementController.Dashed += () => { dashTriggered = true; };
             playerMovementController.DashEnd += () => { endDash = true; };
             playerMovementController.WallJumped += () => { wallJumpedTriggered = true; };
-            playerSpellController.Spellcasted += () => { spellTriggered = true; };
+            playerSpellController.Spellcasted += (spellType) =>
+            {
+                spellTriggered = true;
+                buffOngoing = spellType == SpellType.Buff;
+            };
             playerInputManager.Attacked += () => { attackTriggered = true; };
             playerInputManager.InputReceived += () => { inputReceived = true; };
             playerInputManager.HeavyAttack += () => { heavyAttackTriggered = true; };
@@ -468,7 +553,6 @@ namespace _2_Scripts.Player.Animation
             dashTriggered = false;
             doubleJumpedTriggered = false;
             wallJumpedTriggered = false;
-            hurtTriggered = false;
             inputReceived = false;
             spellTriggered = false;
             endDash = false;
@@ -477,7 +561,7 @@ namespace _2_Scripts.Player.Animation
 
         private bool IsGroundAttackState()
         {
-            return IsStateHashInAnimationDataChain(currentState, 
+            return IsStateHashInAnimationDataChain(currentState,
                 weaponStateAnimationData.GetForState(WeaponAnimationState.AttackGround));
         }
 

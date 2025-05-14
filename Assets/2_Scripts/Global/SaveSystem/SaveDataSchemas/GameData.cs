@@ -55,10 +55,6 @@ namespace _2_Scripts.Global.SaveSystem.SaveDataSchemas
         public Dictionary<string, bool> AlteredObjects = new(); //only objects which should be inactivated across save games should land here.
         #endregion
 
-        #region SPELLS
-        // TODO fill out when spells are implemented... in some way.
-        #endregion
-
         #region CONTAINERS
         // TODO fill when containers are implemented
         #endregion
@@ -72,6 +68,7 @@ namespace _2_Scripts.Global.SaveSystem.SaveDataSchemas
         #endregion
 
         #region QUEST_FLAGS
+        // TODO
         #endregion
     }
 }

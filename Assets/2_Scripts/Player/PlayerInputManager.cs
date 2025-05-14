@@ -45,8 +45,7 @@ namespace _2_Scripts.Player
         private IEnumerator blockInputCoroutine;
         private IEnumerator blockMovementSkillInputCoroutine;
 
-        // Update is called once per frame
-        void Update()
+        private void Update()
         {
             xInput = Input.GetAxisRaw("Horizontal");
             yInput = Input.GetAxisRaw("Vertical");
@@ -87,20 +86,17 @@ namespace _2_Scripts.Player
                 //  logic will need to be adjusted accordingly.
                 if (Input.GetButtonDown("Spell1"))
                 {
-                    CastSpell(spellInventory.GetSpellAtSlot(1));
-                    //TODO this might need some tweaking as to what is being sent
-                    // also for now the PlayerAnimationStateHandler handles this event, but in the future it should be rerouted
-                    // through some spellhandler class like thing, like the PlayerSpellController here.
+                    CastHotkeySpell(spellInventory.GetSpellAtSlot(1));
                 }
 
                 if (Input.GetButtonUp("Spell2"))
                 {
-                    CastSpell(spellInventory.GetSpellAtSlot(2));
+                    CastHotkeySpell(spellInventory.GetSpellAtSlot(2));
                 }
 
                 if (Input.GetButtonUp("Spell3"))
                 {
-                    CastSpell(spellInventory.GetSpellAtSlot(3));
+                    CastHotkeySpell(spellInventory.GetSpellAtSlot(3));
                 }
 
                 if (Input.GetButtonDown("Attack"))
@@ -136,19 +132,28 @@ namespace _2_Scripts.Player
                 if (Input.GetButtonDown("EffortInput5"))
                     inputEffortType = EffortType.Rune;
             }
+
+            if (isInputEnabled)
+            {
+                playerEffort.SpellInput(inputEffortType);
+                playerSpellController.CastHotkeySpell(spellIndex, isSpellcasting);
+            }
+        }
+
+        private void LateUpdate()
+        {
+            inputEffortType = EffortType.NoInput;
+            isSpellcasting = false;
         }
 
         private void FixedUpdate()
         {
             if (isInputEnabled)
             {
-                playerEffort.SpellInput(inputEffortType);
                 playerMovementController.Move(xInput);
                 playerMovementController.Jump(jumpPressed, jumpKeyHold, isMoveSkillInputEnabled);
                 if (isMoveSkillInputEnabled)
                     playerMovementController.Dash(dashPressed);
-                playerSpellController.InputCastSpell(spellIndex, isSpellcasting);
-
 
                 if (inputReceived)
                 {
@@ -278,12 +283,10 @@ namespace _2_Scripts.Player
             jumpPressed = false;
             dashPressed = false;
             inputReceived = false;
-            isSpellcasting = false;
             attacking = false;
-            inputEffortType = EffortType.NoInput;
         }
 
-        private void CastSpell(List<EffortType> effortCombination)
+        private void CastHotkeySpell(List<EffortType> effortCombination)
         {
             inputReceived = true;
             isSpellcasting = true;

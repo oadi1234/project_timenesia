@@ -23,9 +23,9 @@ namespace _2_Scripts.Player.Controllers
             Destroy(gameObject);
         }
 
-        public void SetAttackDirection(Vector2 direction)
+        public void SetKnockbackDirection(Vector2 direction)
         {
-            knockbackDirection = -direction;
+            knockbackDirection = direction;
         }
 
         private void OnTriggerEnter2D(Collider2D other)

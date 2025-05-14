@@ -13,8 +13,12 @@ namespace _2_Scripts.Player.Animation.model
         SpellBoltDown = 8,
         SpellAoE = 9,
         SpellHeavy = 10,
-        SpellBuff = 11,
-        Wallsliding = 12,
-        Concentration
+        SpellShortBuff = 11,
+        SpellMediumBuff = 12,
+        SpellLongBuff = 13,
+        Wallsliding = 14,
+        Concentration,
+        ConcentrationStart,
+        ConcentrationEnd
     }
 }

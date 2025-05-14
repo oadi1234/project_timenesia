@@ -332,6 +332,7 @@ GameObject:
   - component: {fileID: 1401008164258352750}
   - component: {fileID: 8498187196400931344}
   - component: {fileID: 6831096059973611052}
+  - component: {fileID: 6712066552732020877}
   m_Layer: 8
   m_Name: SpriteGroup
   m_TagString: Untagged
@@ -410,6 +411,25 @@ MonoBehaviour:
   maxJumpRotationDuration: 0.4
   maxIdleRotationDuration: 0.1
   maxJumpRotation: 30
+--- !u!114 &6712066552732020877
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2313825295762468625}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1beec627c019c4e9badb15914ac700, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  allRopeElements:
+  - {fileID: 6995651223441300698}
+  - {fileID: 4668399017072143700}
+  timer: 0.125
+  stateHandlers:
+  - {fileID: 5049225402913275212}
+  - {fileID: 386201158625377647}
 --- !u!1 &3018080608788744918
 GameObject:
   m_ObjectHideFlags: 0
@@ -1560,6 +1580,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerMovementController: {fileID: 5552875086602648877}
+  playerVerletRope: {fileID: 4668399017072143700}
   hingeSpriteType: 2
   playerAnimationStateHandler: {fileID: 8498187196400931344}
 --- !u!114 &4668399017072143700
@@ -1845,6 +1866,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerMovementController: {fileID: 5552875086602648877}
   playerInputManager: {fileID: 8358465365214595313}
+  playerSpellController: {fileID: 885311555864196186}
+  ropeLogicOverride: {fileID: 6712066552732020877}
 --- !u!1 &8884814348694100374
 GameObject:
   m_ObjectHideFlags: 0
@@ -2138,5 +2161,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerMovementController: {fileID: 5552875086602648877}
+  playerVerletRope: {fileID: 6995651223441300698}
   hingeSpriteType: 1
   playerAnimationStateHandler: {fileID: 8498187196400931344}

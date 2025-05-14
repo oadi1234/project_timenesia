@@ -55,6 +55,14 @@ namespace _2_Scripts.Player.Animation.model
         public static readonly int SpellcastStaffAoE = Animator.StringToHash("sylvia_spellcast_staff_aoe_l");
         public static readonly int StaffConcentration = Animator.StringToHash("sylvia_staff_concentration_l");
 
+        public static readonly int StaffConcentrationStart =
+            Animator.StringToHash("sylvia_staff_concentration_start_l");
+        public static readonly int StaffConcentrationEnd = Animator.StringToHash("sylvia_staff_concentration_end_l");
+        
+        public static readonly int StaffBuffStart = Animator.StringToHash("sylvia_staff_buff_start_l");
+        public static readonly int StaffBuffOngoing = Animator.StringToHash("sylvia_staff_buff_l");
+        public static readonly int StaffBuffEnd = Animator.StringToHash("sylvia_staff_buff_end_l");
+
         #endregion
 
         #region hurt_layer
@@ -83,6 +91,19 @@ namespace _2_Scripts.Player.Animation.model
 
         #endregion
 
+        #region spells
+
+        //below used for: Spark
+        public static readonly int SpellImpact = Animator.StringToHash("impact");
+        public static readonly int SpellWandBlast = Animator.StringToHash("wand_blast");
+        
+        //below used for: Shield
+        public static readonly int ShieldParticle = Animator.StringToHash("particle");
+        public static readonly int ShieldStart = Animator.StringToHash("start");
+        public static readonly int ShieldEnd = Animator.StringToHash("end");
+
+        #endregion
+
         #region animation_durations
 
         public const float AscendDuration = 5f / 12f;
@@ -96,14 +117,23 @@ namespace _2_Scripts.Player.Animation.model
         public const float RunDuration = 8f / 12f;
         public const float RunStartDuration = 3f / 12f;
         public const float RunStopDuration = 5f / 12f;
+        public const float StaffAttackDuration = 6f / 12f;
+        public const float StaffAttackUpDuration = 5f / 12f;
+        public const float StaffConcentrationDuration = 0f;
+        public const float StaffConcentrationStartDuration = 3f / 12f;
+        public const float StaffConcentrationEndDuration = 5f / 12f;
+
+        public const float StaffHeavyAttackDuration = 10f / 12f;
+
+        //Spellcasts
         public const float StaffSpellcastAoeDuration = 1f;
         public const float StaffSpellcastBoltDuration = 7f / 12f;
         public const float StaffSpellcastHeavyDuration = 11f / 12f;
-        public const float StaffAttackDuration = 6f / 12f;
-        public const float StaffAttackUpDuration = 5f / 12f;
-        public const float StaffConcentrationDuration = 6f / 12f;
-
-        public const float StaffHeavyAttackDuration = 10f / 12f;
+        public const float BuffStartDuration = 3f / 12f;
+        public const float BuffEndDuration = 5f / 12f;
+        public const float BuffShortDuration = 6f / 12f;
+        public const float BuffMediumDuration = 9f / 12f;
+        public const float BuffLongDuration = 12f / 12f;
 
         //cloak durations
         public const float CloakStopMoveDuration = 10f / 12f;
@@ -125,6 +155,7 @@ namespace _2_Scripts.Player.Animation.model
         public const float StaffSpellcastHeavyStateLockDuration = 11f / 12f;
         public const float StaffAttackStateLockDuration = 4f / 12f;
         public const float StaffHeavyAttackStateLockDuration = 9f / 12f;
+        public const float StaffBuffEndStateLockDuration = 3f / 12f;
 
         #endregion
 

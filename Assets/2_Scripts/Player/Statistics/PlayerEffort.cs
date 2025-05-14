@@ -32,6 +32,9 @@ namespace _2_Scripts.Player.Statistics
         private int currentCastCombinationIndex;
 
         private float currentTime = 0f;
+        private bool moved = false;
+
+        private EffortType inputEffortType = EffortType.NoInput;
 
         public event Action<List<EffortType>> SpellCast;
 
@@ -49,12 +52,28 @@ namespace _2_Scripts.Player.Statistics
             effortBar.SetMax(maxEffort);
             effortBar.SetSpellCapacity(spellCapacity);
             castCombination = new List<EffortType>();
+            inputManager.InputReceived += () => { moved = true; };
 
             currentCastCombinationIndex = 0;
         }
 
-        public void SpellInput(EffortType inputEffortType)
+        private void FixedUpdate()
         {
+            if (currentEffort >= maxEffort) return;
+            currentTime += Time.fixedDeltaTime *
+                           (inputManager.IsInConcentrationMode() ? concentrationEffortRegenMultiplier : 1f);
+            if (!(currentTime > regenInterval)) return;
+            currentTime = 0f;
+            RecoverEffort(effortPerInterval);
+        }
+
+        private void Update()
+        {
+            if (moved)
+            {
+                moved = false;
+                CleanData();
+            }
             if (inputEffortType == EffortType.NoInput)
             {
                 return;
@@ -74,11 +93,11 @@ namespace _2_Scripts.Player.Statistics
             if (currentCastCombinationIndex == spellCapacity-1)
             {
                 currentCastCombinationIndex++;
+                castCombination.Add(inputEffortType);
                 CastSpell();
                 //if last slot in cast sequence is already filled spell is cast automatically
                 // this might actually not be a good idea and it would be better to cast it the moment we let go of concentration
                 // but no clue how it would work with sustained spells. For sustained holding shift would be better.
-                inputManager.SetConcentration(false);
                 return;
             }
 
@@ -89,28 +108,29 @@ namespace _2_Scripts.Player.Statistics
             }
         }
 
+        public void SpellInput(EffortType concentrationInput)
+        {
+            inputEffortType = concentrationInput;
+        }
+
         private void CastSpell()
         {
+            // string debugString = "";
+            // for (int i = 0; i < castCombination.Count; i++)
+            // {
+            //     debugString += castCombination[i] + " ";
+            // }
+            // Debug.Log("Player effort - cast combination: " + debugString);
             SpellCast?.Invoke(castCombination);
-            UseEffort(currentCastCombinationIndex);
+            CleanData();
+        }
+
+        private void CleanData()
+        {
             effortBar.CleanManaSources();
             castCombination.Clear();
             currentCastCombinationIndex = 0;
             inputManager.SetConcentration(false);
-        }
-
-        void FixedUpdate()
-        {
-            if (currentEffort < maxEffort)
-            {
-                currentTime += Time.fixedDeltaTime *
-                               (inputManager.IsInConcentrationMode() ? concentrationEffortRegenMultiplier : 1f);
-                if (currentTime > regenInterval)
-                {
-                    currentTime = 0f;
-                    RecoverEffort(effortPerInterval);
-                }
-            }
         }
 
 

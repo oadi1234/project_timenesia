@@ -34,7 +34,7 @@ namespace _2_Scripts.Player
             staffAttackZoneInstance.transform.position = new Vector3(transform.position.x,
                 transform.position.y + 0.67f, 0);
             staffAttackZoneInstance.GetComponent<WeaponAttackHandler>()
-                .SetAttackDirection(Direction > 0 ? Vector2.left : Vector2.right);
+                .SetKnockbackDirection(Direction > 0 ? Vector2.right : Vector2.left);
         }
 
         public void SpawnAttackStaffUp()
@@ -43,7 +43,7 @@ namespace _2_Scripts.Player
             staffAttackZoneInstance.transform.position =
                 new Vector3(transform.position.x, transform.position.y + 0.3f, 0f);
             staffAttackZoneInstance.transform.rotation = Quaternion.Euler(0, 0, -90);
-            staffAttackZoneInstance.GetComponent<WeaponAttackHandler>().SetAttackDirection(Vector2.up);
+            staffAttackZoneInstance.GetComponent<WeaponAttackHandler>().SetKnockbackDirection(Vector2.down);
         }
 
         public void SpawnAttackStaffDown()
@@ -52,7 +52,7 @@ namespace _2_Scripts.Player
             staffAttackZoneInstance.transform.position = new Vector3(transform.position.x - 0.5f * Direction,
                 transform.position.y + 0.8f, 0f);
             staffAttackZoneInstance.transform.rotation = Quaternion.Euler(0, 0, 90);
-            staffAttackZoneInstance.GetComponent<WeaponAttackHandler>().SetAttackDirection(Vector2.down);
+            staffAttackZoneInstance.GetComponent<WeaponAttackHandler>().SetKnockbackDirection(Vector2.up);
         }
 
         public void SpawnAttackStaffDown2()
@@ -61,7 +61,7 @@ namespace _2_Scripts.Player
             staffAttackZoneInstance.transform.position = new Vector3(transform.position.x,
                 transform.position.y + 0.8f, 0f);
             staffAttackZoneInstance.transform.rotation = Quaternion.Euler(0, 0, 90);
-            staffAttackZoneInstance.GetComponent<WeaponAttackHandler>().SetAttackDirection(Vector2.down);
+            staffAttackZoneInstance.GetComponent<WeaponAttackHandler>().SetKnockbackDirection(Vector2.up);
         }
 
         public void HandleAttackKnockback(float strength, Vector2 direction)
