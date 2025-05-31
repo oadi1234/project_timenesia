@@ -214,8 +214,12 @@ namespace _2_Scripts.Player.Controllers
         public void HurtKnockback(float knockbackStrength, Vector3 damageSourcePosition)
         {
             playerInputManager.BlockInput(PlayerConstants.Instance.knockbackTime);
-            hurtKnockbackX = (transform.position.x - damageSourcePosition.x) * knockbackStrength * 4;
-            hurtKnockbackY = (transform.position.y - damageSourcePosition.y) * knockbackStrength + 1f;
+            var normalize = new Vector2(
+                (transform.position.x - damageSourcePosition.x) * knockbackStrength * 4, 
+                (transform.position.y - damageSourcePosition.y) * knockbackStrength + 1f)
+                .normalized;
+            hurtKnockbackX = normalize.x * 35;
+            hurtKnockbackY = normalize.y * 35;
             playerInputManager.BlockInput(AC.LightHurtDuration);
             StartCoroutine(PerformLightHurtKnockback(AC.LightHurtDuration));
         }

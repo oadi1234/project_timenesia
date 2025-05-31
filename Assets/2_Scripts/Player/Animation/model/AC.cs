@@ -75,13 +75,21 @@ namespace _2_Scripts.Player.Animation.model
 
         #region effort_points
 
-        public static readonly int Empty = Animator.StringToHash("effort_empty");
-        public static readonly int Aether = Animator.StringToHash("effort_aether");
-        public static readonly int Entropy = Animator.StringToHash("effort_entropy");
-        public static readonly int Kinesis = Animator.StringToHash("effort_kinesis");
-        public static readonly int Mind = Animator.StringToHash("effort_mind");
-        public static readonly int Rune = Animator.StringToHash("effort_rune");
-        public static readonly int Raw = Animator.StringToHash("effort_raw");
+        public static readonly int EffortEmpty = Animator.StringToHash("effort_empty");
+        public static readonly int EffortAether = Animator.StringToHash("effort_aether");
+        public static readonly int EffortEntropy = Animator.StringToHash("effort_entropy");
+        public static readonly int EffortKinesis = Animator.StringToHash("effort_kinesis");
+        public static readonly int EffortMind = Animator.StringToHash("effort_mind");
+        public static readonly int EffortRune = Animator.StringToHash("effort_rune");
+        public static readonly int EffortRaw = Animator.StringToHash("effort_raw");
+
+        #endregion
+
+        #region health_points
+
+        public static readonly int HealthEmpty = Animator.StringToHash("health_empty");
+        public static readonly int HealthFull = Animator.StringToHash("health_full");
+        public static readonly int HealthShield = Animator.StringToHash("health_shield");
 
         #endregion
 

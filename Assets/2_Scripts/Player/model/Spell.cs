@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using _2_Scripts.Global.Animation.Model;
+using _2_Scripts.UI.Animation.Model;
 
 namespace _2_Scripts.Player.model
 {

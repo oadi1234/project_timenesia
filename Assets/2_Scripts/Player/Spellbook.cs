@@ -1,8 +1,10 @@
 using System.Collections.Generic;
+using _2_Scripts.Global.Animation.Model;
 using _2_Scripts.Global.Spells;
 using _2_Scripts.Player.model;
 using _2_Scripts.Player.utility;
 using _2_Scripts.Spells;
+using _2_Scripts.UI.Animation.Model;
 using UnityEngine;
 
 namespace _2_Scripts.Player

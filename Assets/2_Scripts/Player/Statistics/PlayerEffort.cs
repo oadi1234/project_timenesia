@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using _2_Scripts.Global;
+using _2_Scripts.Global.Animation.Model;
 using _2_Scripts.Player.model;
-using _2_Scripts.Spells;
+using _2_Scripts.UI.Animation.Model;
 using _2_Scripts.UI.Elements.HUD;
-using Spells;
 using UnityEngine;
 
 namespace _2_Scripts.Player.Statistics
@@ -12,22 +12,21 @@ namespace _2_Scripts.Player.Statistics
     public class PlayerEffort : MonoBehaviour
     {
         [SerializeField]
-        private float
-            regenInterval =
-                1f; // TODO set this depending on the chosen difficulty, or allow concentrations to change it. Might get moved to PlayerAbilityAndStats or something like it.
+        // TODO set this depending on the chosen difficulty. Might get moved to PlayerAbilityAndStats or something like it.
+        private float regenInterval = 1f;
 
-        [SerializeField] private int effortPerInterval = 1;
-        [SerializeField] private float concentrationEffortRegenMultiplier = 2f;
+        [SerializeField] 
+        // this might be modified through upgrades and such. When concentrating regenInterval gets multiplied by this.
+        private float concentrationEffortRegenMultiplier = 2f;
+        
         [SerializeField] private EffortBar effortBar;
-        [SerializeField] private List<EffortType> castCombination;
         [SerializeField] private PlayerInputManager inputManager;
+        private List<EffortType> castCombination;
 
         private int maxEffort; //temp starting values, make load from save later on.
         private int currentEffort;
 
         private int spellCapacity; //might get deleted.
-        // private List<Spell> preparedSpells;
-        // private List<BaseSpell> preparedSpells; //this feels like it should be somewhere else, not in effort but spellbook
 
         private int currentCastCombinationIndex;
 
@@ -35,6 +34,7 @@ namespace _2_Scripts.Player.Statistics
         private bool moved = false;
 
         private EffortType inputEffortType = EffortType.NoInput;
+        private const int EffortPerInterval = 1;
 
         public event Action<List<EffortType>> SpellCast;
 
@@ -64,7 +64,7 @@ namespace _2_Scripts.Player.Statistics
                            (inputManager.IsInConcentrationMode() ? concentrationEffortRegenMultiplier : 1f);
             if (!(currentTime > regenInterval)) return;
             currentTime = 0f;
-            RecoverEffort(effortPerInterval);
+            RecoverEffort(EffortPerInterval);
         }
 
         private void Update()
@@ -74,6 +74,7 @@ namespace _2_Scripts.Player.Statistics
                 moved = false;
                 CleanData();
             }
+
             if (inputEffortType == EffortType.NoInput)
             {
                 return;
@@ -84,13 +85,14 @@ namespace _2_Scripts.Player.Statistics
                 inputManager.SetConcentration(false);
                 return;
             }
+
             if (inputEffortType == EffortType.EndOfInput)
             {
                 CastSpell();
                 return;
             }
 
-            if (currentCastCombinationIndex == spellCapacity-1)
+            if (currentCastCombinationIndex == spellCapacity - 1)
             {
                 currentCastCombinationIndex++;
                 castCombination.Add(inputEffortType);

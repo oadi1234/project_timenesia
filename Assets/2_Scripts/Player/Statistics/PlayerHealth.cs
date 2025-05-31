@@ -13,6 +13,7 @@ namespace _2_Scripts.Player.Statistics
         [SerializeField] private ParticleSystem damageParticles;
         private int maxHealth;
         private int currentHealth;
+        private int shieldHealth;
         private PlayerMovementController playerMovementController;
         private float timescaleTimer = 0f;
         private bool hasIFrames = false;
@@ -51,18 +52,27 @@ namespace _2_Scripts.Player.Statistics
         private void TakeDamage(DamageParameters damageParameters)
         {
             Damaged?.Invoke();
-            playerMovementController.HurtKnockback(damageParameters.KnockbackStrength, damageParameters.DamageSourcePosition);
-            damageParticlesInstance = Instantiate(damageParticles, transform.position, Quaternion.identity);
             SlowDownTime();
+            damageParticlesInstance = Instantiate(damageParticles, transform.position, Quaternion.identity);
+            playerMovementController.HurtKnockback(damageParameters.KnockbackStrength, damageParameters.DamageSourcePosition);
             if (damageParameters.IFramesGiven >= 0f)
             {
                 StartCoroutine(ApplyIFrames(damageParameters.IFramesGiven));
+            }
+            if (shieldHealth > 0)
+            {
+                shieldHealth -= damageParameters.DamageDealt;
+                if (shieldHealth < 0) shieldHealth = 0;
+                healthBar.SetCurrentShield(shieldHealth);
+                //TODO shield damage is always light knockback. For now types of knockback animation are unhandled.
+                //TODO change particles depending on whether we had shield or not?
+                return;
             }
             currentHealth -= damageParameters.DamageDealt;
             if (currentHealth <= 0)
             {
                 currentHealth = 0;
-                // TODO play death animation here. Then load game.
+                // TODO play death animation here. Then load last savepoint.
             }
             healthBar.SetCurrent(currentHealth);
         }
@@ -104,7 +114,12 @@ namespace _2_Scripts.Player.Statistics
                 currentHealth = maxHealth;
             }
             healthBar.SetCurrent(currentHealth);
-            //TODO play heal animation on the health bar here.
+        }
+
+        public void AddShield(int amount)
+        {
+            shieldHealth = amount;
+            healthBar.SetCurrentShield(amount);
         }
 
         public bool HasIFrames()

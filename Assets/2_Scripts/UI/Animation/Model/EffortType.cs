@@ -1,4 +1,4 @@
-namespace _2_Scripts.Player.model
+namespace _2_Scripts.UI.Animation.Model
 {
     public enum EffortType
     {

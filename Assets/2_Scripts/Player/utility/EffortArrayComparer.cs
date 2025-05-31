@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
+using _2_Scripts.Global.Animation.Model;
 using _2_Scripts.Player.model;
+using _2_Scripts.UI.Animation.Model;
 
 namespace _2_Scripts.Player.utility
 {

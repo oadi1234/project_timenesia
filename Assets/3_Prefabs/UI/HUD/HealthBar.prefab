@@ -48,6 +48,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2a89500fda9f424e92141205f6ac2ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  healthPoint: {fileID: 4862579505821165546, guid: 192422e054ebb27468ed11413a57ff5f, type: 3}
-  scale: 2
-  healthBar: {fileID: 9044460365108517224}
+  point: {fileID: 4862579505821165546, guid: 192422e054ebb27468ed11413a57ff5f, type: 3}
+  currentValue: 0
+  scale: 2.5
+  bar: {fileID: 9044460365108517224}
+  positionX: 0
+  positionY: 0
+  sizeDelta: {x: 42, y: 42}

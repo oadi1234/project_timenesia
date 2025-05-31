@@ -48,8 +48,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19c3b888ed9b4b242bedb63edd46bfaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  manaPoint: {fileID: 4862579505821165546, guid: becfb7573a52cac4abdcf6304824d044, type: 3}
-  backgroundPoint: {fileID: 2248241723598615693, guid: ac1cd379ead539840bae5725d57fe2c7, type: 3}
-  currentEffort: 0
+  point: {fileID: 4862579505821165546, guid: becfb7573a52cac4abdcf6304824d044, type: 3}
+  currentValue: 0
   scale: 2
-  manaBar: {fileID: 641445260582546985}
+  bar: {fileID: 641445260582546985}
+  positionX: 0
+  positionY: 0
+  backgroundPoint: {fileID: 2248241723598615693, guid: ac1cd379ead539840bae5725d57fe2c7, type: 3}

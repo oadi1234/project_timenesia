@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 4862579505821165462}
   - component: {fileID: 4862579505821165461}
   - component: {fileID: 4862579505821165460}
+  - component: {fileID: 4358293603492532182}
+  - component: {fileID: 7848728242756440722}
   m_Layer: 5
   m_Name: HealthPoint
   m_TagString: Untagged
@@ -97,3 +99,30 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4358293603492532182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4862579505821165546}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b27026d5048396940af961f8f838a9b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7848728242756440722
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4862579505821165546}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91b11b72d04f1674d817cd1e500fe0c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _stateHandler: {fileID: 4358293603492532182}
+  playerMovementController: {fileID: 0}
+  shouldHandleRotation: 0

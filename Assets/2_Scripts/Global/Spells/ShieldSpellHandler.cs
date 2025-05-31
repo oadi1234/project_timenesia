@@ -34,6 +34,7 @@ namespace _2_Scripts.Global.Spells
             stageInstance.transform.localScale = transform.localScale;
             playerHealth.Damaged -= InterruptAnimation;
             playerInputManager.InputReceived -= InterruptAnimation;
+            playerHealth.AddShield(shieldIntensity);
             Destroy(gameObject);
         }
 
