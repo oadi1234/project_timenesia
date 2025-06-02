@@ -24,9 +24,9 @@ namespace _2_Scripts.Player.Animation.model
         public AnimationData GetLastInChain(WeaponAnimationState state)
         {
             var data = AnimationPerWeapon.GetValueOrDefault(state, NoAnim);
-            while (data.chainsInto != null)
+            while (data.ChainsInto != null)
             {
-                data = data.chainsInto;
+                data = data.ChainsInto;
             }
 
             return data;

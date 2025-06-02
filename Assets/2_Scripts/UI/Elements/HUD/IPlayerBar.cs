@@ -1,4 +1,4 @@
-namespace _2_Scripts.Player.Statistics
+namespace _2_Scripts.UI.Elements.HUD
 {
     public interface IPlayerBar
     {

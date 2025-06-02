@@ -119,7 +119,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91b11b72d04f1674d817cd1e500fe0c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _stateHandler: {fileID: 8498187196400931344}
+  stateHandler: {fileID: 8498187196400931344}
   playerMovementController: {fileID: 5552875086602648877}
   shouldHandleRotation: 1
 --- !u!1 &1454504603569855483
@@ -286,7 +286,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91b11b72d04f1674d817cd1e500fe0c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _stateHandler: {fileID: 8498187196400931344}
+  stateHandler: {fileID: 8498187196400931344}
   playerMovementController: {fileID: 5552875086602648877}
   shouldHandleRotation: 1
 --- !u!1 &2180152265386452066
@@ -639,7 +639,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91b11b72d04f1674d817cd1e500fe0c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _stateHandler: {fileID: 8498187196400931344}
+  stateHandler: {fileID: 8498187196400931344}
   playerMovementController: {fileID: 5552875086602648877}
   shouldHandleRotation: 1
 --- !u!1 &4021396819133016725
@@ -761,7 +761,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91b11b72d04f1674d817cd1e500fe0c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _stateHandler: {fileID: 8498187196400931344}
+  stateHandler: {fileID: 8498187196400931344}
   playerMovementController: {fileID: 5552875086602648877}
   shouldHandleRotation: 1
 --- !u!1 &4707729290595137242
@@ -883,7 +883,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91b11b72d04f1674d817cd1e500fe0c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _stateHandler: {fileID: 8498187196400931344}
+  stateHandler: {fileID: 8498187196400931344}
   playerMovementController: {fileID: 5552875086602648877}
   shouldHandleRotation: 1
 --- !u!1 &5132411022394750823
@@ -1005,7 +1005,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91b11b72d04f1674d817cd1e500fe0c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _stateHandler: {fileID: 8498187196400931344}
+  stateHandler: {fileID: 8498187196400931344}
   playerMovementController: {fileID: 5552875086602648877}
   shouldHandleRotation: 1
 --- !u!1 &5676232514667609388
@@ -1187,10 +1187,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   regenInterval: 1
-  effortPerInterval: 1
   concentrationEffortRegenMultiplier: 2
   effortBar: {fileID: 0}
-  castCombination: 
   inputManager: {fileID: 8358465365214595313}
 --- !u!114 &7834630345329486682
 MonoBehaviour:
@@ -1527,7 +1525,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91b11b72d04f1674d817cd1e500fe0c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _stateHandler: {fileID: 386201158625377647}
+  stateHandler: {fileID: 386201158625377647}
   playerMovementController: {fileID: 5552875086602648877}
   shouldHandleRotation: 0
 --- !u!114 &1254471710016749490
@@ -1819,7 +1817,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91b11b72d04f1674d817cd1e500fe0c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _stateHandler: {fileID: 8498187196400931344}
+  stateHandler: {fileID: 8498187196400931344}
   playerMovementController: {fileID: 5552875086602648877}
   shouldHandleRotation: 1
 --- !u!114 &3106427668422968683
@@ -1867,6 +1865,7 @@ MonoBehaviour:
   playerMovementController: {fileID: 5552875086602648877}
   playerInputManager: {fileID: 8358465365214595313}
   playerSpellController: {fileID: 885311555864196186}
+  playerAnimationStateHandler: {fileID: 8498187196400931344}
   ropeLogicOverride: {fileID: 6712066552732020877}
 --- !u!1 &8884814348694100374
 GameObject:
@@ -2082,7 +2081,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91b11b72d04f1674d817cd1e500fe0c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _stateHandler: {fileID: 5049225402913275212}
+  stateHandler: {fileID: 5049225402913275212}
   playerMovementController: {fileID: 5552875086602648877}
   shouldHandleRotation: 0
 --- !u!114 &6458088089945319129

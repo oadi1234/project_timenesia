@@ -2,33 +2,30 @@ namespace _2_Scripts.Player.Animation.model
 {
     public class AnimationData
     {
-        public int animationStateHash {get; private set;}
-        public float animationDuration {get; private set;}
-        public float animationLockDuration {get; private set;}
-        public float animationHangDuration { get; private set; }
+        public int AnimationStateHash {get; private set;}
+        public float AnimationDuration {get; private set;}
+        public float AnimationLockDuration {get; private set;}
+        public float AnimationHangDuration { get; private set; } //for duration of air hangs on certain spells.
         
-        public AnimationData chainsInto { get; private set; }
+        public AnimationData ChainsInto { get; private set; }
 
         public AnimationData(int animationStateHash, float animationDuration, float animationLockDuration)
         {
-            this.animationStateHash = animationStateHash;
-            this.animationLockDuration = animationLockDuration;
-            this.animationDuration = animationDuration;
-            this.animationHangDuration = animationLockDuration;
+            this.AnimationStateHash = animationStateHash;
+            this.AnimationLockDuration = animationLockDuration;
+            this.AnimationDuration = animationDuration;
+            AnimationHangDuration = animationLockDuration;
         }
 
-        public AnimationData(int animationStateHash, float animationDuration, float animationLockDuration,
-            float animationHangDuration)
+        public void SetDurationsTo(float value)
         {
-            this.animationStateHash = animationStateHash;
-            this.animationLockDuration = animationLockDuration;
-            this.animationDuration = animationDuration;
-            this.animationHangDuration = animationHangDuration;
+            AnimationLockDuration = value;
+            AnimationDuration = value;
         }
 
         public void SetChainsInto(ref AnimationData chainsIntoRef)
         {
-            chainsInto = chainsIntoRef;
+            ChainsInto = chainsIntoRef;
         }
     }
 }

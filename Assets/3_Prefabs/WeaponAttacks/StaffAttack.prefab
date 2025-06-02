@@ -112,7 +112,7 @@ GameObject:
   - component: {fileID: 1071745892095747217}
   - component: {fileID: 7369090418252448290}
   - component: {fileID: 3660652689379343291}
-  - component: {fileID: 4977891327770563296}
+  - component: {fileID: 32849248524148767}
   m_Layer: 20
   m_Name: SwooshAnim
   m_TagString: Untagged
@@ -220,10 +220,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91b11b72d04f1674d817cd1e500fe0c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _stateHandler: {fileID: 4977891327770563296}
+  stateHandler: {fileID: 32849248524148767}
   playerMovementController: {fileID: 0}
   shouldHandleRotation: 0
---- !u!114 &4977891327770563296
+--- !u!114 &32849248524148767
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -232,6 +232,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7374724946491461680}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e60be785b22268744b5aaae1fc604883, type: 3}
+  m_Script: {fileID: 11500000, guid: e777fa8757c3430a9c5e6e94855410aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animationName: 5

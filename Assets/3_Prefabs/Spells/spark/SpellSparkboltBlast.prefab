@@ -122,7 +122,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91b11b72d04f1674d817cd1e500fe0c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _stateHandler: {fileID: 441656760306366522}
+  stateHandler: {fileID: 441656760306366522}
   playerMovementController: {fileID: 0}
   shouldHandleRotation: 1
 --- !u!58 &8576046006277220830

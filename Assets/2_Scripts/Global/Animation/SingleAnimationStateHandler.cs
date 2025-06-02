@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using _2_Scripts.Global.Animation.Model;
 using _2_Scripts.Player.Animation.model;
@@ -6,7 +5,7 @@ using UnityEngine;
 
 namespace _2_Scripts.Global.Animation
 {
-    public class SingleAnimationStateHandler : MonoBehaviour, IStateHandler
+    public class SingleAnimationStateHandler : AbstractStateHandler
     {
         [SerializeField] private AnimationName animationName;
 
@@ -18,7 +17,8 @@ namespace _2_Scripts.Global.Animation
             { AnimationName.SpellWandBlast, AC.SpellWandBlast },
             { AnimationName.ShieldParticle, AC.ShieldParticle},
             { AnimationName.ShieldStart, AC.ShieldStart},
-            { AnimationName.ShieldEnd, AC.ShieldEnd}
+            { AnimationName.ShieldEnd, AC.ShieldEnd},
+            { AnimationName.WeaponWideSwoosh, AC.StaffBasicSwoosh}
         };
 
         #endregion
@@ -30,24 +30,9 @@ namespace _2_Scripts.Global.Animation
             currentAnimationHash = animNameToHash.GetValueOrDefault(animationName, AC.None);
         }
 
-        public int GetCurrentState()
+        public override int GetCurrentState()
         {
             return currentAnimationHash;
-        }
-
-        public int GetCurrentHurtState()
-        {
-            return AC.None;
-        }
-
-        public bool LockXFlip()
-        {
-            return false;
-        }
-
-        public bool ShouldRestartAnim()
-        {
-            return false;
         }
     }
 }

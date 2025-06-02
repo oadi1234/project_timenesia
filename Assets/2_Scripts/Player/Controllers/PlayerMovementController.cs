@@ -31,6 +31,7 @@ namespace _2_Scripts.Player.Controllers
         private bool startedDashFromWallSlide = false;
         private bool airHangOngoing = false;
         private bool isLightHurtKnockedback = false;
+        private bool overrideFacingDirection = false;
 
         private bool inputJump;
         private bool inputJumpHeld;
@@ -203,6 +204,18 @@ namespace _2_Scripts.Player.Controllers
                 dashVariableReverserCoroutine = ReverseDashVariablesAfterSeconds(AC.DashDuration);
                 StartCoroutine(dashVariableReverserCoroutine);
             }
+        }
+
+        public void OverrideFacingDirection(bool value)
+        {
+            overrideFacingDirection = value;
+        }
+
+        public void SetFacingDirection(bool value)
+        {
+            if (value!=facingLeft)
+                Flipped?.Invoke(value);
+            facingLeft = value;
         }
 
         private void SetPosition(Vector3 position)
@@ -657,6 +670,8 @@ namespace _2_Scripts.Player.Controllers
 
         private void DoFlip(float direction)
         {
+            if (overrideFacingDirection)
+                return;
             if (direction > 0 && facingLeft)
             {
                 Flip();

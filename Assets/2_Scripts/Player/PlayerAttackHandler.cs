@@ -1,7 +1,5 @@
-using _2_Scripts.Player.Animation.model;
 using _2_Scripts.Player.Controllers;
 using _2_Scripts.Player.model;
-using _2_Scripts.Player.ScriptableObjects;
 using UnityEngine;
 
 namespace _2_Scripts.Player

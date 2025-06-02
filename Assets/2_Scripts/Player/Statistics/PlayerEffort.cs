@@ -147,6 +147,11 @@ namespace _2_Scripts.Player.Statistics
             return true;
         }
 
+        public bool CanUseEffort(int cost)
+        {
+            return cost <= currentEffort;
+        }
+
         public void RecoverEffort(int amount)
         {
             currentEffort = Mathf.Min(currentEffort + amount, maxEffort);

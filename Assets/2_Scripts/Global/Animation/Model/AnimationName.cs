@@ -6,6 +6,7 @@ namespace _2_Scripts.Global.Animation.Model
         SpellImpact,
         ShieldParticle,
         ShieldStart,
-        ShieldEnd
+        ShieldEnd,
+        WeaponWideSwoosh
     }
 }

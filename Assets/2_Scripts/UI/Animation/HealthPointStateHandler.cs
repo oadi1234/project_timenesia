@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace _2_Scripts.UI.Animation
 {
-    public class HealthPointStateHandler : MonoBehaviour, IGUIPointStateHandler<HealthType>
+    public class HealthPointStateHandler : AbstractGUIPointStateHandler<HealthType>
     {
         private Dictionary<HealthType, int> healthToIntDict = new()
         {
@@ -13,32 +13,10 @@ namespace _2_Scripts.UI.Animation
             { HealthType.Health, AC.HealthFull },
             { HealthType.Shield, AC.HealthShield }
         };
-
-        private int currentState = 0;
-
-        public void SetCurrentState(HealthType healthType)
+        
+        public override void SetCurrentState(HealthType healthType)
         {
-            currentState = healthToIntDict[healthType];
-        }
-
-        public int GetCurrentState()
-        {
-            return currentState;
-        }
-
-        public int GetCurrentHurtState()
-        {
-            return AC.None;
-        }
-
-        public bool LockXFlip()
-        {
-            return false;
-        }
-
-        public bool ShouldRestartAnim()
-        {
-            return false;
+            CurrentState = healthToIntDict[healthType];
         }
     }
 }

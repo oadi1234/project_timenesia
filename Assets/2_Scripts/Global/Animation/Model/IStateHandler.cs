@@ -1,13 +1,13 @@
-namespace _2_Scripts.Player.Animation.model
+namespace _2_Scripts.Global.Animation.Model
 {
     public interface IStateHandler
     {
         public int GetCurrentState();
 
         public int GetCurrentHurtState();
-
+        
         public bool LockXFlip();
 
-        bool ShouldRestartAnim();
+        public bool ShouldRestartAnim();
     }
 }

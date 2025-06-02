@@ -59,7 +59,6 @@ namespace _2_Scripts.Player.Animation.model
             Animator.StringToHash("sylvia_staff_concentration_start_l");
         public static readonly int StaffConcentrationEnd = Animator.StringToHash("sylvia_staff_concentration_end_l");
         
-        public static readonly int StaffBuffStart = Animator.StringToHash("sylvia_staff_buff_start_l");
         public static readonly int StaffBuffOngoing = Animator.StringToHash("sylvia_staff_buff_l");
         public static readonly int StaffBuffEnd = Animator.StringToHash("sylvia_staff_buff_end_l");
 

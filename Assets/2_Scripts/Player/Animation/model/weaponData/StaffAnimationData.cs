@@ -26,7 +26,7 @@ namespace _2_Scripts.Player.Animation.model.weaponData
                 AC.StaffAttackStateLockDuration);
             attackDown1.SetChainsInto(ref attackDown2);
 
-            var buffShortStart = new AnimationData(AC.StaffBuffStart, AC.BuffStartDuration, AC.BuffStartDuration);
+            var buffShortStart = new AnimationData(AC.StaffConcentrationStart, AC.StaffConcentrationStartDuration, AC.StaffConcentrationStartDuration);
             var buffShortOngoing = new AnimationData(AC.StaffBuffOngoing, AC.BuffShortDuration, AC.BuffShortDuration);
             var buffEnd = new AnimationData(AC.StaffBuffEnd, AC.BuffEndDuration, AC.StaffBuffEndStateLockDuration);
             buffShortOngoing.SetChainsInto(ref buffEnd);

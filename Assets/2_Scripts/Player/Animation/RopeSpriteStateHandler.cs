@@ -1,10 +1,12 @@
+using _2_Scripts.Global.Animation;
+using _2_Scripts.Global.Animation.Model;
 using _2_Scripts.Player.Animation.model;
 using _2_Scripts.Player.Controllers;
 using UnityEngine;
 
 namespace _2_Scripts.Player.Animation
 {
-    public class RopeSpriteStateHandler : MonoBehaviour, IStateHandler
+    public class RopeSpriteStateHandler : AbstractStateHandler
     {
         [SerializeField] private PlayerMovementController playerMovementController;
         [SerializeField] private PlayerVerletRope playerVerletRope;
@@ -64,26 +66,14 @@ namespace _2_Scripts.Player.Animation
             return AC.None;
         }
 
-        public int GetCurrentState()
+        public override int GetCurrentState()
         {
             return hingeObjectState;
         }
 
-        public int GetCurrentHurtState()
+        public override int GetCurrentHurtState()
         {
             return playerAnimationStateHandler.GetCurrentHurtState();
-        }
-
-        public bool LockXFlip()
-        {
-            //it might be necessary to add something here in the future, when dealing with hurt anims for example.
-            return false;
-        }
-
-        public bool ShouldRestartAnim()
-        {
-            // this one might actually be useless. Oh well.
-            return false;
         }
 
         public void SetMoveTimer(float time)

@@ -16,6 +16,9 @@ namespace _2_Scripts.Player.Particles
         private ParticleSystem heavyStompParticlesInstance;
 
         private float fallingTime = 0f;
+        
+        // TODO add raycast checks to see if certain particles should even happen, i.e. if there is no ground below
+        //  feet it shouldn't rise up dust.
 
         private void FixedUpdate()
         {

@@ -15,7 +15,8 @@ namespace _2_Scripts.Player
         [SerializeField] private PlayerMovementController playerMovementController;
         [SerializeField] private PlayerInputManager playerInputManager;
         [SerializeField] private PlayerSpellController playerSpellController;
-        [FormerlySerializedAs("ropeGravityController")] [SerializeField] private RopeLogicOverride ropeLogicOverride;
+        [SerializeField] private PlayerAnimationStateHandler playerAnimationStateHandler;
+        [SerializeField] private RopeLogicOverride ropeLogicOverride;
 
         private WeaponAnimationSpellOrigin weaponAnimationSpellOrigin;
         private bool loopProtection = false;
@@ -71,6 +72,7 @@ namespace _2_Scripts.Player
             Spellbook.Instance.direction.Set(Direction, 0, 0);
             Spellbook.Instance.originPoint=weaponAnimationSpellOrigin.GetForState(WeaponAnimationState.SpellBolt);
             Spellbook.Instance.originPoint.x *= Direction;
+            playerAnimationStateHandler.SetDoMovementStates(false);
             playerSpellController.InvokeSpell();
         }
 

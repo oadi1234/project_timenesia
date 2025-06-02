@@ -14,6 +14,7 @@ namespace _2_Scripts.Player.Controllers
         [SerializeField] private PlayerEffort playerEffort;
         private SpellType spellType;
         private BaseSpell currentSpellcast;
+        private int spellCost;
         
         public event Action<SpellType> Spellcasted;
         
@@ -29,7 +30,8 @@ namespace _2_Scripts.Player.Controllers
 
         private void CastSpell(List<EffortType> effortCombination)
         {
-            if (playerEffort.UseEffort(effortCombination.Count))
+            spellCost = effortCombination.Count;
+            if (playerEffort.CanUseEffort(spellCost))
             {
                 // Debug.Break();
                 currentSpellcast = Spellbook.Instance.GetSpellData(effortCombination);
@@ -54,6 +56,11 @@ namespace _2_Scripts.Player.Controllers
         public void ClearSpellType()
         {
             spellType = SpellType.None;
+        }
+
+        public void UseSpellCost()
+        {
+            playerEffort.UseEffort(spellCost);
         }
     }
 }

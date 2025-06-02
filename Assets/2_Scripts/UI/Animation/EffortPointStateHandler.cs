@@ -1,12 +1,10 @@
 using System.Collections.Generic;
-using _2_Scripts.Global.Animation.Model;
 using _2_Scripts.Player.Animation.model;
 using _2_Scripts.UI.Animation.Model;
-using UnityEngine;
 
 namespace _2_Scripts.UI.Animation
 {
-    public class EffortPointStateHandler : MonoBehaviour, IGUIPointStateHandler<EffortType>
+    public class EffortPointStateHandler : AbstractGUIPointStateHandler<EffortType>
     {
         private readonly Dictionary<EffortType, int> typeToIntDict = new()
         {
@@ -21,31 +19,9 @@ namespace _2_Scripts.UI.Animation
             { EffortType.NoInput, AC.EffortEmpty }
         };
 
-        public int currentState;
-
-        public void SetCurrentState(EffortType effortType)
+        public override void SetCurrentState(EffortType effortType)
         {
-            currentState = typeToIntDict[effortType];
-        }
-
-        public int GetCurrentState()
-        {
-            return currentState;
-        }
-
-        public int GetCurrentHurtState()
-        {
-            return AC.None;
-        }
-
-        public bool LockXFlip()
-        {
-            return false;
-        }
-
-        public bool ShouldRestartAnim()
-        {
-            return false;
+            CurrentState = typeToIntDict[effortType];
         }
     }
 }
