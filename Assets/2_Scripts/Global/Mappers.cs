@@ -1,24 +1,25 @@
 using System;
-using _2_Scripts.Model;
+using _2_Scripts.Global.Events.Model;
+using _2_Scripts.Player.model;
 
 namespace _2_Scripts.Global
 {
     public static class Mappers
     {
-        public static AbilityName Map(CollectedEventType eventType)
+        public static UnlockableName Map(CollectedEventType eventType)
         {
             return eventType switch
             {
-                CollectedEventType.DoubleJumpCollected => AbilityName.DoubleJump,
-                CollectedEventType.DashCollected => AbilityName.Dash,
-                CollectedEventType.LongDashCollected => AbilityName.LongDash,
-                CollectedEventType.SpatialDashCollected => AbilityName.SpatialDash,
-                CollectedEventType.TimeGateCollected => AbilityName.TimeGate,
-                CollectedEventType.WallJumpCollected => AbilityName.WallJump,
-                CollectedEventType.SwimUnderwaterCollected => AbilityName.SwimUnderwater,
-                CollectedEventType.SlowmotionFocusCollected => AbilityName.SlowMotionFocus,
-                CollectedEventType.MidAirFocusCollected => AbilityName.MidairFocus,
-                CollectedEventType.ChargeSpellCollected => AbilityName.ChargedSpell,
+                CollectedEventType.DoubleJumpCollected => UnlockableName.DoubleJump,
+                CollectedEventType.DashCollected => UnlockableName.Dash,
+                CollectedEventType.LongDashCollected => UnlockableName.LongDash,
+                CollectedEventType.SpatialDashCollected => UnlockableName.SpatialDash,
+                CollectedEventType.TimeGateCollected => UnlockableName.TimeGate,
+                CollectedEventType.WallJumpCollected => UnlockableName.WallJump,
+                CollectedEventType.SwimUnderwaterCollected => UnlockableName.SwimUnderwater,
+                CollectedEventType.SlowmotionFocusCollected => UnlockableName.SlowMotionFocus,
+                CollectedEventType.MidAirFocusCollected => UnlockableName.MidairFocus,
+                CollectedEventType.ChargeSpellCollected => UnlockableName.ChargedSpell,
                 _ => throw new ArgumentOutOfRangeException(nameof(eventType), eventType, null)
             };
         }

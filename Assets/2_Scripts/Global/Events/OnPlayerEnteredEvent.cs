@@ -1,5 +1,5 @@
 ﻿using System;
-using _2_Scripts.Model;
+using _2_Scripts.Global.Events.Model;
 using UnityEngine;
 using UnityEngine.Serialization;
 

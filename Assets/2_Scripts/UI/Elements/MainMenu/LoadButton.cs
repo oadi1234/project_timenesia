@@ -12,20 +12,17 @@ namespace _2_Scripts.UI.Elements.MainMenu
         public MainMenuManager mainMenuManager { get; set; }
         public string directoryName { get; set; }
 
-        private HealthBar healthBar;
-        private EffortBar effortBar;
-        private TextMeshProUGUI text;
+        [SerializeField] private HealthBar healthBar;
+        [SerializeField] private EffortBar effortBar;
+        [SerializeField] private TextMeshProUGUI text;
 
         public static event Action<string, PreviewDataSchema> LoadAction;
         public static event Action<string> DeleteAction;
 
         private void Awake()
         {
-            healthBar = GetComponentInChildren<HealthBar>();
-            effortBar = GetComponentInChildren<EffortBar>();
             healthBar.Initialize();
             effortBar.Initialize();
-            text = GetComponentInChildren<TextMeshProUGUI>();
         }
 
         public void Initialize()

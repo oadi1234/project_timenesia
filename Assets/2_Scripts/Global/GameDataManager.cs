@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using _2___Scripts.Global.Events;
 using _2_Scripts.ExtensionMethods;
 using _2_Scripts.Global.Events;
+using _2_Scripts.Global.Events.Model;
 using _2_Scripts.Global.SaveSystem;
 using _2_Scripts.Global.SaveSystem.SaveDataSchemas;
-using _2_Scripts.Model;
 using _2_Scripts.Player;
 using _2_Scripts.Player.model;
 using _2_Scripts.Scenes;
@@ -123,14 +123,14 @@ namespace _2_Scripts.Global
             Console.WriteLine("loaded");
         }
 
-        private void UnlockAbility(AbilityName abilityName)
+        private void UnlockAbility(UnlockableName unlockableName)
         {
-            currentGameData.Abilities.AddOrUpdate(abilityName, true);
+            currentGameData.Abilities.AddOrUpdate(unlockableName, true);
         }
 
-        public bool IsAbilityUnlocked(AbilityName abilityName)
+        public bool IsAbilityUnlocked(UnlockableName unlockableName)
         {
-            return currentGameData.Abilities.GetValueOrDefault(abilityName, false);
+            return currentGameData.Abilities.GetValueOrDefault(unlockableName, false);
         }
 
         #region SAVE_DATA_ASSIGNMENT

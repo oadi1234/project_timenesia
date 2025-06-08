@@ -1,9 +1,9 @@
 using System;
 using System.Collections;
 using _2_Scripts.Global;
-using _2_Scripts.Model;
 using _2_Scripts.Movement.Shared.CollisionCheck;
 using _2_Scripts.Player.Animation.model;
+using _2_Scripts.Player.model;
 using _2_Scripts.Player.ScriptableObjects;
 using _2_Scripts.Player.Statistics;
 using UnityEngine;
@@ -171,9 +171,9 @@ namespace _2_Scripts.Player.Controllers
             return isLightHurtKnockedback;
         }
 
-        private bool GetAbilityFlag(AbilityName abilityName)
+        private bool GetAbilityFlag(UnlockableName unlockableName)
         {
-            return GameDataManager.Instance.IsAbilityUnlocked(abilityName);
+            return GameDataManager.Instance.IsAbilityUnlocked(unlockableName);
         }
 
         #endregion
@@ -195,7 +195,7 @@ namespace _2_Scripts.Player.Controllers
 
         public void Dash(bool dash)
         {
-            if (currentDashCooldown <= 0 && canDash && dash && GetAbilityFlag(AbilityName.Dash) &&
+            if (currentDashCooldown <= 0 && canDash && dash && GetAbilityFlag(UnlockableName.Dash) &&
                 UseEffort(1))
             {
                 Dashed?.Invoke();
@@ -408,7 +408,7 @@ namespace _2_Scripts.Player.Controllers
                    !isWallJumping &&
                    rigidBody2D.velocity.y <= 0 &&
                    (jumpTime <= 0f || jumpTime > PlayerConstants.Instance.minJumpTimeBeforeWallSlidingEnabled) &&
-                   GetAbilityFlag(AbilityName.WallJump);
+                   GetAbilityFlag(UnlockableName.WallJump);
         }
 
         private void CheckFlipWhenWallJump()
@@ -579,7 +579,7 @@ namespace _2_Scripts.Player.Controllers
 
         private void HandleJumping()
         {
-            if (inputJump && !isGrounded && isWallTouching && GetAbilityFlag(AbilityName.WallJump) &&
+            if (inputJump && !isGrounded && isWallTouching && GetAbilityFlag(UnlockableName.WallJump) &&
                 inputMovementSkillEnabled)
             {
                 WallJump();
@@ -588,7 +588,7 @@ namespace _2_Scripts.Player.Controllers
             {
                 GroundJump();
             }
-            else if (inputJump && !isDoubleJumping && GetAbilityFlag(AbilityName.DoubleJump) &&
+            else if (inputJump && !isDoubleJumping && GetAbilityFlag(UnlockableName.DoubleJump) &&
                      inputMovementSkillEnabled)
             {
                 DoubleJump();

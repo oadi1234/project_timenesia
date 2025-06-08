@@ -34,7 +34,7 @@ namespace _2_Scripts.Player.Controllers
             if (playerEffort.CanUseEffort(spellCost))
             {
                 // Debug.Break();
-                currentSpellcast = Spellbook.Instance.GetSpellData(effortCombination);
+                currentSpellcast = Spellbook.Instance.GetSpellCastData(effortCombination);
                 spellType = currentSpellcast.SpellType;
                 Spellcasted?.Invoke(spellType);
             }

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using _2_Scripts.Model;
 using _2_Scripts.Player;
+using _2_Scripts.Player.model;
 using _2_Scripts.UI.Elements.HUD;
 
 namespace _2_Scripts.Global.SaveSystem.SaveDataSchemas
@@ -34,7 +34,7 @@ namespace _2_Scripts.Global.SaveSystem.SaveDataSchemas
 
         #region ABILITIES
 
-        public Dictionary<AbilityName, bool> Abilities =
+        public Dictionary<UnlockableName, bool> Abilities =
             new();
         // { //TODO: why exception? o.O
         //     {AbilityName.DoubleJump, false},

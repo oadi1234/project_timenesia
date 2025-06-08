@@ -11,7 +11,13 @@ namespace _2_Scripts.UI.Elements.Enum
         InventoryTab,
         SpellsTab,
         MapTab,
-        JournalTab
+        JournalTab,
+        SourceNone,
+        SourceAether,
+        SourceKinesis,
+        SourceRune,
+        SourceMind,
+        SourceEntropy
         //add more as needed
     }
 }

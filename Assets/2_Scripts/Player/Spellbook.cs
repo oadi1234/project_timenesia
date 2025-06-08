@@ -1,8 +1,6 @@
 using System.Collections.Generic;
-using _2_Scripts.Global.Animation.Model;
 using _2_Scripts.Global.Spells;
-using _2_Scripts.Player.model;
-using _2_Scripts.Player.utility;
+using _2_Scripts.Global.Utility;
 using _2_Scripts.Spells;
 using _2_Scripts.UI.Animation.Model;
 using UnityEngine;
@@ -32,13 +30,13 @@ namespace _2_Scripts.Player
 
         private GameObject spellInstance;
 
-        [Header("Single pip spells")]
+        [Header("Single pip spells")] 
         [SerializeField] private GameObject sparkboltBeam;
 
         [SerializeField] private GameObject shieldBuff;
 
-        [Header("Double pip spells")] [SerializeField]
-        private GameObject spaceDash;
+        [Header("Double pip spells")] 
+        [SerializeField] private GameObject spaceDash;
 
         private Dictionary<List<EffortType>, BaseSpell> allSpells;
 
@@ -58,51 +56,54 @@ namespace _2_Scripts.Player
             {
                 #region wild_magic
 
-                { StringToEfType("remaker"), new BaseSpell("chaosMagic", ChaosMagic, SpellType.Aoe) },
-                { StringToEfType("maker"), new BaseSpell("wildMagic", WildMagic, SpellType.Aoe) },
-                { StringToEfType("karma"), new BaseSpell("instability", Instability, SpellType.Aoe) },
-                { StringToEfType(""), new BaseSpell("dud", Dud, SpellType.Bolt) },
+                { StringToEffortCombination("remaker"), new BaseSpell("chaosMagic", ChaosMagic, SpellType.Aoe) },
+                { StringToEffortCombination("maker"), new BaseSpell("wildMagic", WildMagic, SpellType.Aoe) },
+                { StringToEffortCombination("karma"), new BaseSpell("instability", Instability, SpellType.Aoe) },
+                { StringToEffortCombination(""), new BaseSpell("dud", Dud, SpellType.Bolt) },
 
                 #endregion
 
                 #region single_pip_spells
 
-                { StringToEfType("a"), new BaseSpell("shield", Shield, SpellType.Buff) },
-                { StringToEfType("k"), new BaseSpell("spark", Spark, SpellType.Bolt) },
-                { StringToEfType("m"), new BaseSpell("mindProbe", () => { }, SpellType.Meleespell) },
+                { StringToEffortCombination("a"), new BaseSpell("shield", Shield, SpellType.Buff) },
+                { StringToEffortCombination("k"), new BaseSpell("spark", Spark, SpellType.Bolt) },
+                { StringToEffortCombination("m"), new BaseSpell("mindProbe", () => { }, SpellType.Meleespell) },
 
                 #endregion
 
                 #region double_pip_spells
 
-                { StringToEfType("ak"), new BaseSpell("strongShield", () => { }, SpellType.Buff) },
-                { StringToEfType("ke"), new BaseSpell("spaceDash", () => { }, SpellType.Heavy) },
-                { StringToEfType("kk"), new BaseSpell("chainbolt", () => { }, SpellType.Sustained) },
+                { StringToEffortCombination("ak"), new BaseSpell("strongShield", () => { }, SpellType.Buff) },
+                { StringToEffortCombination("ke"), new BaseSpell("spaceDash", () => { }, SpellType.Heavy) },
+                { StringToEffortCombination("kk"), new BaseSpell("chainbolt", () => { }, SpellType.Sustained) },
 
                 #endregion
 
                 #region triple_pip_spells
 
-                { StringToEfType("aka"), new BaseSpell("bulwark", () => { }, SpellType.Buff) },
-                { StringToEfType("kaa"), new BaseSpell("blast", () => { }, SpellType.Aoe) },
-                { StringToEfType("kar"), new BaseSpell("revengeBlast", () => { }, SpellType.Buff) },
-                { StringToEfType("ema"), new BaseSpell("lifesteal", () => { }, SpellType.Bolt) },
-                { StringToEfType("kkk"), new BaseSpell("telekinesis", () => { }, SpellType.Buff) },
-                { StringToEfType("kae"), new BaseSpell("shockwaveCharge", () => { }, SpellType.Heavy) },
+                { StringToEffortCombination("aka"), new BaseSpell("bulwark", () => { }, SpellType.Buff) },
+                { StringToEffortCombination("kaa"), new BaseSpell("blast", () => { }, SpellType.Aoe) },
+                { StringToEffortCombination("kar"), new BaseSpell("revengeBlast", () => { }, SpellType.Buff) },
+                { StringToEffortCombination("ema"), new BaseSpell("lifesteal", () => { }, SpellType.Bolt) },
+                { StringToEffortCombination("kkk"), new BaseSpell("telekinesis", () => { }, SpellType.Buff) },
+                { StringToEffortCombination("kae"), new BaseSpell("shockwaveCharge", () => { }, SpellType.Heavy) },
 
                 #endregion
 
                 #region quadruple_pip_spells
 
-                { StringToEfType("akkk"), new BaseSpell("electromagneticCannon", () => { }, SpellType.Bolt) },
-                { StringToEfType("akea"), new BaseSpell("blackhole", () => { }, SpellType.Aoe) },
-                { StringToEfType("aaaa"), new BaseSpell("heal", () => { }, SpellType.Buff) },
+                { StringToEffortCombination("akkk"), new BaseSpell("electromagneticCannon", () => { }, SpellType.Bolt) },
+                { StringToEffortCombination("akea"), new BaseSpell("blackhole", () => { }, SpellType.Aoe) },
+                { StringToEffortCombination("aaaa"), new BaseSpell("heal", () => { }, SpellType.Buff) },
+                { StringToEffortCombination("eeee"), new BaseSpell("timeschism", Timeschism, SpellType.Buff) },
+                { StringToEffortCombination("aeer"), new BaseSpell("bluePortal", () => { }, SpellType.Bolt) },
+                { StringToEffortCombination("reea"), new BaseSpell("orangePortal", () => { }, SpellType.Bolt) }
 
                 #endregion
             };
         }
 
-        public BaseSpell GetSpellData(List<EffortType> effortCombination)
+        public BaseSpell GetSpellCastData(List<EffortType> effortCombination)
         {
             // string debugString = "";
             // for (int i = 0; i < effortCombination.Count; i++)
@@ -119,14 +120,19 @@ namespace _2_Scripts.Player
 
             return effortCombination.Count switch
             {
-                2 => allSpells[StringToEfType("karma")],
-                3 => allSpells[StringToEfType("maker")],
-                4 => allSpells[StringToEfType("remaker")],
-                _ => allSpells[StringToEfType("")]
+                2 => allSpells[StringToEffortCombination("karma")],
+                3 => allSpells[StringToEffortCombination("maker")],
+                4 => allSpells[StringToEffortCombination("remaker")],
+                _ => allSpells[StringToEffortCombination("")]
             };
         }
+        
+        public BaseSpell GetSpellDataForUI(List<EffortType> effortCombination)
+        {
+            return allSpells.GetValueOrDefault(effortCombination, new BaseSpell("invalid", () => { }, SpellType.Bolt));
+        }
 
-        public static List<EffortType> StringToEfType(string effortType)
+        public static List<EffortType> StringToEffortCombination(string effortType)
         {
             var effortArray = new List<EffortType>();
             for (int i = 0; i < effortType.Length; i++)
@@ -136,6 +142,31 @@ namespace _2_Scripts.Player
             }
 
             return effortArray;
+        }
+        
+        public static int EffortCombinationToInt(List<EffortType> effortCombination)
+        {
+            int result = 0;
+            int pow = 1;
+            for (int i = effortCombination.Count - 1; i >= 0; i--)
+            {
+                result += (int)effortCombination[i] * pow;
+                pow *= 10;
+            }
+
+            return result;
+        }
+
+        public static List<EffortType> IntToEffortCombination(int value)
+        {
+            List<EffortType> result = new();
+            while (value > 0)
+            {
+                EffortType effort = (EffortType) (value % 10);
+                value /= 10;
+                result.Add(effort);
+            }
+            return result;
         }
 
         #region single_pip_spells
@@ -156,6 +187,15 @@ namespace _2_Scripts.Player
             spellInstance = Instantiate(shieldBuff, PlayerPosition.GetPlayerTransform());
             spellInstance.transform.localScale = direction;
             // spellInstance.GetComponent<ShieldSpellHandler>().SetShieldIntensity(1);
+        }
+
+        #endregion
+
+        #region quadruple_pip_spells
+
+        private void Timeschism()
+        {
+            //TODO spell creates a savepoint.
         }
 
         #endregion

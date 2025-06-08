@@ -1,6 +1,5 @@
 using System;
 using _2_Scripts.Global;
-using _2_Scripts.Model;
 using UnityEngine;
 
 namespace _2_Scripts.Enemies

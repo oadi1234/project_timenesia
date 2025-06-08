@@ -100,6 +100,11 @@ namespace _2_Scripts.Player
                 {
                     CastHotkeySpell(spellInventory.GetSpellAtSlot(3));
                 }
+                
+                if (Input.GetButtonUp("Spell4"))
+                {
+                    CastHotkeySpell(spellInventory.GetSpellAtSlot(4));
+                }
 
                 if (Input.GetButtonDown("Attack"))
                 {

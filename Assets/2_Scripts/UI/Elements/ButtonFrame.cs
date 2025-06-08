@@ -1,5 +1,5 @@
 using _2_Scripts.UI.Elements.Enum;
-using _2_Scripts.UI.Elements.InGame;
+using _2_Scripts.UI.Elements.Menu;
 using UnityEngine;
 using UnityEngine.EventSystems;
 

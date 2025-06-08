@@ -68,15 +68,15 @@ namespace _2_Scripts.UI.Elements.HUD
         protected void GenerateNewPoint(int i)
         {
             PointType.Add((T)(object)0);
-            GameObject imageObject = Instantiate(point, bar, true);
-            imageObject.name = "Point_" + i;
-            StateHandlers.Insert(i, imageObject.GetComponent<U>());
-            RectTransform rectTransform = imageObject.GetComponent<RectTransform>();
+            GameObject pointObject = Instantiate(point, bar, true);
+            pointObject.name = "Point_" + i;
+            StateHandlers.Insert(i, pointObject.GetComponent<U>());
+            RectTransform rectTransform = pointObject.GetComponent<RectTransform>();
             rectTransform.localScale = Vector2.one * scale;
             rectTransform.anchoredPosition = OffsetCalculation(i);
             rectTransform.sizeDelta = sizeDelta;
 
-            RenderedPoints.Insert(i, imageObject);
+            RenderedPoints.Insert(i, pointObject);
         }
     }
 }
