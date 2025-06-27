@@ -40,8 +40,13 @@ namespace _2_Scripts.Player
             OnPlayerEnteredEvent.OnPlayerEntered += UnlockSpell;
             // TODO load from Game Data Manager.
             ClearKnownSpellsList();
-            AssignCurrentPreparedSpellsToUI();
             AssignCurrentKnownSpellsToUI();
+            AssignCurrentPreparedSpellsToUI();
+        }
+
+        public bool HasSpellAtSlot(int slot)
+        {
+            return preparedSpellsPerSlot.ContainsKey(slot);
         }
 
         public List<EffortType> GetSpellAtSlot(int slot)
@@ -105,6 +110,7 @@ namespace _2_Scripts.Player
             {
                 var spellData = Spellbook.Instance.GetSpellDataForUI(kvp.Value);
                 preparedSpellsPanel.AssignPreparedSpellToSlot(kvp.Value, spellData.Name, spellData.Name+BaseSpell.descriptionSuffix, kvp.Key);
+                knownSpellList.PrepareSpellOnInitializationIfPresent(kvp.Value, kvp.Key);
             }
         }
 

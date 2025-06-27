@@ -88,22 +88,26 @@ namespace _2_Scripts.Player
                 //  logic will need to be adjusted accordingly.
                 if (Input.GetButtonDown("Spell1"))
                 {
-                    CastHotkeySpell(spellInventory.GetSpellAtSlot(1));
+                    if (spellInventory.HasSpellAtSlot(1))
+                        CastHotkeySpell(spellInventory.GetSpellAtSlot(1));
                 }
 
                 if (Input.GetButtonUp("Spell2"))
                 {
-                    CastHotkeySpell(spellInventory.GetSpellAtSlot(2));
+                    if (spellInventory.HasSpellAtSlot(2))
+                        CastHotkeySpell(spellInventory.GetSpellAtSlot(2));
                 }
 
                 if (Input.GetButtonUp("Spell3"))
                 {
-                    CastHotkeySpell(spellInventory.GetSpellAtSlot(3));
+                    if (spellInventory.HasSpellAtSlot(3))
+                        CastHotkeySpell(spellInventory.GetSpellAtSlot(3));
                 }
-                
+
                 if (Input.GetButtonUp("Spell4"))
                 {
-                    CastHotkeySpell(spellInventory.GetSpellAtSlot(4));
+                    if (spellInventory.HasSpellAtSlot(4))
+                        CastHotkeySpell(spellInventory.GetSpellAtSlot(4));
                 }
 
                 if (Input.GetButtonDown("Attack"))

@@ -4,7 +4,6 @@ using _2_Scripts.Global.Utility;
 using _2_Scripts.Player;
 using _2_Scripts.UI.Animation.Model;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace _2_Scripts.UI.Elements.Menu
 {
@@ -13,7 +12,7 @@ namespace _2_Scripts.UI.Elements.Menu
         [SerializeField] private GameObject knownSpellListElement;
         [SerializeField] private SpellInventory spellInventory;
         [SerializeField] private RectTransform list;
-        [FormerlySerializedAs("preparedSpellPanel")] [SerializeField] private PreparedSpellsPanel preparedSpellsPanel;
+        [SerializeField] private PreparedSpellsPanel preparedSpellsPanel;
         
         private SortedBy sortedBy = SortedBy.Name;
         
@@ -79,6 +78,17 @@ namespace _2_Scripts.UI.Elements.Menu
                 Destroy(child.gameObject);
             }
         }
+
+        public void PrepareSpellOnInitializationIfPresent(List<EffortType> effortCombination, int slot)
+        {
+            var outSpell = spellUIData.FindIndex(spell => spell.GetEffortCombination().SequenceEqual(effortCombination));
+            if (outSpell != -1)
+            {
+                spellUIData[outSpell].SetPreparedOnInitialize();
+                AddToCurrentPreparedSpells(spellUIData[outSpell], slot);
+            }
+        }
+        
 
         private void AssignCorrectIndexToListElements()
         {

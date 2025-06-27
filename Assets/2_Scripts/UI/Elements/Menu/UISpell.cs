@@ -78,6 +78,11 @@ namespace _2_Scripts.UI.Elements.Menu
             this.knownSpellList = knownSpellList;
         }
 
+        public void SetPreparedOnInitialize()
+        {
+            button.interactable = false;
+        }
+
         public void TryAssignAsPreparedSpell()
         {
             int slot = spellInventory.AddPreparedSpell(effortCombination, spellName, description);
