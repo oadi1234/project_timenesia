@@ -1,5 +1,4 @@
 using _2_Scripts.Player;
-using _2_Scripts.Player.model;
 
 namespace _2_Scripts.Spells
 {

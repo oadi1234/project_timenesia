@@ -14,7 +14,7 @@ namespace _2_Scripts.Player
 
         private GameObject staffAttackZoneInstance;
 
-        public override void Awake()
+        protected override void Awake()
         {
             base.Awake();
             staffAttackZone.GetComponent<WeaponAttackHandler>().attackHandler = this;

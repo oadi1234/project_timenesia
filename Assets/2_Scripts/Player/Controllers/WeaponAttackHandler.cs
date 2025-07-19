@@ -9,7 +9,7 @@ namespace _2_Scripts.Player.Controllers
 {
     public class WeaponAttackHandler : MonoBehaviour
     {
-        [SerializeField] private PolygonCollider2D polyCollider2D;
+        [SerializeField] private Collider2D polyCollider2D;
         public PlayerAttackHandler attackHandler;
         private Vector2 knockbackDirection = Vector2.zero;
 

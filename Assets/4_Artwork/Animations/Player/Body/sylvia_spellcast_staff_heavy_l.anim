@@ -107,8 +107,15 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
+  - time: 0
+    functionName: DoHeavySpellCast
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
   - time: 0.41666666
-    functionName: DoLungeOnHeavySpellcast
+    functionName: DoHeavySpellCastLunge
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

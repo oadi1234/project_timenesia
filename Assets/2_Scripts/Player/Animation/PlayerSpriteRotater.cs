@@ -7,7 +7,6 @@ namespace _2_Scripts.Player.Animation
     public class PlayerSpriteRotater : MonoBehaviour
     {
         // TODO implement rotation towards enemy on hurt
-
         [SerializeField] private PlayerMovementController playerMovementController;
         [SerializeField] private PlayerInputManager playerInputManager;
         [SerializeField] private float maxJumpRotationDuration = 0.2f;
@@ -16,12 +15,7 @@ namespace _2_Scripts.Player.Animation
 
         private PlayerAnimationStateHandler playerAnimationStateHandler;
         private float currentVelocity = 0f;
-
-        // smooth damp
-        //  current value
-        //  target value - where we want it to go
-        //  current velocity - reference value, that should probably be used with ref keyword.
-        //  smoothTime - how long it should take, so the max rotation duration
+        
         private void Awake()
         {
             playerAnimationStateHandler = GetComponent<PlayerAnimationStateHandler>();

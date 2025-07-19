@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Numerics;
 using _2_Scripts.Player;
 using _2_Scripts.Player.Controllers;
 using _2_Scripts.Text;
@@ -22,6 +21,7 @@ namespace _2_Scripts.Global.Health
         private Rigidbody2D rb2d;
 
         private float currentHealth;
+        private float iFrameTimer = 0f;
         private ParticleSystem damageParticlesInstance;
         private TextController textControllerInstance;
         
@@ -35,11 +35,11 @@ namespace _2_Scripts.Global.Health
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (other.gameObject.layer == (int) Layers.PlayerAttack)
+            if (iFrameTimer <=0f && other.gameObject.layer == (int) Layers.PlayerAttack)
             {
                 // other.GetComponent<WeaponAttackHandler>();
                 currentHealth -= PlayerDamageController.currentDamage;
-                OnHit();
+                OnHit(other);
                 if (currentHealth <= 0)
                 {
                     Death();
@@ -47,16 +47,16 @@ namespace _2_Scripts.Global.Health
             }
         }
 
-        private void OnHit()
+        private void OnHit(Collider2D other)
         {
             SpawnText();
-            Knockback();
+            Knockback(other);
             SpawnParticles();
         }
 
-        private void Knockback()
+        private void Knockback(Collider2D other)
         {
-            Vector2 direction = (transform.position - PlayerPosition.GetPlayerPosition()).normalized;
+            Vector2 direction = (transform.position - other.transform.position).normalized;
             //TODO here now for testing, move to a specific inheritor of damageable health so not all damageable stuff gets knocked back.
             if (rb2d)
                 rb2d.MovePosition(rb2d.position + direction * PlayerDamageController.currentKnockbackForce);

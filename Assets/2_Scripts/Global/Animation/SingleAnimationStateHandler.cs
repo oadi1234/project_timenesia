@@ -18,7 +18,10 @@ namespace _2_Scripts.Global.Animation
             { AnimationName.ShieldParticle, AC.ShieldParticle},
             { AnimationName.ShieldStart, AC.ShieldStart},
             { AnimationName.ShieldEnd, AC.ShieldEnd},
-            { AnimationName.WeaponWideSwoosh, AC.StaffBasicSwoosh}
+            { AnimationName.WeaponWideSwoosh, AC.StaffBasicSwoosh},
+            { AnimationName.SpellSpaceDashBg, AC.SpellSpaceDashBg},
+            { AnimationName.SpellSpaceDashFg, AC.SpellSpaceDashFg},
+            { AnimationName.SpellSpaceDashPowerGather, AC.SpellSpaceDashPowerGather}
         };
 
         #endregion

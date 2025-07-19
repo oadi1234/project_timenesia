@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace _2_Scripts.Movement.Shared.CollisionCheck
 {
+    //TODO unused, delete.
     public class RotatingCollisionChecker : MonoBehaviour
     {
         [SerializeField]

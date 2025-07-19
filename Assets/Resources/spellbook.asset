@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: spellbook
   m_EditorClassIdentifier: 
   direction: {x: 1, y: 0, z: 0}
-  originPoint: {x: -2.91, y: 0.87, z: 0}
+  helperVector: {x: -1, y: 1, z: 1}
   sparkboltBeam: {fileID: 8906160670066044836, guid: 0cf96c98fe194b343ad0adb4f98dc02f, type: 3}
   shieldBuff: {fileID: 6530600727439198869, guid: e42dd9e1424cdf548b72c52b729ee5e7, type: 3}
-  spaceDash: {fileID: 0}
+  spaceDash: {fileID: 8173458227490978233, guid: 1eda7f1c8aa5e7a45b81b703e069d78f, type: 3}

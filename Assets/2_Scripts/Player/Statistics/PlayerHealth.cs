@@ -57,7 +57,7 @@ namespace _2_Scripts.Player.Statistics
             playerMovementController.HurtKnockback(damageParameters.KnockbackStrength, damageParameters.DamageSourcePosition);
             if (damageParameters.IFramesGiven >= 0f)
             {
-                StartCoroutine(ApplyIFrames(damageParameters.IFramesGiven));
+                StartCoroutine(IFramesHurt(damageParameters.IFramesGiven));
             }
             if (shieldHealth > 0)
             {
@@ -127,13 +127,23 @@ namespace _2_Scripts.Player.Statistics
             return hasIFrames;
         }
 
-        private IEnumerator ApplyIFrames(float iFrame)
+        public void SetNoVisualsIFrames(float iFrame)
+        {
+            StartCoroutine(IFrames(iFrame));
+        }
+
+        private IEnumerator IFramesHurt(float iFrame)
+        {
+            hasIFrames = true;
+            yield return IFrames(iFrame);
+            hasIFrames = false;
+        }
+
+        private IEnumerator IFrames(float iFrame)
         {
             gameObject.layer = (int)Layers.PlayerIFrame;
-            hasIFrames = true;
             yield return new WaitForSeconds(iFrame);
             gameObject.layer = (int)Layers.Player;
-            hasIFrames = false;
         }
     }
 }

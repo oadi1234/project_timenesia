@@ -1352,6 +1352,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a9e4c73d6a8ba14ca6dce57bdff167c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  knownSpellList: {fileID: 0}
+  preparedSpellsPanel: {fileID: 0}
 --- !u!1 &5939638241855016702
 GameObject:
   m_ObjectHideFlags: 0
@@ -1867,6 +1869,8 @@ MonoBehaviour:
   playerSpellController: {fileID: 885311555864196186}
   playerAnimationStateHandler: {fileID: 8498187196400931344}
   ropeLogicOverride: {fileID: 6712066552732020877}
+  playerHealth: {fileID: 7834630345329486682}
+  playerSpriteRotater: {fileID: 6831096059973611052}
 --- !u!1 &8884814348694100374
 GameObject:
   m_ObjectHideFlags: 0

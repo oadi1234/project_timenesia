@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace _2_Scripts.Movement.Enemy
 {
+    //TODO old and very unreliable. Delete.
     public class CrawlerAI : MonoBehaviour
     {
         [SerializeField]

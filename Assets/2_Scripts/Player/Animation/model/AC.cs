@@ -99,15 +99,22 @@ namespace _2_Scripts.Player.Animation.model
         #endregion
 
         #region spells
+        
+        // generic
+        public static readonly int SpellImpact = Animator.StringToHash("impact");
 
         //below used for: Spark
-        public static readonly int SpellImpact = Animator.StringToHash("impact");
         public static readonly int SpellWandBlast = Animator.StringToHash("wand_blast");
         
         //below used for: Shield
         public static readonly int ShieldParticle = Animator.StringToHash("particle");
         public static readonly int ShieldStart = Animator.StringToHash("start");
         public static readonly int ShieldEnd = Animator.StringToHash("end");
+        
+        //below used for: SpaceDash
+        public static readonly int SpellSpaceDashPowerGather = Animator.StringToHash("power_gather");
+        public static readonly int SpellSpaceDashFg = Animator.StringToHash("dash_fg");
+        public static readonly int SpellSpaceDashBg = Animator.StringToHash("dash_bg");
 
         #endregion
 

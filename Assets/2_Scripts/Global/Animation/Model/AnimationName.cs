@@ -7,6 +7,9 @@ namespace _2_Scripts.Global.Animation.Model
         ShieldParticle,
         ShieldStart,
         ShieldEnd,
-        WeaponWideSwoosh
+        WeaponWideSwoosh,
+        SpellSpaceDashFg,
+        SpellSpaceDashBg,
+        SpellSpaceDashPowerGather
     }
 }

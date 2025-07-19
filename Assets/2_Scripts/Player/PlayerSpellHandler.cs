@@ -5,8 +5,8 @@ using _2_Scripts.Player.model;
 using _2_Scripts.Player.ScriptableObjects;
 using _2_Scripts.Player.Spell;
 using _2_Scripts.Player.Spell.weaponData;
+using _2_Scripts.Player.Statistics;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace _2_Scripts.Player
 {
@@ -17,15 +17,17 @@ namespace _2_Scripts.Player
         [SerializeField] private PlayerSpellController playerSpellController;
         [SerializeField] private PlayerAnimationStateHandler playerAnimationStateHandler;
         [SerializeField] private RopeLogicOverride ropeLogicOverride;
+        [SerializeField] private PlayerHealth playerHealth;
+        [SerializeField] private PlayerSpriteRotater playerSpriteRotater;
 
         private WeaponAnimationSpellOrigin weaponAnimationSpellOrigin;
         private bool loopProtection = false;
 
-        public override void Awake()
+        protected override void Awake()
         {
             base.Awake();
             weaponAnimationSpellOrigin = new StaffSpellOrigin(); //TODO load from save data instead.
-            playerSpellController.Spellcasted += _ => { loopProtection = false;};
+            playerSpellController.Spellcasted += _ => { loopProtection = false; };
         }
 
         private void Update()
@@ -35,11 +37,10 @@ namespace _2_Scripts.Player
 
         public void BuffCast()
         {
-            //prevent looping animation from triggering spellcast again.
             if (loopProtection) return;
-            Spellbook.Instance.direction.Set(Direction, 1,1);
+            Spellbook.Instance.direction.Set(Direction, 1, 1);
             playerSpellController.InvokeSpell();
-            
+
             if (!loopProtection)
             {
                 loopProtection = true;
@@ -54,24 +55,24 @@ namespace _2_Scripts.Player
         public void BoltSpellCastUp()
         {
             Spellbook.Instance.direction = Vector3.up;
-            Spellbook.Instance.originPoint=weaponAnimationSpellOrigin.GetForState(WeaponAnimationState.SpellBoltUp);
-            Spellbook.Instance.originPoint.x *= Direction;
+            Spellbook.Instance.helperVector = weaponAnimationSpellOrigin.GetForState(WeaponAnimationState.SpellBoltUp);
+            Spellbook.Instance.helperVector.x *= Direction;
             playerSpellController.InvokeSpell();
         }
-        
+
         public void BoltSpellCastDown()
         {
             Spellbook.Instance.direction = Vector3.down;
-            Spellbook.Instance.originPoint=weaponAnimationSpellOrigin.GetForState(WeaponAnimationState.SpellBoltDown);
-            Spellbook.Instance.originPoint.x *= Direction;
+            Spellbook.Instance.helperVector = weaponAnimationSpellOrigin.GetForState(WeaponAnimationState.SpellBoltDown);
+            Spellbook.Instance.helperVector.x *= Direction;
             playerSpellController.InvokeSpell();
         }
-        
+
         public void BoltSpellCast()
         {
             Spellbook.Instance.direction.Set(Direction, 0, 0);
-            Spellbook.Instance.originPoint=weaponAnimationSpellOrigin.GetForState(WeaponAnimationState.SpellBolt);
-            Spellbook.Instance.originPoint.x *= Direction;
+            Spellbook.Instance.helperVector = weaponAnimationSpellOrigin.GetForState(WeaponAnimationState.SpellBolt);
+            Spellbook.Instance.helperVector.x *= Direction;
             playerAnimationStateHandler.SetDoMovementStates(false);
             playerSpellController.InvokeSpell();
         }
@@ -87,14 +88,27 @@ namespace _2_Scripts.Player
             playerInputManager.SetAdjustAngleMode(true);
         }
 
-        public void DoLungeOnHeavySpellcast()
+        public void DoHeavySpellCastLunge()
         {
-            var angle = playerInputManager.GetAngle();
-            var direction = Quaternion.Euler(0, 0, angle) * Vector3.right;
+            var direction = Quaternion.Euler(0,0, playerInputManager.GetAngle()) * Vector3.right;
 
             playerMovementController.AttackLunge(PlayerConstants.Instance.staffLungeMagnitude * direction.x,
                 AC.StaffHeavySpellcastLungeTimer, direction.y * PlayerConstants.Instance.staffLungeMagnitude);
-            playerInputManager.SetAngleModeAdjustStrength(1f);
+            playerInputManager.SetAngleModeAdjustStrength(0f);
+        }
+
+        public void DoHeavySpellCast()
+        {
+            // if (Direction < 0)
+            // {
+            //     // object y direction is flipped for object when looking right, so we readjust it
+            //     direction.y *= -1;
+            // }
+            
+            // Spellbook.Instance.direction = direction;
+            Spellbook.Instance.helperVector = new Vector3(Direction, 1, 1);
+            playerSpellController.InvokeSpell();
+            playerHealth.SetNoVisualsIFrames(AC.StaffHeavySpellcastLungeTimer + AC.SingleFrame * 3f);
         }
 
         public void EndAngleMode()

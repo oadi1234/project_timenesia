@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using _2_Scripts.Global.Animation.Model;
-using _2_Scripts.Player.model;
 using _2_Scripts.Player.Statistics;
 using _2_Scripts.Spells;
 using _2_Scripts.UI.Animation.Model;
@@ -33,7 +31,6 @@ namespace _2_Scripts.Player.Controllers
             spellCost = effortCombination.Count;
             if (playerEffort.CanUseEffort(spellCost))
             {
-                // Debug.Break();
                 currentSpellcast = Spellbook.Instance.GetSpellCastData(effortCombination);
                 spellType = currentSpellcast.SpellType;
                 Spellcasted?.Invoke(spellType);

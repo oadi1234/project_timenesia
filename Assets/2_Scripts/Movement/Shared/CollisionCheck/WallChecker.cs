@@ -111,16 +111,16 @@ namespace _2_Scripts.Movement.Shared.CollisionCheck
                     }
                 }
             }
-        
-            if (isPlayer)
-            {
-                Debug.DrawRay(new Vector2(leftPositionX, bottomPositionY), Vector2.left * wallCheckRay, Color.green);
-                Debug.DrawRay(new Vector2(rightPositionX, bottomPositionY), Vector2.right * wallCheckRay, Color.red);
-                Debug.DrawRay(new Vector2(leftPositionX, centerPositionY), Vector2.left * wallCheckRay, Color.green);
-                Debug.DrawRay(new Vector2(rightPositionX, centerPositionY), Vector2.right * wallCheckRay, Color.red);
-                Debug.DrawRay(new Vector2(rightPositionX, bottomPositionY + 0.15f), Vector2.right * (wallCheckRay * 0.5f), Color.blue);
-                Debug.DrawRay(new Vector2(leftPositionX, bottomPositionY + 0.15f), Vector2.left * (wallCheckRay * 0.5f), Color.yellow);
-            }
+            //
+            // if (isPlayer)
+            // {
+            //     Debug.DrawRay(new Vector2(leftPositionX, bottomPositionY), Vector2.left * wallCheckRay, Color.green);
+            //     Debug.DrawRay(new Vector2(rightPositionX, bottomPositionY), Vector2.right * wallCheckRay, Color.red);
+            //     Debug.DrawRay(new Vector2(leftPositionX, centerPositionY), Vector2.left * wallCheckRay, Color.green);
+            //     Debug.DrawRay(new Vector2(rightPositionX, centerPositionY), Vector2.right * wallCheckRay, Color.red);
+            //     Debug.DrawRay(new Vector2(rightPositionX, bottomPositionY + 0.15f), Vector2.right * (wallCheckRay * 0.5f), Color.blue);
+            //     Debug.DrawRay(new Vector2(leftPositionX, bottomPositionY + 0.15f), Vector2.left * (wallCheckRay * 0.5f), Color.yellow);
+            // }
         }
 
         #region Checkers

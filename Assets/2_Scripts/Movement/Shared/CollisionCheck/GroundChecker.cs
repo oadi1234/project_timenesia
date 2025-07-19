@@ -41,8 +41,8 @@ namespace _2_Scripts.Movement.Shared.CollisionCheck
             bottomRightColliderCorner.Set(boxBounds.max.x, boxBounds.min.y);
             hitBottomLeft = Physics2D.Raycast(bottomLeftColliderCorner, Vector2.down, groundedCheckRay, whatIsGround);
             hitBottomRight = Physics2D.Raycast(bottomRightColliderCorner, Vector2.down, groundedCheckRay, whatIsGround);
-            Debug.DrawRay(hitBottomLeft.point, hitBottomLeft.normal, Color.cyan);
-            Debug.DrawRay(hitBottomRight.point, hitBottomRight.normal, Color.magenta);
+            // Debug.DrawRay(hitBottomLeft.point, hitBottomLeft.normal, Color.cyan);
+            // Debug.DrawRay(hitBottomRight.point, hitBottomRight.normal, Color.magenta);
         }
 
         public bool IsGrounded()

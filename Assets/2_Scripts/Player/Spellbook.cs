@@ -4,6 +4,7 @@ using _2_Scripts.Global.Utility;
 using _2_Scripts.Spells;
 using _2_Scripts.UI.Animation.Model;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace _2_Scripts.Player
 {
@@ -25,8 +26,10 @@ namespace _2_Scripts.Player
             }
         }
 
+        
         public Vector3 direction = Vector2.zero;
-        public Vector3 originPoint = Vector2.zero;
+        [Tooltip("A helper vector for certain spells. Currently used for:\n1. Origin point of Bolt spells\n2. Look direction of Heavy spells.")]
+        public Vector3 helperVector = Vector2.zero;
 
         private GameObject spellInstance;
 
@@ -73,8 +76,8 @@ namespace _2_Scripts.Player
 
                 #region double_pip_spells
 
-                { StringToEffortCombination("ak"), new BaseSpell("strongShield", () => { }, SpellType.Buff) },
-                { StringToEffortCombination("ke"), new BaseSpell("spaceDash", () => { }, SpellType.Heavy) },
+                { StringToEffortCombination("ak"), new BaseSpell("strongShield", StrongShield, SpellType.Buff) },
+                { StringToEffortCombination("ke"), new BaseSpell("spaceDash", SpaceDash, SpellType.Heavy) },
                 { StringToEffortCombination("kk"), new BaseSpell("chainbolt", () => { }, SpellType.Sustained) },
 
                 #endregion
@@ -105,16 +108,8 @@ namespace _2_Scripts.Player
 
         public BaseSpell GetSpellCastData(List<EffortType> effortCombination)
         {
-            // string debugString = "";
-            // for (int i = 0; i < effortCombination.Count; i++)
-            // {
-            //     debugString += effortCombination[i] + " ";
-            // }
-            // Debug.Log("Spellbook - received effort: " + debugString);
-
             if (allSpells.TryGetValue(effortCombination, out var data))
             {
-                // Debug.Log("Found spell: "+data.Name);
                 return data;
             }
 
@@ -176,8 +171,8 @@ namespace _2_Scripts.Player
             spellInstance = Instantiate(sparkboltBeam, PlayerPosition.GetPlayerTransform());
             spellInstance.GetComponent<BeamSpellHandler>().SetDirection(direction);
             spellInstance.transform.position = new Vector3(
-                PlayerPosition.GetPlayerTransform().position.x + originPoint.x,
-                PlayerPosition.GetPlayerTransform().position.y + originPoint.y, 0);
+                PlayerPosition.GetPlayerTransform().position.x + helperVector.x,
+                PlayerPosition.GetPlayerTransform().position.y + helperVector.y, 0);
             spellInstance.transform.rotation = Quaternion.Euler(0, 0,
                 Vector3.Angle(direction, Vector3.right) * (Mathf.Approximately(direction.y, 1) ? -1 : 1));
         }
@@ -186,16 +181,36 @@ namespace _2_Scripts.Player
         {
             spellInstance = Instantiate(shieldBuff, PlayerPosition.GetPlayerTransform());
             spellInstance.transform.localScale = direction;
-            // spellInstance.GetComponent<ShieldSpellHandler>().SetShieldIntensity(1);
         }
 
+        #endregion
+        
+        #region double_pip_spells
+
+        private void StrongShield()
+        {
+            //TODO change below to its own instance of shield spell. It uses the base shieldBuff now.
+            //TODO make it so that it is a longer spell, requiring longer duration buff.
+            // There is a bit of a logic rework needed in PlayerAnimationStateHandler.cs for that.
+            spellInstance = Instantiate(shieldBuff, PlayerPosition.GetPlayerTransform());
+            spellInstance.transform.localScale = direction;
+            spellInstance.GetComponent<ShieldSpellHandler>().SetShieldIntensity(2);
+        }
+
+        private void SpaceDash()
+        {
+            spellInstance = Instantiate(spaceDash, PlayerPosition.GetPlayerTransform().Find("SpriteGroup"));
+            // spellInstance.transform.rotation = Quaternion.FromToRotation(direction, Vector3.right);
+            spellInstance.transform.localScale = helperVector;
+        }
+        
         #endregion
 
         #region quadruple_pip_spells
 
         private void Timeschism()
         {
-            //TODO spell creates a savepoint.
+            //TODO spell saves game.
         }
 
         #endregion
@@ -219,7 +234,7 @@ namespace _2_Scripts.Player
 
         private static void Dud() // at 1 pips
         {
-            Debug.Log("lol.");
+            Debug.Log("Dud.");
         }
 
         #endregion

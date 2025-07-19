@@ -267,6 +267,10 @@ PrefabInstance:
       propertyPath: preparedSpellPanel
       value: 
       objectReference: {fileID: 1951226480}
+    - target: {fileID: 3561813563974818167, guid: be2e71d11b11bea44bafffd8e8dbabe4, type: 3}
+      propertyPath: preparedSpellsPanel
+      value: 
+      objectReference: {fileID: 1951226480}
     - target: {fileID: 4502648273593359070, guid: be2e71d11b11bea44bafffd8e8dbabe4, type: 3}
       propertyPath: effortBar
       value: 
