@@ -7,6 +7,7 @@ using _2_Scripts.Player.Spell;
 using _2_Scripts.Player.Spell.weaponData;
 using _2_Scripts.Player.Statistics;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace _2_Scripts.Player
 {
@@ -16,7 +17,7 @@ namespace _2_Scripts.Player
         [SerializeField] private PlayerInputManager playerInputManager;
         [SerializeField] private PlayerSpellController playerSpellController;
         [SerializeField] private PlayerAnimationStateHandler playerAnimationStateHandler;
-        [SerializeField] private RopeLogicOverride ropeLogicOverride;
+        [FormerlySerializedAs("ropeLogicOverride")] [SerializeField] private RopeEvents ropeEvents;
         [SerializeField] private PlayerHealth playerHealth;
         [SerializeField] private PlayerSpriteRotater playerSpriteRotater;
 
@@ -49,7 +50,7 @@ namespace _2_Scripts.Player
 
         public void RopeSway()
         {
-            ropeLogicOverride.Sway(new Vector2(Direction * -1, 0));
+            ropeEvents.Sway(new Vector2(Direction * -1, 0));
         }
 
         public void BoltSpellCastUp()
@@ -79,7 +80,7 @@ namespace _2_Scripts.Player
 
         public void Concentrate()
         {
-            ropeLogicOverride.Sway(new Vector2(Direction * -1, 0));
+            ropeEvents.Sway(new Vector2(Direction * -1, 0));
             playerInputManager.SetConcentration(true);
         }
 
@@ -95,20 +96,13 @@ namespace _2_Scripts.Player
             playerMovementController.AttackLunge(PlayerConstants.Instance.staffLungeMagnitude * direction.x,
                 AC.StaffHeavySpellcastLungeTimer, direction.y * PlayerConstants.Instance.staffLungeMagnitude);
             playerInputManager.SetAngleModeAdjustStrength(0f);
+            playerHealth.SetNoVisualsIFrames(AC.StaffHeavySpellcastLungeTimer + AC.SingleFrame * 2f);
         }
 
         public void DoHeavySpellCast()
         {
-            // if (Direction < 0)
-            // {
-            //     // object y direction is flipped for object when looking right, so we readjust it
-            //     direction.y *= -1;
-            // }
-            
-            // Spellbook.Instance.direction = direction;
             Spellbook.Instance.helperVector = new Vector3(Direction, 1, 1);
             playerSpellController.InvokeSpell();
-            playerHealth.SetNoVisualsIFrames(AC.StaffHeavySpellcastLungeTimer + AC.SingleFrame * 3f);
         }
 
         public void EndAngleMode()

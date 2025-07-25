@@ -147,6 +147,7 @@ GameObject:
   - component: {fileID: 446701493481972561}
   - component: {fileID: 511635153268139883}
   - component: {fileID: 3529103433358108908}
+  - component: {fileID: 9168186242379738572}
   m_Layer: 20
   m_Name: SpellSpaceDashImpact
   m_TagString: Untagged
@@ -218,3 +219,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   destroyAfter: 0.625
+--- !u!114 &9168186242379738572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5309222544701459229}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba3d90a30e45a0e46987c322902846e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  randomRotation: 1
+  maxAngleDeviation: 50
+  randomScale: 1
+  maxScaleMultiplier: 1.1
+  randomXFlip: 1
+  randomYFlip: 0

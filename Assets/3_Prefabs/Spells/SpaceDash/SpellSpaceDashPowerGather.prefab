@@ -181,6 +181,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15dd8ebab83442f2b850e18a2ff747d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  interruptSpellEffect: {fileID: 186833459637523882, guid: 314283e6a3cf2ab4a9b984bac9e5ac28, type: 3}
   nextSpellStage: {fileID: 449436965213389385, guid: 29088a83eb8723e4eafaa33f7b61aa5e, type: 3}
   spawnNextStageAfter: 0.4166667
   aliveTimeAfterSpawn: 0.2083333

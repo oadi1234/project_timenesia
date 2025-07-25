@@ -195,8 +195,7 @@ namespace _2_Scripts.Player.Controllers
 
         public void Dash(bool dash)
         {
-            if (currentDashCooldown <= 0 && canDash && dash && GetAbilityFlag(UnlockableName.Dash) &&
-                UseEffort(1))
+            if (currentDashCooldown <= 0 && canDash && dash && GetAbilityFlag(UnlockableName.Dash))
             {
                 Dashed?.Invoke();
                 SetVariablesWhenDashing();
@@ -226,7 +225,7 @@ namespace _2_Scripts.Player.Controllers
 
         public void HurtKnockback(float knockbackStrength, Vector3 damageSourcePosition)
         {
-            playerInputManager.BlockInput(PlayerConstants.Instance.knockbackTime);
+            // playerInputManager.BlockInput(PlayerConstants.Instance.knockbackTime);
             var normalize = new Vector2(
                 (transform.position.x - damageSourcePosition.x) * knockbackStrength * 4, 
                 (transform.position.y - damageSourcePosition.y) * knockbackStrength + 1f)
@@ -496,11 +495,6 @@ namespace _2_Scripts.Player.Controllers
             DashEnd?.Invoke();
         }
 
-        private bool UseEffort(int cost)
-        {
-            return effort.UseEffort(cost);
-        }
-
         private void AssignVelocityVector()
         {
             if (!isDashing && !isLightHurtKnockedback)
@@ -553,7 +547,7 @@ namespace _2_Scripts.Player.Controllers
             {
                 moveY = !nonCoyoteIsGrounded && rigidBody2D.velocity.y > 0.001f && !isOnVerticalLunge ? -10 : moveY;
             }
-            else if (!isJumping && isOnSlope && isGrounded)
+            else if (!isJumping && isOnSlope && isGrounded && !isOnVerticalLunge)
             {
                 bool movingTowardsWallOnSlope = (inputX > 0f && wallChecker.IsTouchingBottomOffset() &&
                                                  wallChecker.IsRightTouching())

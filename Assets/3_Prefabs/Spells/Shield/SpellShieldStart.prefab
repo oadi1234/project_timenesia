@@ -48,9 +48,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bffdab5bf63d4368b22364502c2b6801, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  interruptSpellEffect: {fileID: 1791899995173527298, guid: f678d21156897864d942efbf74f4dc1e, type: 3}
   shieldEnd: {fileID: 4474087037729222091, guid: 5f78d9ef031faf44fa0cffa34c734b09, type: 3}
   shieldDust: {fileID: 7165372070662172521, guid: 444fef484d4399541aa8a30f070d2a53, type: 3}
-  shieldInterrupt: {fileID: 1791899995173527298, guid: f678d21156897864d942efbf74f4dc1e, type: 3}
 --- !u!95 &4317360981041120318
 Animator:
   serializedVersion: 5

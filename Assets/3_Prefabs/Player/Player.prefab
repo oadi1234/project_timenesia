@@ -1186,7 +1186,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 132f1e0c3aadbdf498c370670d99484a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  regenInterval: 1
+  regenInterval: 1.3
   concentrationEffortRegenMultiplier: 2
   effortBar: {fileID: 0}
   inputManager: {fileID: 8358465365214595313}
@@ -1340,6 +1340,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerEffort: {fileID: 4502648273593359070}
+  spellInventory: {fileID: 3561813563974818167}
 --- !u!114 &3561813563974818167
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1868,7 +1869,7 @@ MonoBehaviour:
   playerInputManager: {fileID: 8358465365214595313}
   playerSpellController: {fileID: 885311555864196186}
   playerAnimationStateHandler: {fileID: 8498187196400931344}
-  ropeLogicOverride: {fileID: 6712066552732020877}
+  ropeEvents: {fileID: 6712066552732020877}
   playerHealth: {fileID: 7834630345329486682}
   playerSpriteRotater: {fileID: 6831096059973611052}
 --- !u!1 &8884814348694100374

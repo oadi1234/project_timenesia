@@ -4,23 +4,19 @@ using UnityEngine;
 
 namespace _2_Scripts.Global.Spells
 {
-    public class ShieldSpellHandler : MonoBehaviour
+    public class ShieldSpellHandler : AbstractInterruptibleSpell
     {
         [SerializeField] private GameObject shieldEnd;
         [SerializeField] private GameObject shieldDust;
-        [SerializeField] private GameObject shieldInterrupt;
         private GameObject stageInstance;
-        private PlayerHealth playerHealth;
         private PlayerInputManager playerInputManager;
 
         private int shieldIntensity = 1;
 
-        private void Awake()
+        protected override void Awake()
         {
-            playerHealth = transform.parent.GetComponent<PlayerHealth>();
-            playerInputManager = transform.parent.GetComponent<PlayerInputManager>();
-            playerHealth.Damaged += InterruptAnimation;
-            playerInputManager.InputReceived += InterruptAnimation;
+            playerInputManager = transform.GetComponentInParent<PlayerInputManager>();
+            base.Awake();
         }
 
         public void SetShieldIntensity(int intensity)
@@ -32,9 +28,8 @@ namespace _2_Scripts.Global.Spells
         {
             stageInstance = Instantiate(shieldEnd, transform.parent);
             stageInstance.transform.localScale = transform.localScale;
-            playerHealth.Damaged -= InterruptAnimation;
-            playerInputManager.InputReceived -= InterruptAnimation;
-            playerHealth.AddShield(shieldIntensity);
+            DeregisterEvents();
+            PlayerHealth.AddShield(shieldIntensity);
             Destroy(gameObject);
         }
 
@@ -44,13 +39,18 @@ namespace _2_Scripts.Global.Spells
             stageInstance.transform.localScale = transform.localScale;
         }
 
-        private void InterruptAnimation()
+        protected override void DeregisterEvents()
         {
-            stageInstance = Instantiate(shieldInterrupt, transform.parent);
-            stageInstance.transform.localScale = transform.localScale;
-            playerHealth.Damaged -= InterruptAnimation;
-            playerInputManager.InputReceived -= InterruptAnimation;
-            Destroy(gameObject);
+            base.DeregisterEvents();
+            if (playerInputManager)
+                playerInputManager.InputReceived -= InterruptAnimation;
+        }
+
+        protected override void RegisterEvents()
+        {
+            base.RegisterEvents();
+            if (playerInputManager)
+                playerInputManager.InputReceived += InterruptAnimation;
         }
     }
 }

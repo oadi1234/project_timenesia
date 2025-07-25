@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace _2_Scripts.Player.Animation
 {
-    public class RopeLogicOverride : MonoBehaviour
+    public class RopeEvents : MonoBehaviour
     {
         [SerializeField] private List<PlayerVerletRope> allRopeElements = new();
         [SerializeField] private float timer = 3f/12f;

@@ -1,18 +1,18 @@
 using System.Collections.Generic;
+using System.Linq;
 using _2_Scripts.Global.Events;
 using _2_Scripts.Global.Events.Model;
 using _2_Scripts.Spells;
 using _2_Scripts.UI.Animation.Model;
 using _2_Scripts.UI.Elements.Menu;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace _2_Scripts.Player
 {
     public class SpellInventory : MonoBehaviour
     {
         [SerializeField] private KnownSpellList knownSpellList;
-        [FormerlySerializedAs("preparedSpellPanel")] [SerializeField] private PreparedSpellsPanel preparedSpellsPanel;
+        [SerializeField] private PreparedSpellsPanel preparedSpellsPanel;
         
         private readonly Dictionary<int, List<EffortType>> preparedSpellsPerSlot = new()
         {
@@ -68,9 +68,18 @@ namespace _2_Scripts.Player
             return slot;
         }
 
+        public BaseSpell TryGetSpellFromInventory(List<EffortType> effortCombination)
+        {
+            if (KnownSpellsContains(effortCombination))
+            {
+                return Spellbook.Instance.GetSpellCastData(effortCombination);
+            }
+            return Spellbook.Instance.GetWildMagic(effortCombination.Count);
+        }
+
         private void AddKnownSpell(List<EffortType> effortCombination)
         {
-            if (allKnownSpells.Contains(effortCombination)) return;
+            if (KnownSpellsContains(effortCombination)) return;
             allKnownSpells.Add(effortCombination);
             AddKnownSpellToUIList(effortCombination);
         }
@@ -79,6 +88,11 @@ namespace _2_Scripts.Player
         {
             preparedSpellsPerSlot.Remove(slot);
             knownSpellList.ClearUISpellFromPrepared(slot);
+        }
+
+        public bool KnownSpellsContains(List<EffortType> effortCombination)
+        {
+            return allKnownSpells.Any(combination => combination.SequenceEqual(effortCombination));
         }
 
         private void ClearKnownSpellsList()

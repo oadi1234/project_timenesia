@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using _2_Scripts.Global.Spells;
 using _2_Scripts.Global.Utility;
 using _2_Scripts.Spells;
@@ -108,18 +109,13 @@ namespace _2_Scripts.Player
 
         public BaseSpell GetSpellCastData(List<EffortType> effortCombination)
         {
+            // Debug.Log(effortCombination.Aggregate("", (current, effort) => current + (effort + " ")));
             if (allSpells.TryGetValue(effortCombination, out var data))
             {
                 return data;
             }
 
-            return effortCombination.Count switch
-            {
-                2 => allSpells[StringToEffortCombination("karma")],
-                3 => allSpells[StringToEffortCombination("maker")],
-                4 => allSpells[StringToEffortCombination("remaker")],
-                _ => allSpells[StringToEffortCombination("")]
-            };
+            return GetWildMagic(effortCombination.Count);
         }
         
         public BaseSpell GetSpellDataForUI(List<EffortType> effortCombination)
@@ -199,7 +195,7 @@ namespace _2_Scripts.Player
 
         private void SpaceDash()
         {
-            spellInstance = Instantiate(spaceDash, PlayerPosition.GetPlayerTransform().Find("SpriteGroup"));
+            spellInstance = Instantiate(spaceDash, PlayerPosition.GetPlayerTransform());
             // spellInstance.transform.rotation = Quaternion.FromToRotation(direction, Vector3.right);
             spellInstance.transform.localScale = helperVector;
         }
@@ -216,6 +212,17 @@ namespace _2_Scripts.Player
         #endregion
 
         #region wild_magic_methods
+        
+        public BaseSpell GetWildMagic(int effortCombinationCount)
+        {
+            return effortCombinationCount switch
+            {
+                2 => allSpells[StringToEffortCombination("karma")],
+                3 => allSpells[StringToEffortCombination("maker")],
+                4 => allSpells[StringToEffortCombination("remaker")],
+                _ => allSpells[StringToEffortCombination("")]
+            };
+        }
 
         private static void WildMagic() // at 3 pips
         {

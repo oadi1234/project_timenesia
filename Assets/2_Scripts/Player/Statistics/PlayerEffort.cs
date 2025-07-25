@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using _2_Scripts.Global;
 using _2_Scripts.Global.Animation.Model;
 using _2_Scripts.Player.model;
@@ -117,12 +118,7 @@ namespace _2_Scripts.Player.Statistics
 
         private void CastSpell()
         {
-            // string debugString = "";
-            // for (int i = 0; i < castCombination.Count; i++)
-            // {
-            //     debugString += castCombination[i] + " ";
-            // }
-            // Debug.Log("Player effort - cast combination: " + debugString);
+            // Debug.Log("Player effort - cast combination: " + castCombination.Aggregate("", (current, t) => current + (t + " ")));
             SpellCast?.Invoke(castCombination);
             CleanData();
         }

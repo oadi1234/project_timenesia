@@ -10,6 +10,7 @@ namespace _2_Scripts.Player.Controllers
     public class PlayerSpellController : MonoBehaviour
     {
         [SerializeField] private PlayerEffort playerEffort;
+        [SerializeField] private SpellInventory spellInventory;
         private SpellType spellType;
         private BaseSpell currentSpellcast;
         private int spellCost;
@@ -31,7 +32,7 @@ namespace _2_Scripts.Player.Controllers
             spellCost = effortCombination.Count;
             if (playerEffort.CanUseEffort(spellCost))
             {
-                currentSpellcast = Spellbook.Instance.GetSpellCastData(effortCombination);
+                currentSpellcast = spellInventory.TryGetSpellFromInventory(effortCombination);
                 spellType = currentSpellcast.SpellType;
                 Spellcasted?.Invoke(spellType);
             }

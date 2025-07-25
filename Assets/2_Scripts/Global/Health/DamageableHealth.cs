@@ -38,7 +38,7 @@ namespace _2_Scripts.Global.Health
             if (iFrameTimer <=0f && other.gameObject.layer == (int) Layers.PlayerAttack)
             {
                 // other.GetComponent<WeaponAttackHandler>();
-                currentHealth -= PlayerDamageController.currentDamage;
+                currentHealth -= PlayerDamageController.Instance.currentDamage;
                 OnHit(other);
                 if (currentHealth <= 0)
                 {
@@ -59,7 +59,7 @@ namespace _2_Scripts.Global.Health
             Vector2 direction = (transform.position - other.transform.position).normalized;
             //TODO here now for testing, move to a specific inheritor of damageable health so not all damageable stuff gets knocked back.
             if (rb2d)
-                rb2d.MovePosition(rb2d.position + direction * PlayerDamageController.currentKnockbackForce);
+                rb2d.MovePosition(rb2d.position + direction * PlayerDamageController.Instance.currentKnockbackForce);
         }
 
         private void SpawnText()

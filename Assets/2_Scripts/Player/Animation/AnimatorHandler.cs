@@ -30,7 +30,7 @@ namespace _2_Scripts.Player.Animation
             spriteRenderer = GetComponent<SpriteRenderer>();
             if (playerMovementController)
             {
-                playerMovementController.Flipped += (facingLeftParam) => { this.facingLeft = facingLeftParam; };
+                playerMovementController.Flipped += (facingLeftParam) => { facingLeft = facingLeftParam; };
             }
 
             containsMoreLayers = animator.layerCount > 1;

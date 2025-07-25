@@ -122,6 +122,8 @@ namespace _2_Scripts.Player.Animation
                     return PlayState(AC.DashEnd, AC.DashEndDuration, AC.DashEndStateLockDuration);
             }
 
+            #region state_lock
+
             if (currentStateLockDuration > 0f)
             {
                 if (currentState == AC.Dash && endDash)
@@ -148,6 +150,8 @@ namespace _2_Scripts.Player.Animation
                 else
                     return currentState;
             }
+
+            #endregion
 
             playerMovementController.OverrideFacingDirection(false);
 
@@ -191,6 +195,8 @@ namespace _2_Scripts.Player.Animation
                 return PlayBufferedState();
             }
 
+            #region spellcasting
+
             if (spellTriggered)
             {
                 playerInputManager.SetConcentration(false);
@@ -203,9 +209,7 @@ namespace _2_Scripts.Player.Animation
                     if (playerMovementController.IsWallSliding())
                     {
                         playerMovementController.OverrideFacingDirection(true);
-                        // shouldOverrideDirection = true;
                         playerMovementController.SetFacingDirection(!playerMovementController.IsFacingLeft());
-                        // isLeftOverride = !playerMovementController.IsFacingLeft();
                         shouldDoMovementStates = false; //keep sprite from flipping.
                     }
                     else if (playerInputManager.GetYInput() > 0f)
@@ -250,21 +254,31 @@ namespace _2_Scripts.Player.Animation
                     && playerMovementController.IsGrounded()
                     && IsMovementAdequateForStationaryAnimation())
                 {
+                    playerInputManager.AllowSpellcastInput(false);
                     playerSpellController.UseSpellCost();
                     playerSpellController.ClearSpellType();
                     var concWeaponData = weaponStateAnimationData.GetForState(WeaponAnimationState.Concentration);
                     tempAnimData = weaponStateAnimationData.GetForState(WeaponAnimationState.SpellShortBuff);
                     if (currentState == concWeaponData.AnimationStateHash)
                         tempAnimData.SetDurationsTo(currentStateDuration);
-                    
+
                     InterruptState();
                     bufferedData = tempAnimData;
                     if (currentState == concWeaponData.ChainsInto.AnimationStateHash)
                         bufferedData = bufferedData.ChainsInto;
-                    
+
                     return PlayBufferedData();
                 }
             }
+            
+            #endregion
+            
+            playerInputManager.AllowSpellcastInput(true);
+            // heavy spells sometimes stick their angle mode after they finish for no reason.
+            // this below should essentially fix that.
+            playerInputManager.SetAdjustAngleMode(false); 
+
+            #region attacking
 
             if (attackTriggered)
             {
@@ -319,7 +333,9 @@ namespace _2_Scripts.Player.Animation
                     return PlayState(tempAnimData);
                 }
             }
-            
+
+            #endregion
+
             if (currentStateDuration > 0f && !inputReceived)
             {
                 return currentState;
@@ -327,7 +343,8 @@ namespace _2_Scripts.Player.Animation
 
             // If jumped during ground attack animation. Also has other attacks and double jump there to avoid skipping the animation.
             if (!shouldDoMovementStates && currentState != AC.DoubleJump && IsGroundAttackState() &&
-                !playerMovementController.IsGrounded() && currentState!=weaponStateAnimationData.GetForState(WeaponAnimationState.SpellBolt).AnimationStateHash)
+                !playerMovementController.IsGrounded() && currentState != weaponStateAnimationData
+                    .GetForState(WeaponAnimationState.SpellBolt).AnimationStateHash)
             {
                 InterruptState();
                 shouldDoMovementStates = true;
@@ -337,7 +354,11 @@ namespace _2_Scripts.Player.Animation
                 Mathf.Abs(playerMovementController.GetXVelocity()) < 0.1f)
             {
                 tempAnimData = weaponStateAnimationData.GetForState(WeaponAnimationState.Concentration);
-                if ((currentState == tempAnimData.AnimationStateHash && currentStateDuration <= 0f) || animStage == 1)
+                
+                // Second part of condition below is for fixing a silly issue right after attacking on ground, as it
+                // skips first stage of concentration animation from single ground attack.
+                if ((currentState == tempAnimData.AnimationStateHash && currentStateDuration <= 0f) || 
+                    (currentState != weaponStateAnimationData.GetForState(WeaponAnimationState.AttackGround).AnimationStateHash && animStage == 1))
                     animStage = 1;
 
                 else
@@ -353,6 +374,8 @@ namespace _2_Scripts.Player.Animation
                 animStage = 0;
                 return PlayState(tempAnimData);
             }
+
+            #region movement
 
             if (shouldDoMovementStates || !(currentStateDuration > 0f))
             {
@@ -401,6 +424,8 @@ namespace _2_Scripts.Player.Animation
                 if (!playerMovementController.IsGrounded() && playerMovementController.GetYVelocity() >= 0f)
                 {
                     InterruptState();
+                    playerInputManager.SetConcentration(false);
+                    tempAnimData = null;
                     return AC.Ascend;
                 }
             }
@@ -409,6 +434,7 @@ namespace _2_Scripts.Player.Animation
                 return currentState;
             }
 
+            #endregion
 
             return AC.None;
         }
@@ -540,10 +566,11 @@ namespace _2_Scripts.Player.Animation
 
         private bool IsMovementAdequateForStationaryAnimation()
         {
-            return playerMovementController.GetTotalVelocity() < 4f; 
+            return playerMovementController.GetTotalVelocity() < 4f;
             // rough estimate but this works good at being reactive when player stops movement
             // unfortunately reading X input from input manager is not a good option because
             //  sometimes it still shows 1/-1 even though player is actively stopping movement and slowing down.
+            // TODO above might be an issue with Play instead of Build&Run, test
         }
 
         #region event_registering
@@ -562,6 +589,7 @@ namespace _2_Scripts.Player.Animation
             playerInputManager.Attacked += () => { attackTriggered = true; };
             playerInputManager.InputReceived += () => { inputReceived = true; };
             playerInputManager.HeavyAttack += () => { heavyAttackTriggered = true; };
+            playerHealth.Damaged += () => { playerInputManager.AllowSpellcastInput(true); };
         }
 
         private void ResetLogic()
