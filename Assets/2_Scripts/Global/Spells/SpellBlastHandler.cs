@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace _2_Scripts.Global.Spells
 {
-    public class SpellBlastHandler : MonoBehaviour
+    public class SpellBlastHandler : AbstractDamagingSpell
     {
         [SerializeField] private Collider2D spellCollider;
 

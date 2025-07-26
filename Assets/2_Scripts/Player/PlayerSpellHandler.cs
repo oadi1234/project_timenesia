@@ -96,7 +96,7 @@ namespace _2_Scripts.Player
             playerMovementController.AttackLunge(PlayerConstants.Instance.staffLungeMagnitude * direction.x,
                 AC.StaffHeavySpellcastLungeTimer, direction.y * PlayerConstants.Instance.staffLungeMagnitude);
             playerInputManager.SetAngleModeAdjustStrength(0f);
-            playerHealth.SetNoVisualsIFrames(AC.StaffHeavySpellcastLungeTimer + AC.SingleFrame * 2f);
+            playerHealth.SetNoVisualsIFrames(AC.StaffHeavySpellcastLungeTimer * 2f);
         }
 
         public void DoHeavySpellCast()

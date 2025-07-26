@@ -307,9 +307,10 @@ GameObject:
   - component: {fileID: 3078098277387785693}
   - component: {fileID: 1447210479273341226}
   - component: {fileID: 8268073120087270661}
+  - component: {fileID: 8616483865874381406}
   m_Layer: 20
   m_Name: SpellSparkbolt
-  m_TagString: Untagged
+  m_TagString: PlayerSpell
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -396,7 +397,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abef27f153ad71247a1d3647627724ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wandBlastCollider: {fileID: 1447210479273341226}
   beamHitBlast: {fileID: 1384765783545559761, guid: c45f94b5da27c864eab4a7ee9456871b, type: 3}
   destroyAfterSeconds: 0.4
   activeTimer: 0.125
@@ -404,3 +404,17 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 5120
   lineRenderer: {fileID: 3691073466499438665}
+--- !u!114 &8616483865874381406
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8906160670066044836}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9a5def31320437d8b7f7f2f0ddb1c99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spellDamage: 20
+  spellKnockback: 1.3

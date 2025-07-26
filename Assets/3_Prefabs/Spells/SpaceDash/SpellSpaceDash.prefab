@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8177887306492521864}
   m_Layer: 20
   m_Name: SpellSpaceDash
-  m_TagString: Untagged
+  m_TagString: PlayerSpell
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -333,7 +333,7 @@ GameObject:
   - component: {fileID: 1081848324733965897}
   - component: {fileID: 473695270682834462}
   - component: {fileID: 5816434250972977314}
-  m_Layer: 20
+  m_Layer: 13
   m_Name: SpellWallCollision
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -442,6 +442,7 @@ GameObject:
   - component: {fileID: 121893358736418817}
   - component: {fileID: 6864321267730063633}
   - component: {fileID: 2590922044452862703}
+  - component: {fileID: 4242574195170462030}
   m_Layer: 20
   m_Name: SpellAttackCollision
   m_TagString: Untagged
@@ -523,3 +524,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnPrefab: {fileID: 5309222544701459229, guid: f01be7e254708654e8697e3c18d9f466, type: 3}
   layer: 10
+--- !u!114 &4242574195170462030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9048059540206622300}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9a5def31320437d8b7f7f2f0ddb1c99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spellDamage: 0
+  spellKnockback: 0.5
+  isMultihit: 0

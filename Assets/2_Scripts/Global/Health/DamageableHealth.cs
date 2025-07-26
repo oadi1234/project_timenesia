@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using _2_Scripts.Global.Spells;
 using _2_Scripts.Player;
 using _2_Scripts.Player.Controllers;
 using _2_Scripts.Text;
@@ -21,7 +22,6 @@ namespace _2_Scripts.Global.Health
         private Rigidbody2D rb2d;
 
         private float currentHealth;
-        private float iFrameTimer = 0f;
         private ParticleSystem damageParticlesInstance;
         private TextController textControllerInstance;
         
@@ -35,11 +35,21 @@ namespace _2_Scripts.Global.Health
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (iFrameTimer <=0f && other.gameObject.layer == (int) Layers.PlayerAttack)
+            if (other.gameObject.layer == (int) Layers.PlayerAttack)
             {
-                // other.GetComponent<WeaponAttackHandler>();
-                currentHealth -= PlayerDamageController.Instance.currentDamage;
-                OnHit(other);
+                AbstractDamagingSpell spell = other.gameObject.GetComponent<AbstractDamagingSpell>();
+                if (spell)
+                {
+                    if (spell.WasTagged(gameObject)) return;
+                    if (!spell.IsMultihit)
+                        spell.TagEnemy(gameObject);
+                    currentHealth -= spell.spellDamage * PlayerDamageController.Instance.GetSpellMultiplier();
+                }
+                else
+                {
+                    currentHealth -= PlayerDamageController.Instance.GetDamage();
+                }
+                OnHit(other, spell);
                 if (currentHealth <= 0)
                 {
                     Death();
@@ -47,19 +57,34 @@ namespace _2_Scripts.Global.Health
             }
         }
 
-        private void OnHit(Collider2D other)
+        private void OnHit(Collider2D other, AbstractDamagingSpell spell)
         {
             SpawnText();
-            Knockback(other);
+            if (spell)
+                SpellKnockback(other, spell);
+            else
+                Knockback(other);
             SpawnParticles();
         }
 
         private void Knockback(Collider2D other)
         {
-            Vector2 direction = (transform.position - other.transform.position).normalized;
             //TODO here now for testing, move to a specific inheritor of damageable health so not all damageable stuff gets knocked back.
             if (rb2d)
-                rb2d.MovePosition(rb2d.position + direction * PlayerDamageController.Instance.currentKnockbackForce);
+            {
+                Vector2 direction = (transform.position - other.transform.position).normalized;
+                rb2d.MovePosition(rb2d.position + direction * PlayerDamageController.Instance.GetKnockbackForce());
+            }
+        }
+
+        private void SpellKnockback(Collider2D other, AbstractDamagingSpell spell)
+        {
+            if (rb2d)
+            {
+                Vector2 direction = (transform.position - other.transform.position).normalized;
+                rb2d.MovePosition(rb2d.position + direction * spell.spellKnockback);
+            }
+                
         }
 
         private void SpawnText()
