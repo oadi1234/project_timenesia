@@ -8,7 +8,6 @@ TagManager:
   - LoadingArea
   - Sight
   - PlayerAttack
-  - PlayerSpell
   layers:
   - Default
   - TransparentFX

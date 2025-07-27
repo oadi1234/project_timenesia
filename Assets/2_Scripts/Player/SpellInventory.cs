@@ -27,7 +27,8 @@ namespace _2_Scripts.Player
         {
             Spellbook.StringToEffortCombination("k"),
             Spellbook.StringToEffortCombination("ke"),
-            Spellbook.StringToEffortCombination("a")
+            Spellbook.StringToEffortCombination("a"),
+            Spellbook.StringToEffortCombination("kaa")
         };
 
         private void Start()

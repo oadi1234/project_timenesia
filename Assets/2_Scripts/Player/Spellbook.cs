@@ -29,8 +29,7 @@ namespace _2_Scripts.Player
 
         
         public Vector3 direction = Vector2.zero;
-        [Tooltip("A helper vector for certain spells. Currently used for:\n1. Origin point of Bolt spells\n2. Look direction of Heavy spells.")]
-        public Vector3 helperVector = Vector2.zero;
+        public Vector3 originPoint = Vector2.zero;
 
         private GameObject spellInstance;
 
@@ -41,6 +40,9 @@ namespace _2_Scripts.Player
 
         [Header("Double pip spells")] 
         [SerializeField] private GameObject spaceDash;
+
+        [Header("Triple pip spells")]
+        [SerializeField] private GameObject blast;
 
         private Dictionary<List<EffortType>, BaseSpell> allSpells;
 
@@ -86,7 +88,7 @@ namespace _2_Scripts.Player
                 #region triple_pip_spells
 
                 { StringToEffortCombination("aka"), new BaseSpell("bulwark", () => { }, SpellType.Buff) },
-                { StringToEffortCombination("kaa"), new BaseSpell("blast", () => { }, SpellType.Aoe) },
+                { StringToEffortCombination("kaa"), new BaseSpell("blast", Blast, SpellType.Aoe) },
                 { StringToEffortCombination("kar"), new BaseSpell("revengeBlast", () => { }, SpellType.Buff) },
                 { StringToEffortCombination("ema"), new BaseSpell("lifesteal", () => { }, SpellType.Bolt) },
                 { StringToEffortCombination("kkk"), new BaseSpell("telekinesis", () => { }, SpellType.Buff) },
@@ -167,8 +169,8 @@ namespace _2_Scripts.Player
             spellInstance = Instantiate(sparkboltBeam, PlayerPosition.GetPlayerTransform());
             spellInstance.GetComponent<BeamSpellHandler>().SetDirection(direction);
             spellInstance.transform.position = new Vector3(
-                PlayerPosition.GetPlayerTransform().position.x + helperVector.x,
-                PlayerPosition.GetPlayerTransform().position.y + helperVector.y, 0);
+                PlayerPosition.GetPlayerTransform().position.x + originPoint.x,
+                PlayerPosition.GetPlayerTransform().position.y + originPoint.y, 0);
             spellInstance.transform.rotation = Quaternion.Euler(0, 0,
                 Vector3.Angle(direction, Vector3.right) * (Mathf.Approximately(direction.y, 1) ? -1 : 1));
         }
@@ -197,11 +199,20 @@ namespace _2_Scripts.Player
         {
             spellInstance = Instantiate(spaceDash, PlayerPosition.GetPlayerTransform());
             // spellInstance.transform.rotation = Quaternion.FromToRotation(direction, Vector3.right);
-            spellInstance.transform.localScale = helperVector;
+            spellInstance.transform.localScale = direction;
         }
         
         #endregion
+        
+        #region triple_pip_spells
 
+        private void Blast()
+        {
+            spellInstance = Instantiate(blast, PlayerPosition.GetPlayerTransform());
+            spellInstance.transform.localScale = direction;
+        }
+        
+        #endregion
         #region quadruple_pip_spells
 
         private void Timeschism()

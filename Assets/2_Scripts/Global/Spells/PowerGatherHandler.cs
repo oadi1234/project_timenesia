@@ -39,10 +39,8 @@ namespace _2_Scripts.Global.Spells
         private IEnumerator Start()
         {
             yield return new WaitForSeconds(spawnNextStageAfter);
-            nextStageInstance = Instantiate(nextSpellStage, transform);
-            nextStageInstance.transform.rotation = transform.rotation;
-            nextStageInstance.transform.parent = transform.parent;
-            nextStageInstance.transform.localScale = new Vector3(transform.localScale.x, 1, 1);
+            InstantiateNextStage();
+            DetachFromParent();
             DeregisterEvents();
             yield return new WaitForSeconds(aliveTimeAfterSpawn);
             Destroy(gameObject);
@@ -70,6 +68,19 @@ namespace _2_Scripts.Global.Spells
         {
             // since this animation does not have any state that blocks flipping sprites, it should be safe to use PMC
             transform.localScale = new Vector3(isFacingleft? 1 : -1, transform.localScale.y, transform.localScale.z);
+        }
+
+        private void InstantiateNextStage()
+        {
+            nextStageInstance = Instantiate(nextSpellStage, transform);
+            nextStageInstance.transform.rotation = transform.rotation;
+            nextStageInstance.transform.parent = transform.parent;
+            nextStageInstance.transform.localScale = new Vector3(transform.localScale.x, 1, 1);
+        }
+
+        private void DetachFromParent()
+        {
+            transform.parent = null;
         }
 
     }

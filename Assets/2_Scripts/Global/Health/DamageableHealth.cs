@@ -37,7 +37,7 @@ namespace _2_Scripts.Global.Health
         {
             if (other.gameObject.layer == (int) Layers.PlayerAttack)
             {
-                AbstractDamagingSpell spell = other.gameObject.GetComponent<AbstractDamagingSpell>();
+                DamagingSpell spell = other.gameObject.GetComponent<DamagingSpell>();
                 if (spell)
                 {
                     if (spell.WasTagged(gameObject)) return;
@@ -57,7 +57,7 @@ namespace _2_Scripts.Global.Health
             }
         }
 
-        private void OnHit(Collider2D other, AbstractDamagingSpell spell)
+        private void OnHit(Collider2D other, DamagingSpell spell)
         {
             SpawnText();
             if (spell)
@@ -77,7 +77,7 @@ namespace _2_Scripts.Global.Health
             }
         }
 
-        private void SpellKnockback(Collider2D other, AbstractDamagingSpell spell)
+        private void SpellKnockback(Collider2D other, DamagingSpell spell)
         {
             if (rb2d)
             {

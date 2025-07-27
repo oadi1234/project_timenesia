@@ -56,24 +56,24 @@ namespace _2_Scripts.Player
         public void BoltSpellCastUp()
         {
             Spellbook.Instance.direction = Vector3.up;
-            Spellbook.Instance.helperVector = weaponAnimationSpellOrigin.GetForState(WeaponAnimationState.SpellBoltUp);
-            Spellbook.Instance.helperVector.x *= Direction;
+            Spellbook.Instance.originPoint = weaponAnimationSpellOrigin.GetForState(WeaponAnimationState.SpellBoltUp);
+            Spellbook.Instance.originPoint.x *= Direction;
             playerSpellController.InvokeSpell();
         }
 
         public void BoltSpellCastDown()
         {
             Spellbook.Instance.direction = Vector3.down;
-            Spellbook.Instance.helperVector = weaponAnimationSpellOrigin.GetForState(WeaponAnimationState.SpellBoltDown);
-            Spellbook.Instance.helperVector.x *= Direction;
+            Spellbook.Instance.originPoint = weaponAnimationSpellOrigin.GetForState(WeaponAnimationState.SpellBoltDown);
+            Spellbook.Instance.originPoint.x *= Direction;
             playerSpellController.InvokeSpell();
         }
 
         public void BoltSpellCast()
         {
             Spellbook.Instance.direction.Set(Direction, 0, 0);
-            Spellbook.Instance.helperVector = weaponAnimationSpellOrigin.GetForState(WeaponAnimationState.SpellBolt);
-            Spellbook.Instance.helperVector.x *= Direction;
+            Spellbook.Instance.originPoint = weaponAnimationSpellOrigin.GetForState(WeaponAnimationState.SpellBolt);
+            Spellbook.Instance.originPoint.x *= Direction;
             playerAnimationStateHandler.SetDoMovementStates(false);
             playerSpellController.InvokeSpell();
         }
@@ -89,7 +89,7 @@ namespace _2_Scripts.Player
             playerInputManager.SetAdjustAngleMode(true);
         }
 
-        public void DoHeavySpellCastLunge()
+        public void HeavySpellCastLunge()
         {
             var direction = Quaternion.Euler(0,0, playerInputManager.GetAngle()) * Vector3.right;
 
@@ -99,9 +99,15 @@ namespace _2_Scripts.Player
             playerHealth.SetNoVisualsIFrames(AC.StaffHeavySpellcastLungeTimer * 2f);
         }
 
-        public void DoHeavySpellCast()
+        public void HeavySpellCast()
         {
-            Spellbook.Instance.helperVector = new Vector3(Direction, 1, 1);
+            Spellbook.Instance.direction = new Vector3(Direction, 1, 1);
+            playerSpellController.InvokeSpell();
+        }
+
+        public void AoESpellCast()
+        {
+            Spellbook.Instance.direction = new Vector3(Direction, 1, 1);
             playerSpellController.InvokeSpell();
         }
 
