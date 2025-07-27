@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 
 namespace _2_Scripts.UI.Elements
@@ -39,13 +38,6 @@ namespace _2_Scripts.UI.Elements
             fadeController.StopAllCoroutines();
             StopAllCoroutines();
             StartCoroutine(fadeController.DoFadeOut());
-        }
-
-        public IEnumerator WaitForFadeOutAndDeactivate()
-        {
-            fadeController.StopAllCoroutines();
-            StopAllCoroutines();
-            yield return StartCoroutine(fadeController.DoFadeOut());
         }
     }
 }

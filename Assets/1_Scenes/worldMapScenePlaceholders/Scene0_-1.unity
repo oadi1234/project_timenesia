@@ -751,14 +751,6 @@ CompositeCollider2D:
         Y: -540000000
       - X: 150000000
         Y: -510000000
-      - X: 120000000
-        Y: -510000000
-      - X: 120000000
-        Y: -500000000
-      - X: 90000000
-        Y: -500000000
-      - X: 90000000
-        Y: -510000000
       - X: -160000000
         Y: -510000000
       - X: -160000000
@@ -905,10 +897,6 @@ CompositeCollider2D:
       - {x: 21.999971, y: -54}
       - {x: 15, y: -53.99997}
       - {x: 14.999971, y: -51}
-      - {x: 12, y: -50.999973}
-      - {x: 11.99997, y: -50}
-      - {x: 9, y: -50.00003}
-      - {x: 8.99997, y: -51}
       - {x: -16, y: -50.999973}
       - {x: -16.000029, y: -44}
       - {x: -21, y: -43.999973}
@@ -7441,36 +7429,6 @@ Tilemap:
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
   - first: {x: -17, y: -51, z: 0}
-    second:
-      serializedVersion: 2
-      m_TileIndex: 12
-      m_TileSpriteIndex: 12
-      m_TileMatrixIndex: 0
-      m_TileColorIndex: 0
-      m_TileObjectToInstantiateIndex: 65535
-      dummyAlignment: 0
-      m_AllTileFlags: 1073741825
-  - first: {x: 9, y: -51, z: 0}
-    second:
-      serializedVersion: 2
-      m_TileIndex: 12
-      m_TileSpriteIndex: 12
-      m_TileMatrixIndex: 0
-      m_TileColorIndex: 0
-      m_TileObjectToInstantiateIndex: 65535
-      dummyAlignment: 0
-      m_AllTileFlags: 1073741825
-  - first: {x: 10, y: -51, z: 0}
-    second:
-      serializedVersion: 2
-      m_TileIndex: 12
-      m_TileSpriteIndex: 12
-      m_TileMatrixIndex: 0
-      m_TileColorIndex: 0
-      m_TileObjectToInstantiateIndex: 65535
-      dummyAlignment: 0
-      m_AllTileFlags: 1073741825
-  - first: {x: 11, y: -51, z: 0}
     second:
       serializedVersion: 2
       m_TileIndex: 12
@@ -14616,7 +14574,7 @@ Tilemap:
     m_Data: {fileID: 11400000, guid: 6725551c16494ed419ec088d79531e6c, type: 2}
   - m_RefCount: 1
     m_Data: {fileID: 11400000, guid: 51d568b63dca44241a366814baa5d0f9, type: 2}
-  - m_RefCount: 1354
+  - m_RefCount: 1351
     m_Data: {fileID: 11400000, guid: 972fe59b527b4964bab797557e179d69, type: 2}
   m_TileSpriteArray:
   - m_RefCount: 0
@@ -14643,10 +14601,10 @@ Tilemap:
     m_Data: {fileID: -8421477212022976497, guid: a21379f85be29bd429c5c046bb409751, type: 3}
   - m_RefCount: 1
     m_Data: {fileID: -887801021943726790, guid: a21379f85be29bd429c5c046bb409751, type: 3}
-  - m_RefCount: 1354
+  - m_RefCount: 1351
     m_Data: {fileID: -6379277833500934283, guid: a21379f85be29bd429c5c046bb409751, type: 3}
   m_TileMatrixArray:
-  - m_RefCount: 1357
+  - m_RefCount: 1354
     m_Data:
       e00: 1
       e01: 0
@@ -14665,7 +14623,7 @@ Tilemap:
       e32: 0
       e33: 1
   m_TileColorArray:
-  - m_RefCount: 1357
+  - m_RefCount: 1354
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
@@ -15320,8 +15278,32 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 24862557987798301, guid: 26f7d7db52f2e25448283d7c74ab77bd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2050727165}
   m_SourcePrefab: {fileID: 100100000, guid: 26f7d7db52f2e25448283d7c74ab77bd, type: 3}
+--- !u!1 &2050727164 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 24862557987798301, guid: 26f7d7db52f2e25448283d7c74ab77bd, type: 3}
+  m_PrefabInstance: {fileID: 2050727163}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2050727165
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2050727164}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d6e2f4076784dc28dae369ad2ae72ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 16
+  objectId: 0
+  damageParticles: {fileID: 263261225388098809, guid: e650e9bf2dcf32647872255700fb5a2a, type: 3}
+  textController: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -19,22 +19,26 @@ namespace _2_Scripts.Player.Animation
 
         private Vector2 gravityVector = Vector2.zero;
         private float currentTimer = 0f;
+        private bool overrideGravity = false;
+        private float gravityTimer = 0f;
 
-        void Awake()
+        private void Awake()
         {
             for (int i = 1; i < segments.Count; i++)
             {
-                segments[i].distanceToParent = (Vector2.Distance(segments[i].transform.position,
-                    segments[i - 1].transform.position));
+                segments[i].distanceToParent = Vector2.Distance(segments[i].transform.position,
+                    segments[i - 1].transform.position);
             }
         }
 
-        void FixedUpdate()
+        private void FixedUpdate()
         {
             if (playerMovementController.GetTotalVelocity() < 0.5f)
                 currentTimer += Time.fixedDeltaTime;
             else
                 currentTimer = 0f;
+            overrideGravity = gravityTimer > 0;
+            if (overrideGravity) gravityTimer -= Time.fixedDeltaTime;
 
             if (!animationPivot.IsInNonRopeState())
             {
@@ -52,12 +56,19 @@ namespace _2_Scripts.Player.Animation
             }
         }
 
+        public void OverrideGravity(Vector2 gravityDirection, float time)
+        {
+            if (gravityTimer > 0) return;
+            gravityVector = gravityDirection * gravityStrength;
+            gravityTimer = time;
+        }
+
         private void SimulateRope()
         {
             for (int i = 1; i < segments.Count; i++)
             {
                 Vector2 velocity = segments[i].currentPosition - segments[i].oldPosition;
-                velocity *= currentTimer > timerBeforeDampening ? idleDampeningMultiplier : 1f;
+                velocity *= currentTimer > timerBeforeDampening && gravityTimer <= 0 ? idleDampeningMultiplier : 1f;
 
                 segments[i].oldPosition = segments[i].currentPosition;
                 segments[i].currentPosition += velocity;
@@ -96,7 +107,8 @@ namespace _2_Scripts.Player.Animation
 
         private void CalculateGravityVector()
         {
-            gravityVector.x = -(playerMovementController.GetXVelocity() + (playerMovementController.GetIsWallSliding()
+            if (overrideGravity) return;
+            gravityVector.x = -(playerMovementController.GetXVelocity() + (playerMovementController.IsWallSliding()
                 ? playerMovementController.GetXVelocityVector()
                 : 1f)) * 0.125f * (-gravityStrength);
             gravityVector.y = gravityStrength + playerMovementController.GetYVelocity() * 0.25f * gravityStrength +

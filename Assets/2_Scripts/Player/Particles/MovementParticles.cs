@@ -1,43 +1,37 @@
 using _2_Scripts.Player.Controllers;
+using _2_Scripts.Player.model;
 using UnityEngine;
 
 namespace _2_Scripts.Player.Particles
 {
-    public class MovementParticles : MonoBehaviour
+    public class MovementParticles : SpriteFacingDirection
     {
         [SerializeField] private PlayerMovementController playerMovementController;
         [SerializeField] private ParticleSystem stepParticles;
         [SerializeField] private ParticleSystem heavyStompParticles;
         [SerializeField] private float fallingTimeThreshold = 0.1f;
 
-        private SpriteRenderer spriteRenderer;
 
         private ParticleSystem stepParticlesInstance;
         private ParticleSystem heavyStompParticlesInstance;
 
         private float fallingTime = 0f;
-        private int multiplier = 1;
-
-        //helper variable to avoid generating new vectors all the time. Probably a not-needed addition
-        private Vector3 position = Vector3.zero;
-
-        private void Awake()
-        {
-            spriteRenderer = GetComponent<SpriteRenderer>();
-        }
+        
+        // TODO add raycast checks to see if certain particles should even happen, i.e. if there is no ground below
+        //  feet it shouldn't rise up dust.
 
         private void FixedUpdate()
         {
-            multiplier = spriteRenderer.flipX ? -1 : 1;
+            CalculateDirection();
             if (playerMovementController.GetYVelocity() < 0f)
                 fallingTime += Time.fixedDeltaTime;
-            if (fallingTime > fallingTimeThreshold && playerMovementController.GetIsGrounded())
+            if (fallingTime > fallingTimeThreshold && playerMovementController.IsGrounded())
             {
                 SpawnHeavyStompParticles();
             }
 
-            if (playerMovementController.GetYVelocity() > 0f || playerMovementController.GetIsWallSliding() ||
-                playerMovementController.GetIsGrounded())
+            if (playerMovementController.GetYVelocity() > 0f || playerMovementController.IsWallSliding() ||
+                playerMovementController.IsGrounded())
                 fallingTime = 0f;
         }
 
@@ -71,6 +65,20 @@ namespace _2_Scripts.Player.Particles
             InstantiateParticles(- 0.979f, - 1.669f, 0.5f);
         }
 
+        public void SpawnWallslideHandDust()
+        {
+            InstantiateParticles(-0.95f, 1.83f, 0.5f);
+        }
+
+        public void SpawnWallslideLeg1Dust()
+        {
+            InstantiateParticles(-0.95f, -0.31f, 0.5f);
+        }
+        public void SpawnWallslideLeg2Dust()
+        {
+            InstantiateParticles(-0.95f, -1.56f, 1f);
+        }
+
         private void SpawnHeavyStompParticles()
         {
             heavyStompParticlesInstance = Instantiate(heavyStompParticles,
@@ -82,16 +90,14 @@ namespace _2_Scripts.Player.Particles
 
         private void InstantiateParticles(float xPos, float yPos, float sizeMult)
         {
-            position.Set(transform.position.x + xPos * multiplier, transform.position.y + yPos,
+            var vector = new Vector3(transform.position.x + xPos * Direction, transform.position.y + yPos,
                 transform.position.z);
             stepParticlesInstance = Instantiate(stepParticles,
-                position,
+                vector,
                 Quaternion.identity);
-            if (sizeMult != 1f)
-            {
-                var main = stepParticlesInstance.main;
-                main.startSizeMultiplier = 0.5f;
-            }
+            if (Mathf.Approximately(sizeMult, 1f)) return;
+            var main = stepParticlesInstance.main;
+            main.startSizeMultiplier = 0.5f;
         }
     }
 }

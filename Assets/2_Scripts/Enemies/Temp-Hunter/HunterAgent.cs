@@ -46,7 +46,7 @@ namespace _2_Scripts.Enemies.Temp_Hunter
             if (timer > calculationInterval)
             {
                 followPath = false; // prevents the object from trying to follow the path before it's ready
-                seeker.StartPath(transform.position,  PlayerPosition.GetPlayerPosition().position, OnPathComplete);
+                seeker.StartPath(transform.position,  PlayerPosition.GetPlayerTransform().position, OnPathComplete);
                 timer -= calculationInterval;
             }
             timer += Time.deltaTime;

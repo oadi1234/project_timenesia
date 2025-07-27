@@ -9,7 +9,7 @@ namespace _2_Scripts.Enemies.Agents
         private bool _playerSeenOnRight;
         private bool _chargeFinished;
         private CleanEnemyStateMachine _stateMachine;
-        private GameObject _sight;
+        private GameObject _sight; //TODO imo better to serialize it and connect directly in editor
 
         protected override void Awake()
         {

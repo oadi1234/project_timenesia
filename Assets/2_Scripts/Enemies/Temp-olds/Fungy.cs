@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections;
-using _2_Scripts.Enemies.Attacks;
 using _2_Scripts.Enemies.Temp_FirstApproach;
+using _2_Scripts.Global.Health;
+using _2_Scripts.Global.Health.EnemyAttack;
 using UnityEngine;
 
 namespace _2_Scripts.Enemies.Temp_olds
@@ -34,7 +35,7 @@ namespace _2_Scripts.Enemies.Temp_olds
             _rigidbody2D = GetComponent<Rigidbody2D>();
             _playerPosition = GameObject.Find("Player").GetComponent<Rigidbody2D>();
             _spriteRenderer = GetComponent<SpriteRenderer>();
-            BaseAttack.Attack += Attack_AoE_OnAttackHit;
+            BaseAttack.PlayerHit += PlayerHitAoEOnPlayerHitHit;
 
             var attackingState = new AttackState_Fungy(this);
             var patrolingState = new PatrolingState_Fungy(this);
@@ -51,7 +52,7 @@ namespace _2_Scripts.Enemies.Temp_olds
 
         }
 
-        private void Attack_AoE_OnAttackHit(BaseAttack obj)
+        private void PlayerHitAoEOnPlayerHitHit(BaseAttack obj)
         {
             _plum.SetActive(false);
         }

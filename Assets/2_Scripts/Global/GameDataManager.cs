@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using _2___Scripts.Global.Events;
 using _2_Scripts.ExtensionMethods;
 using _2_Scripts.Global.Events;
+using _2_Scripts.Global.Events.Model;
 using _2_Scripts.Global.SaveSystem;
 using _2_Scripts.Global.SaveSystem.SaveDataSchemas;
-using _2_Scripts.Model;
 using _2_Scripts.Player;
+using _2_Scripts.Player.model;
 using _2_Scripts.Scenes;
 using _2_Scripts.UI.Elements.HUD;
 using _2_Scripts.UI.Elements.MainMenu;
@@ -47,7 +48,8 @@ namespace _2_Scripts.Global
             {
                 Destroy(gameObject);
             }
-            
+            Spellbook.Instance.PopulateAllSpells();
+
             //GameObject.Find("Player").GetComponent<PlayerMovementController>().SetVariablesOnLoad(ref GameData); //move responsibility to load GameData to player
             //CoinText = GameObject.Find("CoinCounter").GetComponent<TextMeshProUGUI>(); // see above
         }
@@ -61,7 +63,7 @@ namespace _2_Scripts.Global
         public void SetGameDataForNewGameStart()
         {
             currentGameData.MaxHealth = 3;
-            currentGameData.MaxEffort = 2;
+            currentGameData.MaxEffort = 4; //TODO set to 2, it's just better for testing.
             currentGameData.SpellCapacity = 2;
             lastSavePointPosition = new Vector2(0f, 0f); // this might need changing later. Still, (0, 0) is a good starting point I think.
         }
@@ -121,14 +123,14 @@ namespace _2_Scripts.Global
             Console.WriteLine("loaded");
         }
 
-        private void UnlockAbility(AbilityName abilityName)
+        private void UnlockAbility(UnlockableName unlockableName)
         {
-            currentGameData.Abilities.AddOrUpdate(abilityName, true);
+            currentGameData.Abilities.AddOrUpdate(unlockableName, true);
         }
 
-        public bool IsAbilityUnlocked(AbilityName abilityName)
+        public bool IsAbilityUnlocked(UnlockableName unlockableName)
         {
-            return currentGameData.Abilities.GetValueOrDefault(abilityName, false);
+            return currentGameData.Abilities.GetValueOrDefault(unlockableName, false);
         }
 
         #region SAVE_DATA_ASSIGNMENT

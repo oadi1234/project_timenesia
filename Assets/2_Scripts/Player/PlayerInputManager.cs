@@ -1,17 +1,22 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using _2_Scripts.Global.Animation.Model;
 using _2_Scripts.Player.Controllers;
+using _2_Scripts.Player.model;
+using _2_Scripts.Player.Statistics;
+using _2_Scripts.UI.Animation.Model;
 using UnityEngine;
 
 namespace _2_Scripts.Player
 {
     public class PlayerInputManager : MonoBehaviour
     {
-        public PlayerMovementController playerMovementController;
-        
-        public PlayerSpellController playerSpellController;
+        [SerializeField] private PlayerMovementController playerMovementController;
 
-        public WeaponController weaponController;
+        [SerializeField] private PlayerSpellController playerSpellController;
+        [SerializeField] private PlayerEffort playerEffort;
+        [SerializeField] private SpellInventory spellInventory;
 
         private float xInput;
         private float yInput;
@@ -23,22 +28,27 @@ namespace _2_Scripts.Player
         private bool attacking = false;
         private bool dashPressed;
         private bool concentrationHeld;
+        private bool concentrationMode;
         private bool inputReceived = false;
         private bool isSpellcasting = false;
-        private int spellIndex = -1;
+        private bool adjustAngleMode = false;
+        private bool canSpellcast = true;
+        private EffortType inputEffortType = EffortType.Raw;
+        private List<EffortType> spellIndex = new();
         private float chargeTime = 0f;
         private float chargeCooldown = 0f;
+        private float angle = 0f;
+        private float angleModeAdjustStrength = 3f;
         private const float ChargeInputDuration = 2f;
 
         public event Action Attacked;
         public event Action InputReceived;
         public event Action HeavyAttack;
-        
+
         private IEnumerator blockInputCoroutine;
         private IEnumerator blockMovementSkillInputCoroutine;
 
-        // Update is called once per frame
-        void Update()
+        private void Update()
         {
             xInput = Input.GetAxisRaw("Horizontal");
             yInput = Input.GetAxisRaw("Vertical");
@@ -47,12 +57,15 @@ namespace _2_Scripts.Player
                 chargeTime += Time.deltaTime;
             if (chargeCooldown > 0f)
                 chargeCooldown -= Time.deltaTime;
-            
-            
+
+
             if (Input.GetButtonDown("Concentration"))
                 concentrationHeld = true;
             if (Input.GetButtonUp("Concentration"))
+            {
                 concentrationHeld = false;
+                inputEffortType = EffortType.EndOfInput;
+            }
 
             if (Input.GetAxisRaw("Horizontal") != 0f)
             {
@@ -70,38 +83,49 @@ namespace _2_Scripts.Player
                 jumpKeyHold = false;
             }
 
-            // TODO left like this for now, even though it bypasses blockInput. Once spell controller is worked out
-            //  logic will need to be adjusted accordingly.
-            if (Input.GetButtonDown("Spell1"))
+            if (!concentrationMode)
             {
-                CastSpell(0);
-                 //TODO this might need some tweaking as to what is being sent
-                // also for now the PlayerAnimationStateHandler handles this event, but in the future it should be rerouted
-                // through some spellhandler class like thing, like the PlayerSpellController here.
-            }
+                // TODO left like this for now, even though it bypasses blockInput. Once spell controller is worked out
+                //  logic will need to be adjusted accordingly.
+                if (canSpellcast)
+                {
+                    if (Input.GetButtonDown("Spell1"))
+                    {
+                        if (spellInventory.HasSpellAtSlot(1))
+                            CastHotkeySpell(spellInventory.GetSpellAtSlot(1));
+                    }
 
-            if (Input.GetButtonUp("Spell2"))
-            {
-                CastSpell(1);
-            }
+                    if (Input.GetButtonDown("Spell2"))
+                    {
+                        if (spellInventory.HasSpellAtSlot(2))
+                            CastHotkeySpell(spellInventory.GetSpellAtSlot(2));
+                    }
 
-            if (Input.GetButtonUp("Spell3"))
-            {
-                CastSpell(2);
-            }
+                    if (Input.GetButtonDown("Spell3"))
+                    {
+                        if (spellInventory.HasSpellAtSlot(3))
+                            CastHotkeySpell(spellInventory.GetSpellAtSlot(3));
+                    }
 
-            if (Input.GetButtonDown("Attack"))
-            {
-                attackHeld = true;
-                attacking = true;
-                inputReceived = true;
-            }
+                    if (Input.GetButtonDown("Spell4"))
+                    {
+                        if (spellInventory.HasSpellAtSlot(4))
+                            CastHotkeySpell(spellInventory.GetSpellAtSlot(4));
+                    }
+                }
 
-            if (Input.GetButtonUp("Attack"))
-            {
+                if (Input.GetButtonDown("Attack"))
+                {
+                    attackHeld = true;
+                    attacking = true;
+                    inputReceived = true;
+                }
 
-                chargeTime = 0f;
-                attackHeld = false;
+                if (Input.GetButtonUp("Attack"))
+                {
+                    chargeTime = 0f;
+                    attackHeld = false;
+                }
             }
 
             if (Input.GetButtonDown("Dash"))
@@ -109,17 +133,43 @@ namespace _2_Scripts.Player
                 dashPressed = true;
                 inputReceived = true;
             }
+
+            if (concentrationMode)
+            {
+                if (Input.GetButtonDown("EffortInput1"))
+                    inputEffortType = EffortType.Aether;
+                if (Input.GetButtonDown("EffortInput2"))
+                    inputEffortType = EffortType.Entropy;
+                if (Input.GetButtonDown("EffortInput3"))
+                    inputEffortType = EffortType.Kinesis;
+                if (Input.GetButtonDown("EffortInput4"))
+                    inputEffortType = EffortType.Mind;
+                if (Input.GetButtonDown("EffortInput5"))
+                    inputEffortType = EffortType.Rune;
+            }
+
+            if (isInputEnabled)
+            {
+                playerEffort.SpellInput(inputEffortType);
+                playerSpellController.CastHotkeySpell(spellIndex, isSpellcasting);
+            }
+        }
+
+        private void LateUpdate()
+        {
+            inputEffortType = EffortType.NoInput;
+            isSpellcasting = false;
         }
 
         private void FixedUpdate()
         {
             if (isInputEnabled)
             {
-                playerMovementController.Move(xInput * Time.fixedDeltaTime * 50);
+                playerMovementController.Move(xInput);
                 playerMovementController.Jump(jumpPressed, jumpKeyHold, isMoveSkillInputEnabled);
                 if (isMoveSkillInputEnabled)
-                    playerMovementController.Dash(dashPressed, xInput);
-                playerSpellController.CastSpell(spellIndex, isSpellcasting);
+                    playerMovementController.Dash(dashPressed);
+
                 if (inputReceived)
                 {
                     InputReceived?.Invoke();
@@ -137,6 +187,11 @@ namespace _2_Scripts.Player
             else
             {
                 xInput = 0;
+            }
+
+            if (adjustAngleMode)
+            {
+                angle += yInput * angleModeAdjustStrength;
             }
 
             ResetLogic();
@@ -157,9 +212,44 @@ namespace _2_Scripts.Player
             return yInput;
         }
 
+        public float GetAngle()
+        {
+            return Mathf.Clamp(angle, -70f, playerMovementController.IsGrounded() ? 70f : 0f);
+        }
+
+        public void SetAdjustAngleMode(bool value)
+        {
+            adjustAngleMode = value;
+        }
+
+        public void SetAngleModeAdjustStrength(float value)
+        {
+            angleModeAdjustStrength = value;
+        }
+
+        public void SetConcentration(bool value)
+        {
+            concentrationMode = value && concentrationHeld;
+        }
+
+        public bool IsAngleMode()
+        {
+            return adjustAngleMode;
+        }
+
+        public void SetAngle(float value)
+        {
+            angle = value;
+        }
+
         public bool IsConcentrating()
         {
             return isInputEnabled && concentrationHeld;
+        }
+
+        public bool IsInConcentrationMode()
+        {
+            return concentrationMode;
         }
 
         public void SetChargeCooldown(float seconds)
@@ -184,18 +274,27 @@ namespace _2_Scripts.Player
             StopCoroutine(blockInputCoroutine);
         }
         
-        // moved from playerMovementController to here, since it makes more sense for input related things to be handled here.
+        
+        public void AllowSpellcastInput(bool value)
+        {
+            canSpellcast = value;
+        }
+
         private IEnumerator BlockInputForSeconds(float seconds)
         {
             isInputEnabled = false;
-            yield return new WaitForSeconds(seconds); // might need to be realTime, but if we are to use Time.scale then this takes it into account.
+            yield return
+                new WaitForSeconds(
+                    seconds); // might need to be realTime, but if we are to use Time.scale then this takes it into account.
             isInputEnabled = true;
         }
-        
+
         private IEnumerator BlockMoveSkillInputForSeconds(float seconds)
         {
             isMoveSkillInputEnabled = false;
-            yield return new WaitForSeconds(seconds); // might need to be realTime, but if we are to use Time.scale then this takes it into account.
+            yield return
+                new WaitForSeconds(
+                    seconds); // might need to be realTime, but if we are to use Time.scale then this takes it into account.
             isMoveSkillInputEnabled = true;
         }
 
@@ -204,16 +303,14 @@ namespace _2_Scripts.Player
             jumpPressed = false;
             dashPressed = false;
             inputReceived = false;
-            isSpellcasting = false;
             attacking = false;
-            spellIndex = -1;
         }
 
-        private void CastSpell(int index)
+        private void CastHotkeySpell(List<EffortType> effortCombination)
         {
             inputReceived = true;
             isSpellcasting = true;
-            spellIndex = index;
+            spellIndex = effortCombination;
         }
     }
 }

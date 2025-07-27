@@ -1,13 +1,13 @@
 using System.Collections.Generic;
-using _2_Scripts.Model;
 using _2_Scripts.Player;
+using _2_Scripts.Player.model;
 
 namespace _2_Scripts.Global.SaveSystem.Player
 {
     public class PlayerAbilitiesAndStats
     {
         #region ABILITIES
-        public Dictionary<AbilityName, bool> abilities = new();
+        public Dictionary<UnlockableName, bool> abilities = new();
         #endregion
 
         #region BASE_STATS
@@ -23,14 +23,14 @@ namespace _2_Scripts.Global.SaveSystem.Player
         public int Coins { get; set; }
         #endregion
 
-        public void UnlockAbility(AbilityName abilityName)
+        public void UnlockAbility(UnlockableName unlockableName)
         {
-            abilities.Add(abilityName, true);
+            abilities.Add(unlockableName, true);
         }
 
-        public bool GetAbilityFlag(AbilityName abilityName)
+        public bool GetAbilityFlag(UnlockableName unlockableName)
         {
-            return abilities.GetValueOrDefault(abilityName, false);
+            return abilities.GetValueOrDefault(unlockableName, false);
         }
     }
 }

@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3785cf468724ba74eb06e4b1fea3a30d, type: 3}
+  m_Name: spellbook
+  m_EditorClassIdentifier: 
+  direction: {x: 1, y: 1, z: 1}
+  originPoint: {x: 0, y: 0, z: 0}
+  sparkboltBeam: {fileID: 8906160670066044836, guid: 0cf96c98fe194b343ad0adb4f98dc02f, type: 3}
+  shieldBuff: {fileID: 6530600727439198869, guid: e42dd9e1424cdf548b72c52b729ee5e7, type: 3}
+  spaceDash: {fileID: 8173458227490978233, guid: 1eda7f1c8aa5e7a45b81b703e069d78f, type: 3}
+  blast: {fileID: 7662153598644583126, guid: a1d7cdea218575b4994dbb12dabb5f50, type: 3}

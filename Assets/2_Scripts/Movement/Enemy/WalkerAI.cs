@@ -1,11 +1,13 @@
+using _2_Scripts.Movement.Shared.CollisionCheck;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace _2_Scripts.Movement.Enemy
 {
     public class WalkerAI : MonoBehaviour
     {
-        [SerializeField]
-        private FlatGroundChecker flatGroundChecker;
+        [FormerlySerializedAs("flatGroundChecker")] [SerializeField]
+        private GroundChecker groundChecker;
 
         [SerializeField]
         private WallChecker wallChecker;
@@ -53,11 +55,11 @@ namespace _2_Scripts.Movement.Enemy
         void FixedUpdate()
         {
             wallChecker.CalculateRays(facingLeft);
-            flatGroundChecker.CalculateRays();
-            isOnSlope = flatGroundChecker.FrontSlopeAngle(facingLeft) != 0;
-            if (flatGroundChecker.IsGrounded() && !encounteredNoGroundOrAWall)
+            groundChecker.CalculateRays();
+            isOnSlope = groundChecker.FrontSlopeAngle(facingLeft) != 0;
+            if (groundChecker.IsGrounded() && !encounteredNoGroundOrAWall)
             {
-                encounteredNoGroundOrAWall = wallChecker.IsAgainstUnwalkableSurface() || !flatGroundChecker.IsGroundAhead(facingLeft);
+                encounteredNoGroundOrAWall = wallChecker.IsAgainstUnwalkableSurface() || !groundChecker.IsGroundAhead(facingLeft);
                 if (!isOnSlope && encounteredNoGroundOrAWall)
                 {
                     Flip();
@@ -93,8 +95,8 @@ namespace _2_Scripts.Movement.Enemy
             else if (isOnSlope)
             {
                 velocityVector.Set(
-                    -moveSpeed * flatGroundChecker.slopeNormalPerpendicular.x * move,
-                    -moveSpeed * flatGroundChecker.slopeNormalPerpendicular.y * move);
+                    -moveSpeed * groundChecker.slopeNormalPerpendicular.x * move,
+                    -moveSpeed * groundChecker.slopeNormalPerpendicular.y * move);
             }
 
             if (isOnSlope && move == 0f)

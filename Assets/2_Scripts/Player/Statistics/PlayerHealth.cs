@@ -1,30 +1,37 @@
+using System;
 using System.Collections;
-using _2___Scripts.UI;
-using _2_Scripts.Enemies.Attacks;
 using _2_Scripts.Global;
+using _2_Scripts.Global.Health.EnemyAttack;
 using _2_Scripts.Player.Controllers;
+using _2_Scripts.UI.Elements.HUD;
 using UnityEngine;
 
 namespace _2_Scripts.Player.Statistics
 {
     public class PlayerHealth : MonoBehaviour
     {
-        private Animator animator;
+        [SerializeField] private ParticleSystem damageParticles;
         private int maxHealth;
         private int currentHealth;
+        private int shieldHealth;
         private PlayerMovementController playerMovementController;
+        private float timescaleTimer = 0f;
+        private bool hasIFrames = false;
 
-        public HealthBar healthBar;
+        private ParticleSystem damageParticlesInstance;
+
+        public event Action Damaged;
+
+        [SerializeField] private HealthBar healthBar;
 
         void Start()
         {
             Initialize();
-            BaseAttack.Attack += OnBasicAttackHit;
-            animator = GetComponentInChildren<Animator>();
+            BaseAttack.PlayerHit += OnBasicPlayerHitHit;
             playerMovementController = GetComponent<PlayerMovementController>();
         }
 
-        private void OnBasicAttackHit(BaseAttack obj)
+        private void OnBasicPlayerHitHit(BaseAttack obj)
         {
             TakeDamage(obj.Params);
         }
@@ -34,29 +41,59 @@ namespace _2_Scripts.Player.Statistics
             maxHealth = GameDataManager.Instance.currentGameData.MaxHealth;
             currentHealth = maxHealth;
             healthBar.Initialize();
-            healthBar.SetMaxHealth(maxHealth);
-            healthBar.SetCurrentHealth(currentHealth);
+            healthBar.SetMax(maxHealth);
+            healthBar.SetCurrent(currentHealth);
         }
         public void Restart()
         {
             Initialize();
         }
 
-        private void TakeDamage(Hurt hurt)
+        private void TakeDamage(DamageParameters damageParameters)
         {
-
-            playerMovementController.Knockback(hurt.KnockbackStrength);
-            if (hurt.IFramesGiven >= 0f)
+            Damaged?.Invoke();
+            SlowDownTime();
+            damageParticlesInstance = Instantiate(damageParticles, transform.position, Quaternion.identity);
+            playerMovementController.HurtKnockback(damageParameters.KnockbackStrength, damageParameters.DamageSourcePosition);
+            if (damageParameters.IFramesGiven >= 0f)
             {
-                StartCoroutine(ApplyIFrames(hurt.IFramesGiven));
+                StartCoroutine(IFramesHurt(damageParameters.IFramesGiven));
             }
-            currentHealth -= hurt.DamageDealt;
+            if (shieldHealth > 0)
+            {
+                shieldHealth -= damageParameters.DamageDealt;
+                if (shieldHealth < 0) shieldHealth = 0;
+                healthBar.SetCurrentShield(shieldHealth);
+                //TODO shield damage is always light knockback. For now types of knockback animation are unhandled.
+                //TODO change particles depending on whether we had shield or not?
+                return;
+            }
+            currentHealth -= damageParameters.DamageDealt;
             if (currentHealth <= 0)
             {
                 currentHealth = 0;
-                // TODO play death animation here. Then load game.
+                // TODO play death animation here. Then load last savepoint.
             }
-            healthBar.SetCurrentHealth(currentHealth);
+            healthBar.SetCurrent(currentHealth);
+        }
+
+        private void SlowDownTime()
+        {
+            Time.timeScale = 0;
+            StartCoroutine(RestoreTimeFlowOverTime());
+        }
+
+        private IEnumerator RestoreTimeFlowOverTime()
+        {
+            yield return new WaitForSecondsRealtime(0.1f);
+            timescaleTimer = 2f;
+            while (Time.timeScale < 1f)
+            {
+                timescaleTimer += Time.fixedDeltaTime;
+                Time.timeScale = Mathf.MoveTowards(Time.timeScale, 1, timescaleTimer * 0.01f);
+                
+                yield return null;
+            }
         }
 
         public void IncreaseHealth(int amount)
@@ -65,7 +102,7 @@ namespace _2_Scripts.Player.Statistics
             currentHealth = maxHealth;
             if (maxHealth < 1) // wtf is this
                 maxHealth = 1;
-            healthBar.SetMaxHealth(maxHealth);
+            healthBar.SetMax(maxHealth);
             //TODO play increase max health animation here. Both on health bar and do an overlay of sorts maybe?
         }
 
@@ -76,17 +113,37 @@ namespace _2_Scripts.Player.Statistics
             {
                 currentHealth = maxHealth;
             }
-            healthBar.SetCurrentHealth(currentHealth);
-            //TODO play heal animation on the health bar here.
+            healthBar.SetCurrent(currentHealth);
         }
 
-        private IEnumerator ApplyIFrames(float iFrame)
+        public void AddShield(int amount)
+        {
+            shieldHealth = amount;
+            healthBar.SetCurrentShield(amount);
+        }
+
+        public bool HasIFrames()
+        {
+            return hasIFrames;
+        }
+
+        public void SetNoVisualsIFrames(float iFrame)
+        {
+            StartCoroutine(IFrames(iFrame));
+        }
+
+        private IEnumerator IFramesHurt(float iFrame)
+        {
+            hasIFrames = true;
+            yield return IFrames(iFrame);
+            hasIFrames = false;
+        }
+
+        private IEnumerator IFrames(float iFrame)
         {
             gameObject.layer = (int)Layers.PlayerIFrame;
-            animator.SetBool("iFrame", true);
             yield return new WaitForSeconds(iFrame);
             gameObject.layer = (int)Layers.Player;
-            animator.SetBool("iFrame", false);
         }
     }
 }

@@ -16,7 +16,8 @@ public class CameraScript : MonoBehaviour
 
     [SerializeField] private Transform limitRight;
 
-    private float smooth = 5f;
+    private readonly float movementSharpnessX = 3f;
+    private readonly float movementSharpnessY = 4f;
 
     private float x = 0;
     private float y = 0;
@@ -37,8 +38,8 @@ public class CameraScript : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        cameraHeight = GetComponent<Camera>().orthographicSize;
-        cameraWidth = cameraHeight * ((float)Screen.width / Screen.height); //this is deranged but without casting it does not work.
+
+        LoadCameraBoundaries();
 
         DontDestroyOnLoad(gameObject);
     }
@@ -79,8 +80,8 @@ public class CameraScript : MonoBehaviour
                 x = Mathf.Min(x + cameraWidth, limitRight.position.x) - cameraWidth;
             }
             workingVector.Set(
-                Mathf.Lerp(transform.position.x, x, Time.deltaTime * smooth),
-                Mathf.Lerp(transform.position.y, y, Time.deltaTime * smooth),
+                Mathf.Lerp(transform.position.x, x, Time.deltaTime * movementSharpnessX),
+                Mathf.Lerp(transform.position.y, y, Time.deltaTime * movementSharpnessY),
                 -10);
         }
         transform.position = workingVector;
@@ -135,6 +136,17 @@ public class CameraScript : MonoBehaviour
     {
         followX = null;
         followY = null;
+    }
+
+    public void SetInstantSnap(bool snap)
+    {
+        instantSnap = snap;
+    }
+
+    public void LoadCameraBoundaries()
+    {
+        cameraHeight = GetComponent<Camera>().orthographicSize;
+        cameraWidth = cameraHeight * ((float)Screen.width / Screen.height); //this is deranged but without casting it does not work.
     }
 }
 

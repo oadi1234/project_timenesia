@@ -1,140 +1,110 @@
 using System.Collections;
 using System.Collections.Generic;
-using _2_Scripts.Model;
+using _2_Scripts.Global;
+using _2_Scripts.UI.Animation;
+using _2_Scripts.UI.Animation.Model;
 using UnityEngine;
 
-namespace _2___Scripts.UI
+namespace _2_Scripts.UI.Elements.HUD
 {
-    public class HealthBar : MonoBehaviour
+    public class HealthBar : AbstractBar<HealthType, HealthPointStateHandler>
     {
-        [SerializeField]
-        private GameObject healthPoint;
+        private int currentShield;
+        private int oldCurrentShield;
 
-        [SerializeField]
-        private float scale = 1f;
-
-        [SerializeField]
-        private RectTransform healthBar;
-
-        private int maxHealth = 0;
-        private int currentHealth = 0;
-        private int oldMaxHealth = 0;
-        private float positionX = 0f;
-        private float positionY = 0f;
-
-        private List<HealthType> healthType;
-        private List<GameObject> renderedHealth;
-
-        public void Initialize()
+        public override void Initialize()
         {
-            healthType = new();
-            renderedHealth = new();
+            MaxValue = GameDataManager.Instance.currentGameData.MaxHealth;
+            PointType = new List<HealthType>();
+            RenderedPoints = new List<GameObject>();
+            StateHandlers = new List<HealthPointStateHandler>();
+            OffsetCalculation = CalculateOffset;
+            oldCurrentShield = 0;
+            currentShield = 0;
         }
 
-        public void SetCurrentHealth(int health)
+        public override void SetCurrent(int health)
         {
-            if (health >= maxHealth)
+            if (health >= MaxValue)
             {
-                for (int i = currentHealth; i < maxHealth; i++)
+                for (int i = currentValue; i < MaxValue; i++)
                 {
-                    SetHealthAnimation(HealthType.Health, i);
+                    SetType(HealthType.Health, i);
                 }
-                currentHealth = maxHealth;
+
+                currentValue = MaxValue;
+            }
+            else if (health > currentValue)
+            {
+                for (int i = currentValue; i < health; i++)
+                {
+                    SetType(HealthType.Health, i);
+                }
+
+                currentValue = health;
             }
             else
             {
-                for (int i = maxHealth -1; i >= health; i--)
+                for (int i = MaxValue - 1; i >= health; i--)
                 {
-                    SetHealthAnimation(HealthType.Empty, i);
+                    SetType(HealthType.Empty, i);
                 }
-                currentHealth = health;
+
+                currentValue = health;
             }
         }
-        public void SetHealthAnimation(HealthType type, int index)
-        {
-            Animator animator = renderedHealth[index].GetComponent<Animator>();
-            SetCurrentHealthToFalse(animator, index);
-            SwitchToBooleanBasedOnType(animator, true, type);
 
-            healthType[index] = type;
+        public void SetCurrentShield(int amount)
+        {
+            oldCurrentShield = currentShield;
+            currentShield = amount;
+            if (currentShield < oldCurrentShield) //shield was expended
+            {
+                for (int i = currentShield; i < oldCurrentShield; i++)
+                {
+                    //offset by max value, shield points should always appear after normal HP
+                    Destroy(RenderedPoints[i + MaxValue]); 
+                    StateHandlers.RemoveAt(i + MaxValue);
+                    RenderedPoints.RemoveAt(i + MaxValue);
+                    PointType.RemoveAt(i + MaxValue);
+                }
+            }
+            else if (currentShield > oldCurrentShield) //shield was generated
+            {
+                for (int i = oldCurrentShield; i < currentShield; i++)
+                {
+                    GenerateNewPoint(i+MaxValue);
+                    SetType(HealthType.Shield, i+MaxValue);
+                }
+            }
         }
 
         public IEnumerator FillSequentially(float delay)
         {
-            for (int i = 0; i < maxHealth; i++)
+            for (int i = 0; i < MaxValue; i++)
             {
                 yield return new WaitForSeconds(delay);
-                SetHealthAnimation(HealthType.Health, i);
+                SetType(HealthType.Health, i);
             }
         }
 
-        private void SwitchToBooleanBasedOnType(Animator animator, bool boolean, HealthType type)
+        public override void SetMax(int newMaxHealth)
         {
-            switch (type)
-            {
-                case HealthType.Empty:
-                    animator.SetBool("empty", boolean);
-                    break;
-                case HealthType.Health:
-                    animator.SetBool("health", boolean);
-                    break;
-                case HealthType.Shield:
-                    animator.SetBool("shield", boolean);
-                    break;
-            }
+            base.SetMax(newMaxHealth);
+            SetCurrent(newMaxHealth);
         }
 
-        private void SetCurrentHealthToFalse(Animator animator, int index)
+        private Vector3 CalculateOffset(int i)
         {
-            HealthType element = healthType[index];
-            SwitchToBooleanBasedOnType(animator, false, element);
-        }
-
-        public void SetMaxHealth(int newMaxHealth)
-        {
-            maxHealth = newMaxHealth;
-
-            if(oldMaxHealth < maxHealth)
-            {
-                for(int i = oldMaxHealth; i<maxHealth; i++)
-                {
-                    GenerateNewPoint(i);
-                }
-            }
-            // Debug only.
-            else if (oldMaxHealth > maxHealth)
-            {
-                for (int i = oldMaxHealth-1; i >= maxHealth; i--)
-                {
-                    Destroy(renderedHealth[i].gameObject);
-                    renderedHealth.RemoveAt(i);
-                }
-            }
-            oldMaxHealth = maxHealth;
-            SetCurrentHealth(newMaxHealth);
-        }
-
-        private void GenerateNewPoint(int i)
-        {
-            healthType.Add(HealthType.Empty);
-            GameObject imageObject = Instantiate(healthPoint);
-            imageObject.name = "HealthBead" + i;
-            RectTransform trans = imageObject.GetComponent<RectTransform>();
-            imageObject.transform.SetParent(healthBar);
-            trans.localScale = Vector2.one * scale;
-            trans.anchoredPosition = new Vector3(positionX + (i * 20 * scale), positionY, -10);
             //if (i % 2 != 0)
             //{
-            //    trans.anchoredPosition = new Vector3(positionX + (i * 20 * scale), positionY, -10);
+            //    return new Vector3(positionX + (i * 20 * scale), positionY, -10);
             //}
             //else
             //{
-            //    trans.anchoredPosition = new Vector3(positionX + (i * 20 * scale), positionY - (10 * scale), -10);
+            //    return new Vector3(positionX + (i * 20 * scale), positionY - (10 * scale), -10);
             //}
-            trans.sizeDelta = new Vector2(42, 42);
-            imageObject.transform.SetParent(healthBar);
-
-            renderedHealth.Add(imageObject);
+            return new Vector3(positionX + i * 20 * scale, positionY, -10);
         }
     }
 }

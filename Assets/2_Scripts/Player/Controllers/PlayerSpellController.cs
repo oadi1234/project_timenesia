@@ -1,67 +1,64 @@
 using System;
+using System.Collections.Generic;
+using _2_Scripts.Player.Statistics;
+using _2_Scripts.Spells;
+using _2_Scripts.UI.Animation.Model;
 using UnityEngine;
 
 namespace _2_Scripts.Player.Controllers
 {
     public class PlayerSpellController : MonoBehaviour
     {
-        private Spellbook spellbook;
-        private PlayerInputManager playerInputManager;
-        private PlayerMovementController playerMovementController;
+        [SerializeField] private PlayerEffort playerEffort;
+        [SerializeField] private SpellInventory spellInventory;
         private SpellType spellType;
+        private BaseSpell currentSpellcast;
+        private int spellCost;
         
-        public event Action Spellcasted;
-
-        #region Actions
-
-        public void CastSpell(int spellIndex, bool isCasting)
+        public event Action<SpellType> Spellcasted;
+        
+        private void Awake()
         {
-            // TODO change switch-case to dictionary<index, spelltype> lookup
+            playerEffort.SpellCast += CastSpell;
+        }
+
+        public void InvokeSpell()
+        {
+            currentSpellcast.CastHandler();
+        }
+
+        private void CastSpell(List<EffortType> effortCombination)
+        {
+            spellCost = effortCombination.Count;
+            if (playerEffort.CanUseEffort(spellCost))
+            {
+                currentSpellcast = spellInventory.TryGetSpellFromInventory(effortCombination);
+                spellType = currentSpellcast.SpellType;
+                Spellcasted?.Invoke(spellType);
+            }
+        }
+
+        public void CastHotkeySpell(List<EffortType> effortCombination, bool isCasting)
+        {
             if (isCasting)
             {
-                switch (spellIndex)
-                {
-                    case 0:
-                        spellType = SpellType.Bolt;
-                        Spellcasted?.Invoke();
-                        break;
-                    case 1:
-                        spellType = SpellType.Aoe;
-                        Spellcasted?.Invoke();
-                        break;
-                    case 2:
-                        spellType = SpellType.Heavy;
-                        Spellcasted?.Invoke();
-                        break;
-                    default:
-                        spellType = SpellType.None;
-                        break;
-                }
+                CastSpell(effortCombination);
             }
         }
-
-        public void Test(int spellIndex)
-        {
-            switch (spellIndex)
-            {
-                // TODO I know this is testing stuff, but now PMC is a bit unreliable for facing direction check.
-                //  I think there are cases where movement controller thinks it looks left, while sprite does not.
-                //  alternatively use a similar logic like in AnimationHandler.cs:43
-                case 0:
-                    spellbook.CastFireBall(playerMovementController.IsFacingLeft() ? -1 : 1);
-                    break;
-                case 1:
-                    spellbook.CastEyeBall(playerMovementController.IsFacingLeft() ? -1 : 1);
-                    break;
-            }
-            playerInputManager.SetInputEnabled(true);
-        }
-
-        #endregion
         
         public SpellType GetSpellType()
         {
             return spellType;
+        }
+
+        public void ClearSpellType()
+        {
+            spellType = SpellType.None;
+        }
+
+        public void UseSpellCost()
+        {
+            playerEffort.UseEffort(spellCost);
         }
     }
 }

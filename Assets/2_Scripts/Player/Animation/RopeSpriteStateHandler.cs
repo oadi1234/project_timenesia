@@ -1,25 +1,34 @@
+using _2_Scripts.Global.Animation;
+using _2_Scripts.Global.Animation.Model;
 using _2_Scripts.Player.Animation.model;
 using _2_Scripts.Player.Controllers;
 using UnityEngine;
 
 namespace _2_Scripts.Player.Animation
 {
-    public class RopeSpriteStateHandler : MonoBehaviour, IStateHandler
+    public class RopeSpriteStateHandler : AbstractStateHandler
     {
         [SerializeField] private PlayerMovementController playerMovementController;
+        [SerializeField] private PlayerVerletRope playerVerletRope;
         [SerializeField] private HingeSpriteType hingeSpriteType;
         [SerializeField] private PlayerAnimationStateHandler playerAnimationStateHandler;
 
         private int hingeObjectState;
         private int bufferedState;
         private float currentStateDuration;
-        
+        private float lockMoveTimer = 0f;
 
-        void Update()
+
+        private void Update()
         {
             if (currentStateDuration > 0f) currentStateDuration -= Time.deltaTime;
 
             hingeObjectState = GetState();
+        }
+
+        private void FixedUpdate()
+        {
+            if (lockMoveTimer > 0f) lockMoveTimer -= Time.fixedDeltaTime;
         }
 
         private int GetState()
@@ -36,42 +45,40 @@ namespace _2_Scripts.Player.Animation
                 return hingeObjectState;
             }
             
-            if (playerMovementController.GetTotalVelocity() < 2f)
+            if (ShouldStartOrKeepMoving())
             {
-                if (hingeObjectState == AC.HingeMove)
+                if (hingeObjectState == AC.RopeIdle)
                 {
-                    return PlayState(AC.HingeStopMove, AC.CloakStopMoveDuration);
+                    return PlayState(AC.RopeStartMove, AC.CloakStartMoveDuration);
                 }
-                return AC.HingeIdle;
+                return AC.RopeMove;
             }
-
-            if (playerMovementController.GetTotalVelocity() > 2f)
+            
+            if (ShouldStopOrKeepIdling())
             {
-                if (hingeObjectState == AC.HingeIdle)
+                if (hingeObjectState == AC.RopeMove)
                 {
-                    return PlayState(AC.HingeStartMove, AC.CloakStartMoveDuration);
+                    return PlayState(AC.RopeStopMove, AC.CloakStopMoveDuration);
                 }
-                return AC.HingeMove;
+                return AC.RopeIdle;
             }
 
             return AC.None;
         }
 
-        public int GetCurrentState()
+        public override int GetCurrentState()
         {
             return hingeObjectState;
         }
 
-        public bool LockXFlip()
+        public override int GetCurrentHurtState()
         {
-            //it might be necessary to add something here in the future, when dealing with hurt anims for example.
-            return false;
+            return playerAnimationStateHandler.GetCurrentHurtState();
         }
 
-        public bool ShouldRestartAnim()
+        public void SetMoveTimer(float time)
         {
-            // this one might actually be useless. Oh well.
-            return false;
+            lockMoveTimer = time;
         }
 
         private int PlayState(int state, float stateDuration)
@@ -84,11 +91,15 @@ namespace _2_Scripts.Player.Animation
         {
             return (int) hingeSpriteType;
         }
-        
-        private void SetFacingDirection()
+
+        private bool ShouldStartOrKeepMoving()
         {
-            transform.localScale = new Vector3(transform.localScale.x, playerMovementController.IsFacingLeft() ? 1 : -1,
-                transform.localScale.z);
+            return playerMovementController.GetTotalVelocity() > 2f || lockMoveTimer > 0;
+        }
+
+        private bool ShouldStopOrKeepIdling()
+        {
+            return playerMovementController.GetTotalVelocity() < 2f;
         }
 
         private enum HingeSpriteType

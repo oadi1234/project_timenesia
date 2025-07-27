@@ -1,33 +1,30 @@
+using _2_Scripts.Player;
+
 namespace _2_Scripts.Spells
 {
     public class BaseSpell
     {
-        public EffortType[] EffortElements;
-        public int CostMana => 0;//EffortElements.Length;
         public string Name { get; }
-        public int AnimationTimeMilisec { get; }
-        public int CastingTimeMilisec { get; }
+        public readonly SpellType SpellType;
     
-        public int? Duration { get; }
-        public string Description { get; }
+        public float Duration { get; }
+        public static string descriptionSuffix = ".description";
 
         public delegate void CastDelegate();
 
         public CastDelegate CastHandler;
 
-        public BaseSpell(string name, int cost, int animationTimeMilisec, int castingTimeMilisec, string description, CastDelegate castmethod)
+        public BaseSpell(string name, CastDelegate castMethod, SpellType spellType, float duration = 0f)
         {
-            CastHandler = castmethod;
+            CastHandler = castMethod;
+            Name = name;
+            Duration = duration;
+            SpellType = spellType;
         }
 
-            public override string ToString()
+        public override string ToString()
         {
-            return Name + ": " + Description;
-        }
-
-        public int GetFullTime()
-        {
-            return AnimationTimeMilisec + CastingTimeMilisec;
+            return Name;
         }
     }
 }

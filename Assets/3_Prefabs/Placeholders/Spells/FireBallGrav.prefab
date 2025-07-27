@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 24862557987798295}
   - component: {fileID: 24862557987798292}
   - component: {fileID: 4158548711736100521}
-  m_Layer: 9
+  m_Layer: 20
   m_Name: FireBallGrav
   m_TagString: Untagged
   m_Icon: {fileID: 0}

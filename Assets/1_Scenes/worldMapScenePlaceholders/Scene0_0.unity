@@ -336,12 +336,24 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1341268263626945112, guid: 20c33da1ccee91d469060b0180f1f96b, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2.58
+      objectReference: {fileID: 0}
+    - target: {fileID: 1341268263626945112, guid: 20c33da1ccee91d469060b0180f1f96b, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2.58
+      objectReference: {fileID: 0}
+    - target: {fileID: 1341268263626945112, guid: 20c33da1ccee91d469060b0180f1f96b, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1341268263626945112, guid: 20c33da1ccee91d469060b0180f1f96b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 13.729866
+      value: 11.93
       objectReference: {fileID: 0}
     - target: {fileID: 1341268263626945112, guid: 20c33da1ccee91d469060b0180f1f96b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -26.702845
+      value: -26.36
       objectReference: {fileID: 0}
     - target: {fileID: 1341268263626945112, guid: 20c33da1ccee91d469060b0180f1f96b, type: 3}
       propertyPath: m_LocalPosition.z
@@ -375,9 +387,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1341268263626945112, guid: 20c33da1ccee91d469060b0180f1f96b, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2969926974809496996, guid: 20c33da1ccee91d469060b0180f1f96b, type: 3}
       propertyPath: m_Name
       value: Cleaner (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5456040431369369331, guid: 20c33da1ccee91d469060b0180f1f96b, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6925118099956889340, guid: 20c33da1ccee91d469060b0180f1f96b, type: 3}
+      propertyPath: maxHealth
+      value: 150
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -832,7 +856,7 @@ GameObject:
   - component: {fileID: 727875060}
   - component: {fileID: 727875059}
   - component: {fileID: 727875058}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Tilemap0-0
   m_TagString: Walls
   m_Icon: {fileID: 0}

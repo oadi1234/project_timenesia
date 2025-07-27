@@ -9,7 +9,7 @@ namespace _2_Scripts.Global
 
         void OnEnable()
         {
-            AIDestinationSetter.target = PlayerPosition.GetPlayerPosition();
+            AIDestinationSetter.target = PlayerPosition.GetPlayerTransform();
         }
     }
 }

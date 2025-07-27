@@ -1,4 +1,4 @@
-using _2_Scripts.UI.Elements.InGame;
+using _2_Scripts.UI.Elements.Menu;
 using UnityEngine;
 
 namespace _2_Scripts.UI
@@ -20,7 +20,7 @@ namespace _2_Scripts.UI
                 menuManager.EscCommand();
             }
             else if (Input.GetButtonDown("Inventory")) {
-                menuManager.ToggleInventory();
+                menuManager.TogglePlayerMenu();
             }
             //else if (!_isMainMenuActive)
             //{

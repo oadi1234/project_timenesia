@@ -1,7 +1,6 @@
 using _2_Scripts.Global;
 using UnityEngine;
 
-//TODO it does not seem to be player-only. Change namespace.
 //Renamed from PlayerSpellController to ProjectileHandler to better show what it does.
 namespace _2_Scripts.Player.Controllers
 {

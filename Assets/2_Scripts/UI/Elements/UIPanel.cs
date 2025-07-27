@@ -3,37 +3,53 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+
+//TODO this is absolute mess. Might need a refactor.
 namespace _2_Scripts.UI.Elements
 {
     public class UIPanel : MonoBehaviour
     {
-        public List<Button> buttons;
-        private FadeController fadeController;
+        public List<(Button button, FadeController fadeController)> ButtonFadeControllerTuples;
+        protected FadeController FadeController;
         public bool isActiveAtStart = false;
         public bool controlButtonsFade = true;
         private bool isActive;
         public int buttonIndexOnOpen = 0;
 
-        void Start()
+        private void Start()
         {
-            buttons = new List<Button>(GetComponentsInChildren<Button>());
-            gameObject.SetActive(isActiveAtStart);
-            if(isActiveAtStart && buttonIndexOnOpen >= 0 && buttonIndexOnOpen < buttons.Count) 
+            LoadButtonList();
+            FadeController = GetComponent<FadeController>();
+        }
+        
+        protected virtual void Awake()
+        {
+            LoadButtonList();
+            FadeController = GetComponent<FadeController>();
+            SetGameObjectActive(isActiveAtStart);
+            if(isActiveAtStart && buttonIndexOnOpen >= 0 && buttonIndexOnOpen < ButtonFadeControllerTuples.Count) 
             {
-                buttons[buttonIndexOnOpen].Select();
+                ButtonFadeControllerTuples[buttonIndexOnOpen].button.Select();
             }
             isActive = isActiveAtStart;
-            fadeController = GetComponent<FadeController>();
         }
 
         public void LoadButtonList()
         {
-            buttons = new List<Button>(GetComponentsInChildren<Button>());
+            // TODO this is relatively buggy. I thought it only affects direct children but it apparently goes all the way down the hierarchy.
+            List<Button> butts = new List<Button>(GetComponentsInChildren<Button>());
+            ButtonFadeControllerTuples = new List<(Button, FadeController)>();
+            foreach (Button b in butts)
+            {
+                var fadeController = b.GetComponent<FadeController>();
+                if (fadeController)
+                    ButtonFadeControllerTuples.Add((b, fadeController));
+            }
         }
 
         public void RemoveNullButtons()
         {
-            buttons.RemoveAll(button => button == null);
+            ButtonFadeControllerTuples.RemoveAll(button => !button.button);
         }
 
         public void SetButtonToBeSelectedOnActive(int index)
@@ -56,10 +72,10 @@ namespace _2_Scripts.UI.Elements
 
         public void Open()
         {
-            gameObject.SetActive(true);
+            SetGameObjectActive(true);
             RemoveNullButtons();
             SetButtonsInteractable(true);
-            fadeController.StopAllCoroutines();
+            FadeController.StopAllCoroutines();
             StopAllCoroutines();
             StartCoroutine(Activate());
         }
@@ -68,7 +84,7 @@ namespace _2_Scripts.UI.Elements
         {
             RemoveNullButtons();
             SetButtonsInteractable(false);
-            fadeController.StopAllCoroutines();
+            FadeController.StopAllCoroutines();
             StopAllCoroutines();
             StartCoroutine(Deactivate());
         }
@@ -76,7 +92,7 @@ namespace _2_Scripts.UI.Elements
         public IEnumerator WaitForButtonFadeOutAndClose()
         {
             SetButtonsInteractable(false);
-            fadeController.StopAllCoroutines();
+            FadeController.StopAllCoroutines();
             StopAllCoroutines();
             yield return StartCoroutine(WaitForButtonFadeOutAndDeactivate());
         }
@@ -85,31 +101,31 @@ namespace _2_Scripts.UI.Elements
         {
             if (!controlButtonsFade)
             {
-                yield return StartCoroutine(fadeController.DoFadeIn());
+                yield return StartCoroutine(FadeController.DoFadeIn());
             }
             else
             {
-                StartCoroutine(fadeController.DoFadeIn());
+                StartCoroutine(FadeController.DoFadeIn());
                 yield return StartCoroutine(FadeInButtons());
             }
-            if (buttonIndexOnOpen >= 0 && buttons.Count > buttonIndexOnOpen)
+            if (buttonIndexOnOpen >= 0 && ButtonFadeControllerTuples.Count > buttonIndexOnOpen+1)
             {
-                buttons[buttonIndexOnOpen].Select();
+                ButtonFadeControllerTuples[buttonIndexOnOpen].button.Select();
             }
         }
 
         private IEnumerator Deactivate()
         {
-            if(buttons.Count == 0 || !controlButtonsFade)
+            if(ButtonFadeControllerTuples.Count == 0 || !controlButtonsFade)
             {
-                yield return StartCoroutine(fadeController.DoFadeOut());
+                yield return StartCoroutine(FadeController.DoFadeOut());
             }
             else
             {
-                StartCoroutine(fadeController.DoFadeOut());
+                StartCoroutine(FadeController.DoFadeOut());
                 yield return FadeOutButtons();
             }
-            gameObject.SetActive(false);
+            SetGameObjectActive(false);
         }
 
         private IEnumerator WaitForButtonFadeOutAndDeactivate()
@@ -117,51 +133,61 @@ namespace _2_Scripts.UI.Elements
             StartCoroutine(FadeOutButtons());
             yield return new WaitForSeconds(0.2f);
 
-            yield return StartCoroutine(fadeController.DoFadeOut());
-            gameObject.SetActive(false);
+            yield return StartCoroutine(FadeController.DoFadeOut());
+            SetGameObjectActive(false);
         }
 
         private IEnumerator FadeInButtons()
         {
-            for (int i = 0; i < buttons.Count; i++)
+            for (int i = 0; i < ButtonFadeControllerTuples.Count; i++)
             {
-                buttons[i].interactable = true;
-                StartCoroutine(EnableButton(buttons[i]));
+                ButtonFadeControllerTuples[i].button.interactable = true;
+                StartCoroutine(EnableButton(ButtonFadeControllerTuples[i]));
                 yield return new WaitForSeconds(0.1f);
             }
         }
 
         private IEnumerator FadeOutButtons()
         {
-            for (int i = buttons.Count -1; i >= 0; i--)
+            for (int i = ButtonFadeControllerTuples.Count -1; i >= 0; i--)
             {
-                buttons[i].interactable = false;
+                ButtonFadeControllerTuples[i].button.interactable = false;
 
-                yield return DisableButton(buttons[i]);
+                yield return DisableButton(ButtonFadeControllerTuples[i]);
             }
         }
 
-        private IEnumerator EnableButton(Button button)
+        private IEnumerator EnableButton((Button button, FadeController fadeContr) buttonFadeContrTuple)
         {
-            button.gameObject.SetActive(true);
+            SetButtonActive(buttonFadeContrTuple.button, true);
 
-            yield return button.GetComponent<FadeController>().DoFadeIn();
+            yield return buttonFadeContrTuple.fadeContr.DoFadeIn();
         }
 
-        private IEnumerator DisableButton(Button button)
+        private IEnumerator DisableButton((Button button, FadeController fadeContr) buttonFadeContrTuple)
         {
 
-            yield return button.GetComponent<FadeController>().DoFadeOut();
+            yield return buttonFadeContrTuple.fadeContr.DoFadeOut();
 
-            button.gameObject.SetActive(false);
+            SetButtonActive(buttonFadeContrTuple.button, false);
         }
 
         private void SetButtonsInteractable(bool value)
         {
-            foreach (Button button in buttons)
+            foreach ((Button button, FadeController) buttonFadeContrTuple in ButtonFadeControllerTuples)
             {
-                button.interactable = value;
+                buttonFadeContrTuple.button.interactable = value;
             }
+        }
+
+        protected virtual void SetGameObjectActive(bool value)
+        {
+            gameObject.SetActive(value);
+        }
+
+        protected virtual void SetButtonActive(Button button, bool value)
+        {
+            button.gameObject.SetActive(value);
         }
     }
 }

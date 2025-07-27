@@ -15,20 +15,18 @@ MonoBehaviour:
   coyoteTime: 0.1
   knockbackTime: 0.5
   jumpGroundCheckCooldown: 0.01
-  minJumpTimeBeforeWallSlidingEnabled: 0.15
-  groundedCheckRay: 0.1
-  ceilingCheckRadius: 0.1
-  wallCheckRay: 0.2
+  minJumpTimeBeforeWallSlidingEnabled: 0.1
   maxJumpTime: 0.2
-  jumpVerticalSpeed: 25
+  jumpVerticalSpeed: 19
   dashSpeed: 25
   doubleJumpPersistenceModifier: 1
-  postWallJumpSpeedModifier: 1.1
+  postWallJumpSpeedModifier: 1.2
   wallJumpPersistenceModifier: 0.5
   moveSpeed: 10
   dashCooldown: 0.6
-  maxHorizontalSpeed: 25
   maxVerticalSpeed: 19
-  initialJumpForce: 15
-  doubleJumpForce: 3
+  initialJumpForce: 25
   wallSlideSpeed: -4.5
+  attackObstacleKnockback: 28
+  attackWallKnockback: 10
+  staffLungeMagnitude: 36

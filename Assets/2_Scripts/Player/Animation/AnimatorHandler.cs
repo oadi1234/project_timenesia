@@ -1,3 +1,4 @@
+using _2_Scripts.Global.Animation.Model;
 using _2_Scripts.Player.Animation.model;
 using _2_Scripts.Player.Controllers;
 using UnityEngine;
@@ -7,7 +8,7 @@ namespace _2_Scripts.Player.Animation
 {
     public class AnimatorHandler : MonoBehaviour
     {
-        [SerializeField, OfType(typeof(IStateHandler))] private Object _stateHandler;
+        [SerializeField, OfType(typeof(IStateHandler))] private Object stateHandler;
         [SerializeField] private PlayerMovementController playerMovementController;
         [SerializeField] private bool shouldHandleRotation = true;
         private SpriteRenderer spriteRenderer;
@@ -15,45 +16,55 @@ namespace _2_Scripts.Player.Animation
         private Animator animator;
         private bool facingLeft;
         private int lastState;
+        private bool containsMoreLayers;
 
-        public IStateHandler stateHandler
+        public IStateHandler StateHandler
         {
-            get => _stateHandler as IStateHandler;
-            set => _stateHandler = value as Object;
+            get => stateHandler as IStateHandler;
+            set => stateHandler = value as Object;
         }
 
         void Awake()
         {
             animator = GetComponent<Animator>();
             spriteRenderer = GetComponent<SpriteRenderer>();
-            playerMovementController.Flipped += (facingLeftParam) => { this.facingLeft = facingLeftParam; };
-        }
+            if (playerMovementController)
+            {
+                playerMovementController.Flipped += (facingLeftParam) => { facingLeft = facingLeftParam; };
+            }
 
-        // Update is called once per frame
+            containsMoreLayers = animator.layerCount > 1;
+        }
+        
         void Update()
         {
             if (shouldHandleRotation)
                 SetFacingDirection();
-            if (animator.HasState(0, stateHandler.GetCurrentState()))
-                animator.CrossFade(stateHandler.GetCurrentState(), 0, 0);
-            else animator.CrossFade(AC.None, 0, 0);
-            if (stateHandler.ShouldRestartAnim())
-                animator.Play(stateHandler.GetCurrentState(), 0, 0);
             
-            lastState = stateHandler.GetCurrentState();
+            if (animator.HasState(0, StateHandler.GetCurrentState()))
+                animator.CrossFade(StateHandler.GetCurrentState(), 0, 0);
+            else
+                animator.CrossFade(AC.None, 0, 0);
+            
+
+            if (containsMoreLayers && animator.HasState(1, StateHandler.GetCurrentHurtState()))
+                animator.CrossFade(StateHandler.GetCurrentHurtState(), 0, 1);
+            
+            if (StateHandler.ShouldRestartAnim())
+                animator.Play(StateHandler.GetCurrentState(), 0, 0);
+            
+            lastState = StateHandler.GetCurrentState();
         }
         
-        //TODO expose actual facing direction so it can be used by other things. It might require a bit of architectural
-        // magic, as animationHandler is relatively low in hierarchy compared to stuff like SpellControllers.
         private void SetFacingDirection()
         {
-            if (!stateHandler.LockXFlip())
+            if (!StateHandler.LockXFlip())
             {
                 spriteRenderer.flipX = !facingLeft;
             }
 
             // force flip on state change if character was actually flipped
-            if (lastState != stateHandler.GetCurrentState() && spriteRenderer.flipX == facingLeft)
+            if (lastState != StateHandler.GetCurrentState() && spriteRenderer.flipX == facingLeft)
             {
                 spriteRenderer.flipX = !facingLeft;
             }

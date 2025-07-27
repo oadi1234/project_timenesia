@@ -1,8 +1,9 @@
 using System;
 using System.Collections;
 using _2_Scripts.Global;
-using _2_Scripts.Model;
+using _2_Scripts.Movement.Shared.CollisionCheck;
 using _2_Scripts.Player.Animation.model;
+using _2_Scripts.Player.model;
 using _2_Scripts.Player.ScriptableObjects;
 using _2_Scripts.Player.Statistics;
 using UnityEngine;
@@ -13,17 +14,14 @@ namespace _2_Scripts.Player.Controllers
     {
         #region variables
 
-        [SerializeField] private Transform _wallCheckMarker;
-
-        [SerializeField] private PhysicsMaterial2D _noFriction;
-
-        [SerializeField] private PhysicsMaterial2D _allFriction;
+        [SerializeField] private Transform wallCheckMarker;
 
         private bool isDoubleJumping;
         private bool canDash; //only one dash midair.
 
         private bool facingLeft = false;
         private bool isGrounded;
+        private bool nonCoyoteIsGrounded;
         private bool isJumping;
         private bool isWallJumping = false;
         private bool isWallSliding;
@@ -32,25 +30,39 @@ namespace _2_Scripts.Player.Controllers
         private bool isDashing;
         private bool startedDashFromWallSlide = false;
         private bool airHangOngoing = false;
+        private bool isLightHurtKnockedback = false;
+        private bool overrideFacingDirection = false;
+
+        private bool inputJump;
+        private bool inputJumpHeld;
+        private bool inputMovementSkillEnabled;
+        private bool isOnVerticalLunge = false;
 
         private float currentCoyoteTime;
         private float timeAfterJumpPressed; //cooldown for setting variables after pressing jump.
-        private float flipCooldown;
-        private float tempValue; //temporary value to avoid constant reassignment or temp value creation on loop.
         private float currentDashCooldown;
         private float jumpTime = 0f;
-        private float brakeSpeedY = 0f;
-        private float brakeSpeedX = 0f;
         private float movementMagnitudeMultiplier = 1f;
-        private float groundAttackTimer;
-        private float lungeSpeed = 15f;
+        private float attackTimer;
+        private float preLungeTimer;
+        private float lungeSpeedX = 1f;
+        private float lungeSpeedY = 0f;
         private float normalGravity;
 
+        private float inputX;
+        private float moveX;
+        private float moveY;
+
+        private float attackKnockbackX;
+        private float attackKnockbackY;
+
+        private float hurtKnockbackX;
+        private float hurtKnockbackY;
+
         private Rigidbody2D rigidBody2D;
-        private Vector2 velocityVector;
-        private Vector2 brakeVector = Vector2.zero;
+        private Vector2 velocityVector = Vector2.zero;
         private Vector2 startingPosition;
-        private FlatGroundChecker flatGroundChecker;
+        private GroundChecker groundChecker;
 
         private WallChecker wallChecker;
 
@@ -72,18 +84,18 @@ namespace _2_Scripts.Player.Controllers
         public event Action<bool> Flipped;
         public event Action DashEnd;
 
+        public event Action WallJumped;
+
         #endregion
 
         private void Awake()
         {
             rigidBody2D = GetComponent<Rigidbody2D>();
             wallChecker = GetComponent<WallChecker>();
-            flatGroundChecker = GetComponent<FlatGroundChecker>();
+            groundChecker = GetComponent<GroundChecker>();
             //animator = GetComponentInChildren<Animator>(); //TODO remove. unfeasible as there might be many children with animators
             playerInputManager = GetComponent<PlayerInputManager>();
             effort = GetComponent<PlayerEffort>();
-            velocityVector = new Vector2();
-            tempValue = PlayerConstants.Instance.moveSpeed;
             startingPosition = rigidBody2D.position;
             currentCoyoteTime = PlayerConstants.Instance.coyoteTime;
             normalGravity = rigidBody2D.gravityScale;
@@ -93,40 +105,26 @@ namespace _2_Scripts.Player.Controllers
 
         private void FixedUpdate()
         {
-            IsGrounded();
+            CalculateIsGrounded();
             IsTouchingWall();
             IsOnSlope();
             CheckIfShouldStopDash();
             KeepVelocityYAtZeroWhenDashing();
-            Brake();
-            DoAttackLunge();
+            Lunge();
 
             if (timeAfterJumpPressed > 0)
             {
                 timeAfterJumpPressed -= Time.fixedDeltaTime;
             }
 
-            if (flipCooldown > 0)
-            {
-                flipCooldown -= Time.fixedDeltaTime;
-            }
-
             if (currentDashCooldown > 0)
             {
                 currentDashCooldown -= Time.fixedDeltaTime;
             }
-        }
 
-        private void Initialize()
-        {
-            ResetPosition(startingPosition);
-        }
+            isOnVerticalLunge = !Mathf.Approximately(lungeSpeedY, 0);
 
-        private void Restart() // TODO remove from here - movement controller should not be doing a full restart. Might require something like a PlayerEventController.
-        {
-            //playerHealth.Restart();
-            // StartCoroutine(BlockInputForSeconds(2f));
-            Initialize();
+            AssignVelocityVector();
         }
 
         #region Getters
@@ -158,247 +156,109 @@ namespace _2_Scripts.Player.Controllers
             return rigidBody2D.velocity.magnitude;
         }
 
-        public bool GetIsGrounded()
+        public bool IsGrounded()
         {
             return isGrounded;
         }
 
-        public bool GetIsWallSliding()
+        public bool IsWallSliding()
         {
             return isWallSliding;
         }
 
-        private bool GetAbilityFlag(AbilityName abilityName)
+        public bool IsKnockedBackLight()
         {
-            return GameDataManager.Instance.IsAbilityUnlocked(abilityName);
+            return isLightHurtKnockedback;
+        }
+
+        private bool GetAbilityFlag(UnlockableName unlockableName)
+        {
+            return GameDataManager.Instance.IsAbilityUnlocked(unlockableName);
         }
 
         #endregion
 
-        #region Movement
+        #region Input
 
         public void Move(float move)
         {
             move *= movementMagnitudeMultiplier;
-            if (!isJumping && isGrounded && !isOnSlope)
-            {
-                velocityVector.Set(
-                    move * PlayerConstants.Instance.moveSpeed, rigidBody2D.velocity.y);
-            }
-            else if (!isJumping && isOnSlope && !isWallTouching)
-            {
-                velocityVector.Set(
-                    move * PlayerConstants.Instance.moveSpeed,
-                    flatGroundChecker.slopeNormalPerpendicular.y * -move * PlayerConstants.Instance.moveSpeed);
-            }
-            else if (!isJumping && isOnSlope && isWallTouching)
-            {
-                velocityVector.Set(
-                    move * PlayerConstants.Instance.moveSpeed, 0f);
-            }
-
-            else if (!isGrounded)
-            {
-                if (isWallSliding && !airHangOngoing)
-                    velocityVector.Set(move * PlayerConstants.Instance.moveSpeed,
-                        PlayerConstants.Instance.wallSlideSpeed);
-                else if (isWallJumping && facingLeft)
-                {
-                    velocityVector.Set(Mathf.Min(move * PlayerConstants.Instance.moveSpeed, rigidBody2D.velocity.x),
-                        rigidBody2D.velocity.y);
-                }
-                else if (isWallJumping && !facingLeft)
-                {
-                    velocityVector.Set(Mathf.Max(move * PlayerConstants.Instance.moveSpeed, rigidBody2D.velocity.x),
-                        rigidBody2D.velocity.y);
-                }
-                else
-                    velocityVector.Set(move * PlayerConstants.Instance.moveSpeed, rigidBody2D.velocity.y);
-            }
-
-            rigidBody2D.velocity = velocityVector;
-            
-            DoFlip(move);
-
-            HandleSlipperySlopes(move);
-        }
-
-        private void Brake()
-        {
-            //TODO I may have typed it weird in the past. Use Mathf.MoveTowards(current speed value, target value, maxdelta) instead of adding negative force to rigidbody.
-            // I mean, the solution below works but it is a bit weird. Hard to adjust it. At the same time it allows for momentary burst of speed so maybe it is fine...
-            // Might need to think about it.
-            brakeSpeedX = 0;
-            brakeSpeedY = 0;
-            // Speed when falling/ascending. Most likely not ideal but it works.
-            if (Math.Abs(rigidBody2D.velocity.y) > PlayerConstants.Instance.maxVerticalSpeed)
-            {
-                brakeSpeedY = Math.Abs(rigidBody2D.velocity.y) - PlayerConstants.Instance.maxVerticalSpeed +
-                              brakeVector.y / 16;
-            }
-
-            if (Math.Abs(rigidBody2D.velocity.x) > PlayerConstants.Instance.maxHorizontalSpeed)
-            {
-                brakeSpeedX = Math.Abs(rigidBody2D.velocity.x) - PlayerConstants.Instance.maxHorizontalSpeed +
-                              brakeVector.x / 16;
-            }
-
-            brakeVector.Set(rigidBody2D.velocity.x * brakeSpeedX / 2, rigidBody2D.velocity.y * brakeSpeedY / 2);
-            rigidBody2D.AddForce(-brakeVector);
+            inputX = move;
         }
 
         public void Jump(bool jump, bool keyHeld, bool moveSkillInputEnabled)
         {
-            //TODO: It would be good to make it so that the jump buffers slightly or even that when jump is held the character keeps jumping.
-            // Double jump takes precedence over the buffer.
-            if (jump && !isGrounded && isWallTouching && GetAbilityFlag(AbilityName.WallJump) && moveSkillInputEnabled)
-            {
-                WallJump();
-            }
-            else if (jump && isGrounded)
-            {
-                GroundJump();
-            }
-            else if (jump && !isDoubleJumping && GetAbilityFlag(AbilityName.DoubleJump) && moveSkillInputEnabled)
-            {
-                DoubleJump();
-            }
-            else if ((isJumping || isDoubleJumping) && keyHeld && rigidBody2D.velocity.y > 0 &&
-                     jumpTime < PlayerConstants.Instance.maxJumpTime)
-            {
-                KeyHoldAscendWhileJumping();
-            }
-            else if ((isJumping || isDoubleJumping) && (!keyHeld || jumpTime >= PlayerConstants.Instance.maxJumpTime) &&
-                     rigidBody2D.velocity.y > 0 && !isDashing)
-            {
-                LoseVelocityAfterJumping();
-            }
+            inputJump = jump;
+            inputJumpHeld = keyHeld;
+            inputMovementSkillEnabled = moveSkillInputEnabled;
         }
 
-        public void Dash(bool dash, float move)
+        public void Dash(bool dash)
         {
-            if (currentDashCooldown <= 0 && canDash && dash && GetAbilityFlag(AbilityName.Dash) &&
-                UseEffort(1))
+            if (currentDashCooldown <= 0 && canDash && dash && GetAbilityFlag(UnlockableName.Dash))
             {
                 Dashed?.Invoke();
-                SetVariablesWhenDashing(move);
+                SetVariablesWhenDashing();
                 playerInputManager.BlockInput(AC.DashDuration);
                 dashVariableReverserCoroutine = ReverseDashVariablesAfterSeconds(AC.DashDuration);
                 StartCoroutine(dashVariableReverserCoroutine);
             }
         }
 
-        private void GroundJump()
+        public void OverrideFacingDirection(bool value)
         {
-            timeAfterJumpPressed =
-                PlayerConstants.Instance
-                    .jumpGroundCheckCooldown; //a cooldown made to avoid setting values on being grounded a short while after jumping.
-            isJumping = true;
-            isGrounded = false;
-            if (!flatGroundChecker.IsGrounded()) //coyote time case, otherwise player just awkwardly floats for a second
-            {
-                MidAirJumpVerticalSpeedReset();
-            }
-
-            rigidBody2D.AddForce(transform.up * PlayerConstants.Instance.initialJumpForce, ForceMode2D.Impulse);
+            overrideFacingDirection = value;
         }
 
-        private void WallJump()
+        public void SetFacingDirection(bool value)
         {
-            SetVariablesWhenWallJumping();
-            rigidBody2D.AddForce(
-                (transform.up + (wallChecker.IsLeftTouching()
-                    ? transform.right * PlayerConstants.Instance.postWallJumpSpeedModifier
-                    : -transform.right * PlayerConstants.Instance.postWallJumpSpeedModifier)) *
-                PlayerConstants.Instance.initialJumpForce, ForceMode2D.Impulse);
-            CheckFlipWhenWallJump();
-            StartCoroutine(ReverseAfterWallJumpAfterSeconds(0.15f));
+            if (value!=facingLeft)
+                Flipped?.Invoke(value);
+            facingLeft = value;
         }
 
-        private void DoubleJump()
+        private void SetPosition(Vector3 position)
         {
-            isWallJumping =
-                false; //reset the flag so wall jumping penalty for KeyHoldAscendWhileJumping does not apply.
-            isDoubleJumping = true;
-            MidAirJumpVerticalSpeedReset();
-            jumpTime = 0;
-            rigidBody2D.AddForce(transform.up * PlayerConstants.Instance.initialJumpForce, ForceMode2D.Impulse);
-            DoubleJumped?.Invoke();
-        }
-
-        private void KeyHoldAscendWhileJumping()
-        {
-            jumpTime += Time.fixedDeltaTime +
-                        Time.fixedDeltaTime * Convert.ToInt32(isWallJumping) *
-                        PlayerConstants.Instance.wallJumpPersistenceModifier + Time.fixedDeltaTime *
-                        Convert.ToInt32(isDoubleJumping) * PlayerConstants.Instance.doubleJumpPersistenceModifier;
-            velocityVector.Set(rigidBody2D.velocity.x, PlayerConstants.Instance.jumpVerticalSpeed);
-            rigidBody2D.velocity = velocityVector;
-        }
-
-        private void LoseVelocityAfterJumping()
-        {
-            // smooth ascend to 0 once key is no longer held. Allows for finer control without jerky movement.
-            velocityVector.Set(rigidBody2D.velocity.x, rigidBody2D.velocity.y * 0.8f);
-            rigidBody2D.velocity = velocityVector;
-            jumpTime = PlayerConstants.Instance.maxJumpTime; //TODO tbh not sure why its here. Safe to delete?
-        }
-
-        private void MidAirJumpVerticalSpeedReset()
-        {
-            velocityVector.Set(rigidBody2D.velocity.x, 0);
-            rigidBody2D.velocity = velocityVector;
-        }
-
-        private void DoFlip(float move)
-        {
-            if (move > 0 && facingLeft)
-            {
-                Flip();
-            }
-            else if (move < 0 && !facingLeft)
-            {
-                Flip();
-            }
-        }
-
-        private void Flip()
-        {
-            if (flipCooldown <= 0)
-            {
-                facingLeft = !facingLeft;
-                Flipped?.Invoke(facingLeft);
-            }
-        }
-
-        private void ResetPosition(Vector3 position)
-        {
-            velocityVector = new Vector2();
+            velocityVector = Vector2.zero;
             gameObject.transform.position = position;
         }
 
-        public void Knockback(float knockbackStrength)
+        public void HurtKnockback(float knockbackStrength, Vector3 damageSourcePosition)
         {
-            //TODO: Change the script to work sort of like RigidBody.AddExplosionForce, so the knockback happens away from its source always
-            // https://stackoverflow.com/questions/34250868/unity-addexplosionforce-to-2d
-            playerInputManager.BlockInput(PlayerConstants.Instance.knockbackTime);
-            var sign = ((Convert.ToInt32(facingLeft) << 1) - 1);
-            velocityVector = Vector2.zero;
-            rigidBody2D.velocity = velocityVector;
-            rigidBody2D.AddForce(new Vector2(knockbackStrength * sign, knockbackStrength * 0.8f), ForceMode2D.Impulse);
-
-            // TODO slow time for a while here when hit
+            // playerInputManager.BlockInput(PlayerConstants.Instance.knockbackTime);
+            var normalize = new Vector2(
+                (transform.position.x - damageSourcePosition.x) * knockbackStrength * 4, 
+                (transform.position.y - damageSourcePosition.y) * knockbackStrength + 1f)
+                .normalized;
+            hurtKnockbackX = normalize.x * 35;
+            hurtKnockbackY = normalize.y * 35;
+            playerInputManager.BlockInput(AC.LightHurtDuration);
+            StartCoroutine(PerformLightHurtKnockback(AC.LightHurtDuration));
         }
 
-        public void AttackLunge(float speed)
+        public void AttackKnockback(float knockbackStrength, Vector2 direction)
         {
-            if (groundAttackTimer <= 0f)
+            direction *= knockbackStrength;
+            attackKnockbackX = direction.x * 0.4f;
+            attackKnockbackY = direction.y;
+        }
+
+        public void AttackLunge(float speedX, float timer, float speedY = 0f)
+        {
+            if (attackTimer <= 0f)
             {
-                lungeSpeed = speed;
-                groundAttackTimer = AC.StaffAttackStateLockDuration;
+                lungeSpeedX = speedX;
+                attackTimer = timer;
+                lungeSpeedY = speedY;
             }
         }
-        
+
+        public void ResetAttackLunge()
+        {
+            attackTimer = 0f;
+            lungeSpeedY = 0f;
+        }
+
         //Not really used right now, but might have some potential in the future?
         // I.e. "your attacks slow you down but deal 20% more damage" or something.
         public void AdjustInputMoveStrength(float seconds, float multiplier)
@@ -414,15 +274,25 @@ namespace _2_Scripts.Player.Controllers
                 StopCoroutine(airHangCoroutine);
                 StopCoroutine(inputStrengthCoroutine);
             }
+
             airHangCoroutine = AirHang(seconds, gravity);
             inputStrengthCoroutine = ReduceInputStrength(seconds, 0.1f);
             StartCoroutine(inputStrengthCoroutine);
             StartCoroutine(airHangCoroutine);
         }
 
-        #endregion Movement
+        #endregion
 
         #region Waiters
+
+        private IEnumerator PerformLightHurtKnockback(float seconds)
+        {
+            isLightHurtKnockedback = true;
+            yield return new WaitForSeconds(seconds);
+            isLightHurtKnockedback = false;
+            hurtKnockbackX = 0;
+            hurtKnockbackY = 0;
+        }
 
         private IEnumerator ReverseAfterWallJumpAfterSeconds(float seconds)
         {
@@ -446,8 +316,6 @@ namespace _2_Scripts.Player.Controllers
         private IEnumerator AirHang(float seconds, float gravity)
         {
             airHangOngoing = true;
-            velocityVector = Vector2.zero;
-            rigidBody2D.velocity = velocityVector;
             rigidBody2D.gravityScale = gravity;
             yield return new WaitForSecondsRealtime(seconds);
             rigidBody2D.gravityScale = normalGravity;
@@ -460,14 +328,15 @@ namespace _2_Scripts.Player.Controllers
 
         private void IsOnSlope()
         {
-            isOnSlope = flatGroundChecker.IsOnSlope();
+            isOnSlope = groundChecker.IsOnSlope();
         }
 
-        private void IsGrounded()
+        private void CalculateIsGrounded()
         {
-            flatGroundChecker.CalculateRays();
+            groundChecker.CalculateRays();
+            nonCoyoteIsGrounded = groundChecker.IsGrounded();
 
-            if (flatGroundChecker.IsGrounded())
+            if (nonCoyoteIsGrounded)
             {
                 SetVariablesWhenGrounded();
             }
@@ -520,16 +389,16 @@ namespace _2_Scripts.Player.Controllers
             }
         }
 
-        private void DoAttackLunge()
+        private void Lunge()
         {
-            if (groundAttackTimer > 0f)
+            if (attackTimer > 0f)
             {
-                rigidBody2D.velocity = new Vector2(0, 0);
-                var sign = ((Convert.ToInt32(!facingLeft) << 1) - 1);
-                rigidBody2D.AddForce(new Vector2(groundAttackTimer * lungeSpeed * sign, 0f),
-                    ForceMode2D.Impulse);
-                groundAttackTimer -= Time.fixedDeltaTime;
+                var sign = (Convert.ToInt32(!facingLeft) << 1) - 1;
+                Move(lungeSpeedX * sign * attackTimer * 2);
+                attackTimer -= Time.fixedDeltaTime;
             }
+            else
+                lungeSpeedY = 0;
         }
 
         private bool CanWallSlide()
@@ -538,7 +407,7 @@ namespace _2_Scripts.Player.Controllers
                    !isWallJumping &&
                    rigidBody2D.velocity.y <= 0 &&
                    (jumpTime <= 0f || jumpTime > PlayerConstants.Instance.minJumpTimeBeforeWallSlidingEnabled) &&
-                   GetAbilityFlag(AbilityName.WallJump);
+                   GetAbilityFlag(UnlockableName.WallJump);
         }
 
         private void CheckFlipWhenWallJump()
@@ -546,23 +415,20 @@ namespace _2_Scripts.Player.Controllers
             if ((facingLeft && wallChecker.IsLeftTouching()) || (!facingLeft && wallChecker.IsRightTouching()))
             {
                 Flip();
-                flipCooldown = 0.2f;
             }
         }
 
         #endregion Checkers
 
-        #region SETTING-VARIABLES
+        #region set_variables
 
-        private void HandleSlipperySlopes(float move)
+        private void HandleSlipperySlopes()
         {
-            if (isOnSlope && move == 0f)
-            {
-                rigidBody2D.sharedMaterial = _allFriction;
-            }
+            if (isOnSlope || airHangOngoing)
+                rigidBody2D.gravityScale = 0f;
             else
             {
-                rigidBody2D.sharedMaterial = _noFriction;
+                rigidBody2D.gravityScale = normalGravity;
             }
         }
 
@@ -579,6 +445,7 @@ namespace _2_Scripts.Player.Controllers
                 canDash = true;
                 jumpTime = 0f;
                 currentCoyoteTime = PlayerConstants.Instance.coyoteTime;
+                inputJump = inputJumpHeld;
             }
         }
 
@@ -590,9 +457,186 @@ namespace _2_Scripts.Player.Controllers
             canDash = true;
         }
 
+
+        private void SetVariablesWhenDashing()
+        {
+            currentDashCooldown = PlayerConstants.Instance.dashCooldown;
+            isDashing = true;
+            rigidBody2D.gravityScale = 0f;
+            attackTimer = 0f;
+            startedDashFromWallSlide = isWallSliding;
+            moveX = PlayerConstants.Instance.dashSpeed *
+                    ((Convert.ToInt32(inputX is < 0.01f and > -0.01f ? !facingLeft : (inputX > 0) == !isWallSliding) <<
+                      1) - 1);
+            moveY = 0f;
+            DoFlip(moveX);
+        }
+
+        private void KeepVelocityYAtZeroWhenDashing()
+        {
+            if (isDashing && !isOnSlope)
+            {
+                moveY = 0f;
+            }
+        }
+
+        private void EndDash()
+        {
+            isDashing = false;
+            rigidBody2D.gravityScale = normalGravity;
+            canDash = isGrounded || isWallTouching;
+            if (startedDashFromWallSlide)
+            {
+                isDoubleJumping = false;
+                startedDashFromWallSlide = false;
+            }
+
+            jumpTime = 0f; // set so you can double jump after a dash
+            DashEnd?.Invoke();
+        }
+
+        private void AssignVelocityVector()
+        {
+            if (!isDashing && !isLightHurtKnockedback)
+            {
+                if (!isWallJumping)
+                    HandleMovement();
+                if (!airHangOngoing)
+                    HandleJumping();
+            }
+            else if (isLightHurtKnockedback)
+            {
+                HandleHurtKnockback();
+            }
+
+            velocityVector.Set(
+                moveX, moveY);
+            rigidBody2D.velocity = velocityVector;
+            ResetAttackKnockback();
+        }
+
+        private void HandleHurtKnockback()
+        {
+            moveX = hurtKnockbackX = Mathf.MoveTowards(hurtKnockbackX, 0, PlayerConstants.Instance.moveSpeed * 0.2f);
+            moveY = hurtKnockbackY = Mathf.MoveTowards(hurtKnockbackY, -6f, PlayerConstants.Instance.moveSpeed * 0.2f);
+            DoFlip(-moveX);
+        }
+
+        private void HandleMovement()
+        {
+            if (attackKnockbackY > 0)
+                moveY = attackKnockbackY;
+            else if (isOnVerticalLunge)
+            {
+                moveY = lungeSpeedY*attackTimer*2;
+            }
+            else if (airHangOngoing)
+                moveY = Mathf.MoveTowards(moveY, -1f, PlayerConstants.Instance.maxVerticalSpeed * 0.1f);
+            else
+                moveY = rigidBody2D.velocity.y;
+
+            if (!Mathf.Approximately(inputX, 0))
+                moveX = Mathf.MoveTowards(moveX, inputX * PlayerConstants.Instance.moveSpeed,
+                    PlayerConstants.Instance.moveSpeed * (attackTimer > 0 ? 1 : 0.25f)) + attackKnockbackX;
+            else
+            {
+                moveX = Mathf.MoveTowards(moveX, 0, PlayerConstants.Instance.moveSpeed * 0.1f) + attackKnockbackX;
+            }
+
+            if (!isJumping && isGrounded && !isOnSlope)
+            {
+                moveY = !nonCoyoteIsGrounded && rigidBody2D.velocity.y > 0.001f && !isOnVerticalLunge ? -10 : moveY;
+            }
+            else if (!isJumping && isOnSlope && isGrounded && !isOnVerticalLunge)
+            {
+                bool movingTowardsWallOnSlope = (inputX > 0f && wallChecker.IsTouchingBottomOffset() &&
+                                                 wallChecker.IsRightTouching())
+                                                || (inputX < 0f && wallChecker.IsTouchingBottomOffset() &&
+                                                    wallChecker.IsLeftTouching());
+                moveX = movingTowardsWallOnSlope
+                    ? 0f
+                    : moveX;
+                moveY = movingTowardsWallOnSlope ? -1f : groundChecker.slopeNormalPerpendicular.y * -moveX;
+            }
+
+            else if (!isGrounded && isWallSliding && !airHangOngoing)
+            {
+                moveY = PlayerConstants.Instance.wallSlideSpeed;
+            }
+
+
+            DoFlip(inputX);
+
+
+            HandleSlipperySlopes();
+        }
+
+        private void HandleJumping()
+        {
+            if (inputJump && !isGrounded && isWallTouching && GetAbilityFlag(UnlockableName.WallJump) &&
+                inputMovementSkillEnabled)
+            {
+                WallJump();
+            }
+            else if (inputJump && isGrounded)
+            {
+                GroundJump();
+            }
+            else if (inputJump && !isDoubleJumping && GetAbilityFlag(UnlockableName.DoubleJump) &&
+                     inputMovementSkillEnabled)
+            {
+                DoubleJump();
+            }
+            else if ((isJumping || isDoubleJumping) && inputJumpHeld && rigidBody2D.velocity.y > 0 &&
+                     jumpTime < PlayerConstants.Instance.maxJumpTime && !airHangOngoing)
+            {
+                KeyHoldAscendWhileJumping();
+            }
+            else if ((isJumping || isDoubleJumping) &&
+                     (!inputJumpHeld || jumpTime >= PlayerConstants.Instance.maxJumpTime) &&
+                     rigidBody2D.velocity.y > 0 && !isDashing)
+            {
+                LoseVelocityAfterJumping();
+            }
+        }
+
+
+        private void KeyHoldAscendWhileJumping()
+        {
+            jumpTime += Time.fixedDeltaTime +
+                        Time.fixedDeltaTime * Convert.ToInt32(isWallJumping) *
+                        PlayerConstants.Instance.wallJumpPersistenceModifier + Time.fixedDeltaTime *
+                        Convert.ToInt32(isDoubleJumping) * PlayerConstants.Instance.doubleJumpPersistenceModifier;
+            moveY = PlayerConstants.Instance.jumpVerticalSpeed;
+        }
+
+        private void GroundJump()
+        {
+            currentCoyoteTime = 0f;
+            timeAfterJumpPressed =
+                PlayerConstants.Instance
+                    .jumpGroundCheckCooldown; //a cooldown made to avoid setting values on being grounded a short while after jumping.
+            isJumping = true;
+            isGrounded = false;
+
+            moveY = PlayerConstants.Instance.initialJumpForce;
+        }
+
+        private void WallJump()
+        {
+            WallJumped?.Invoke();
+            SetVariablesWhenWallJumping();
+            moveX = wallChecker.IsLeftTouching()
+                ? PlayerConstants.Instance.moveSpeed * PlayerConstants.Instance.postWallJumpSpeedModifier
+                : PlayerConstants.Instance.moveSpeed * -PlayerConstants.Instance.postWallJumpSpeedModifier;
+            moveY = PlayerConstants.Instance.initialJumpForce;
+            CheckFlipWhenWallJump();
+            StartCoroutine(ReverseAfterWallJumpAfterSeconds(0.15f));
+        }
+
         private void SetVariablesWhenWallJumping()
         {
-            rigidBody2D.velocity = new Vector2(0, 0);
+            currentCoyoteTime = 0f;
             isWallJumping = true;
             isJumping = true;
             isWallSliding = false;
@@ -600,55 +644,50 @@ namespace _2_Scripts.Player.Controllers
             jumpTime = 0f;
         }
 
-        private void SetVariablesWhenDashing(float move)
+        private void DoubleJump()
         {
-            currentDashCooldown = PlayerConstants.Instance.dashCooldown;
-            isDashing = true;
-            tempValue = rigidBody2D.gravityScale;
-            rigidBody2D.gravityScale = 0f;
-            flipCooldown = 0f;
-            groundAttackTimer = 0f;
-            startedDashFromWallSlide = isWallSliding;
-            // if (startedDashFromWallSlide) facingLeft = !facingLeft;
-            velocityVector.Set(
-                PlayerConstants.Instance.dashSpeed *
-                ((Convert.ToInt32(move < 0.01f && move > -0.01f ? !facingLeft : (move > 0) == !isWallSliding) << 1) - 1),
-                0f);
-            DoFlip(velocityVector.x);
-            rigidBody2D.sharedMaterial = _noFriction;
-            rigidBody2D.velocity = velocityVector;
+            currentCoyoteTime = 0f;
+            isWallJumping =
+                false; //reset the flag so wall jumping penalty for KeyHoldAscendWhileJumping does not apply.
+            isDoubleJumping = true;
+            jumpTime = 0;
+            moveY = PlayerConstants.Instance.initialJumpForce;
+            DoubleJumped?.Invoke();
         }
 
-        private void KeepVelocityYAtZeroWhenDashing()
+        private void LoseVelocityAfterJumping()
         {
-            if (isDashing && !isOnSlope)
+            moveY = rigidBody2D.velocity.y * 0.8f; //reduces floatiness.
+            jumpTime = PlayerConstants.Instance.maxJumpTime;
+        }
+
+
+        private void DoFlip(float direction)
+        {
+            if (overrideFacingDirection)
+                return;
+            if (direction > 0 && facingLeft)
             {
-                velocityVector.Set(rigidBody2D.velocity.x, 0f);
-                rigidBody2D.velocity = velocityVector;
+                Flip();
+            }
+            else if (direction < 0 && !facingLeft)
+            {
+                Flip();
             }
         }
 
-        private void EndDash()
+        private void Flip()
         {
-            isDashing = false;
-            rigidBody2D.gravityScale = tempValue;
-            rigidBody2D.sharedMaterial = _allFriction;
-            canDash = isGrounded || isWallTouching;
-            currentDashCooldown = 0f;
-            if (startedDashFromWallSlide)
-            {
-                isDoubleJumping = false;
-                startedDashFromWallSlide = false;
-            }
-            jumpTime = 0f; // set so you can double jump after a dash
-            DashEnd?.Invoke();
+            facingLeft = !facingLeft;
+            Flipped?.Invoke(facingLeft);
         }
 
-        private bool UseEffort(int cost)
+        private void ResetAttackKnockback()
         {
-            return effort.UseEffort(cost);
+            attackKnockbackX = 0;
+            attackKnockbackY = 0;
         }
 
-        #endregion SETTING-VARIABLES
+        #endregion
     }
 }

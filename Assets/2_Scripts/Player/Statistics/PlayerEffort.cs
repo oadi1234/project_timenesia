@@ -1,74 +1,47 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using _2_Scripts.Global;
-using _2_Scripts.Spells;
+using _2_Scripts.Global.Animation.Model;
+using _2_Scripts.Player.model;
+using _2_Scripts.UI.Animation.Model;
 using _2_Scripts.UI.Elements.HUD;
-using Spells;
 using UnityEngine;
 
 namespace _2_Scripts.Player.Statistics
 {
     public class PlayerEffort : MonoBehaviour
     {
+        [SerializeField]
+        // TODO set this depending on the chosen difficulty. Might get moved to PlayerAbilityAndStats or something like it.
+        private float regenInterval = 1f;
+
+        [SerializeField] 
+        // this might be modified through upgrades and such. When concentrating regenInterval gets multiplied by this.
+        private float concentrationEffortRegenMultiplier = 2f;
+        
+        [SerializeField] private EffortBar effortBar;
+        [SerializeField] private PlayerInputManager inputManager;
+        private List<EffortType> castCombination;
+
         private int maxEffort; //temp starting values, make load from save later on.
         private int currentEffort;
-        private int spellCapacity; //might get deleted.
 
-        public float regenInterval = 0.8f; // TODO set this depending on the chosen difficulty, or allow concentrations to change it. Might get moved to PlayerAbilityAndStats or something like it.
-        public int effortPerInterval = 1;
-        public EffortBar effortBar;
-        public EffortType[] castCombination;
-        // private List<Spell> preparedSpells;
-        private List<BaseSpell> preparedSpells;
-        private int lastPreparedSpellManaCost = -1;
+        private int spellCapacity; //might get deleted.
 
         private int currentCastCombinationIndex;
 
         private float currentTime = 0f;
+        private bool moved = false;
+
+        private EffortType inputEffortType = EffortType.NoInput;
+        private const int EffortPerInterval = 1;
+
+        public event Action<List<EffortType>> SpellCast;
 
         void Start()
         {
             Initialize();
-            // preparedSpells = new List<Spell> { new Spell("Fireball", new List<EffortElement> { EffortElement.Fire, EffortElement.Fire }) };
-            preparedSpells = new List<BaseSpell>
-            {
-                new BaseSpell("Fireball", 1, 1, 1, "", SpellCastEffects.Fireball),
-                new BaseSpell("Fireball", 1, 1, 1, "", SpellCastEffects.ShockWave),
-            }; //new List<EffortElement> { EffortElement.Fire, EffortElement.Fire }) };
-
-        }
-
-        void Update()
-        {
-            bool isFocusing = CheckFocusBegin();
-            if (isFocusing)
-            {
-                FocusCasting();
-            }
-            if (Input.GetKeyUp(KeyCode.LeftShift))
-            {
-                CastSpell();
-            }
-
-            //else
-            //{
-            //    if (Input.GetKeyDown(KeyCode.H))
-            //    {
-            //        CastSpell(0);
-            //    }
-            //    if (Input.GetKeyDown(KeyCode.J))
-            //    {
-            //        CastSpell(1);
-            //    }
-            //    if (Input.GetKeyDown(KeyCode.K))
-            //    {
-            //        UseEffort(3);
-            //    }
-
-            //    if (Input.GetKeyUp(KeyCode.H))
-            //    {
-            //        UseEffort(lastPreparedSpellManaCost);
-            //    }
-            //}
         }
 
         private void Initialize()
@@ -77,135 +50,108 @@ namespace _2_Scripts.Player.Statistics
             spellCapacity = GameDataManager.Instance.currentGameData.SpellCapacity;
             currentEffort = 0;
             effortBar.Initialize();
-            effortBar.SetMaxEffort(maxEffort, false);
+            effortBar.SetMax(maxEffort);
             effortBar.SetSpellCapacity(spellCapacity);
-            castCombination = new EffortType[maxEffort];
-            for (int i = 0; i < castCombination.Length; i++)
-            {
-                castCombination[i] = EffortType.Empty;
-            }
+            castCombination = new List<EffortType>();
+            inputManager.InputReceived += () => { moved = true; };
+
             currentCastCombinationIndex = 0;
         }
 
-        private void CastSpell(int indexOfSpell) // TODO Move to a different class - player effort should only manage effort levels. Spellbook class might be better for casting spells.
+        private void FixedUpdate()
         {
-            var spell = preparedSpells[indexOfSpell];
-            spell.CastHandler();
-            // for (int i = 0; i < spell.EffortElements.Length; i++)
-            // {
-            //     effortBar.SetElement(spell.EffortElements[i], i);
-            // }
-            //TODO - there will be animation cast time, so this should go somewhere here, as it would let us see effort used
-            //lastPreparedSpellManaCost = spell;
+            if (currentEffort >= maxEffort) return;
+            currentTime += Time.fixedDeltaTime *
+                           (inputManager.IsInConcentrationMode() ? concentrationEffortRegenMultiplier : 1f);
+            if (!(currentTime > regenInterval)) return;
+            currentTime = 0f;
+            RecoverEffort(EffortPerInterval);
+        }
+
+        private void Update()
+        {
+            if (moved)
+            {
+                moved = false;
+                CleanData();
+            }
+
+            if (inputEffortType == EffortType.NoInput)
+            {
+                return;
+            }
+
+            if (currentCastCombinationIndex == 0 && inputEffortType == EffortType.EndOfInput)
+            {
+                inputManager.SetConcentration(false);
+                return;
+            }
+
+            if (inputEffortType == EffortType.EndOfInput)
+            {
+                CastSpell();
+                return;
+            }
+
+            if (currentCastCombinationIndex == spellCapacity - 1)
+            {
+                currentCastCombinationIndex++;
+                castCombination.Add(inputEffortType);
+                CastSpell();
+                //if last slot in cast sequence is already filled spell is cast automatically
+                // this might actually not be a good idea and it would be better to cast it the moment we let go of concentration
+                // but no clue how it would work with sustained spells. For sustained holding shift would be better.
+                return;
+            }
+
+            if (effortBar.TrySetEffortType(inputEffortType, currentCastCombinationIndex))
+            {
+                castCombination.Add(inputEffortType);
+                currentCastCombinationIndex++;
+            }
+        }
+
+        public void SpellInput(EffortType concentrationInput)
+        {
+            inputEffortType = concentrationInput;
         }
 
         private void CastSpell()
         {
-            int manaCost = CalculateManaCost();
-            UseEffort(manaCost);
-            CleanSourceCombinations();
-            //TODO: clearColors
+            // Debug.Log("Player effort - cast combination: " + castCombination.Aggregate("", (current, t) => current + (t + " ")));
+            SpellCast?.Invoke(castCombination);
+            CleanData();
         }
 
-        private void CleanSourceCombinations()
+        private void CleanData()
         {
-            for(int i = 0; i < currentCastCombinationIndex; i++)
-            {
-                castCombination[i] = EffortType.Empty;
-            }
+            effortBar.CleanManaSources();
+            castCombination.Clear();
             currentCastCombinationIndex = 0;
+            inputManager.SetConcentration(false);
         }
 
-        private int CalculateManaCost()
-        {
-            //int cost = 0;
-            //foreach(var source in castCombination)
-            //{
-            //    if (source != EffortElement.Empty)
-            //        cost++;
-            //    else
-            //        break;
-            //}
-            //return cost;
-            return currentCastCombinationIndex;
-        }
 
-        private void FocusCasting()
-        {
-            if (currentCastCombinationIndex < maxEffort && effortBar.GetEffortElementAt(currentCastCombinationIndex) == EffortType.Raw)
-            {
-                if (Input.GetKeyDown(KeyCode.O))
-                {
-                    AddNewSourceWhileFocusing(EffortType.Cold);
-                }
-                if (Input.GetKeyDown(KeyCode.P))
-                {
-                    AddNewSourceWhileFocusing(EffortType.Fire);
-                }
-            }
-        }
-
-        private void AddNewSourceWhileFocusing(EffortType source)
-        {
-            if (currentCastCombinationIndex < castCombination.Length)
-            {
-                castCombination[currentCastCombinationIndex] = source;
-                effortBar.SetEffortAnimation(source, currentCastCombinationIndex);
-                currentCastCombinationIndex++;
-            }
-            //    int index = 0;
-            //    EffortElement currentSource = castCombination[index];
-            //    while(currentSource != EffortElement.Empty)
-            //    {
-            //        index++;
-            //        currentSource = castCombination[index];
-            //    }
-        }
-
-        private bool CheckFocusBegin()
-        {
-            return Input.GetKey(KeyCode.LeftShift);
-        }
-
-        // Update is called once per frame
-        void FixedUpdate()
-        {
-            if(currentEffort < maxEffort)
-            {
-                currentTime += Time.fixedDeltaTime;
-                if(currentTime > regenInterval)
-                {
-                    currentTime = 0f;
-                    RecoverEffort(effortPerInterval);
-                }
-            }
-        }
-
-    
         public bool UseEffort(int cost)
         {
             if (cost > currentEffort)
                 return false;
-            else
-                currentEffort -= cost;
-            effortBar.SetCurrentEffort(currentEffort);
+
+            currentEffort -= cost;
+            effortBar.SetCurrent(currentEffort);
             effortBar.CleanManaSources();
             return true;
         }
 
-        //Freeze mana will sometimes keep rightmost mana points coloured - they cannot be used and
-        //are not recovering. Possibly used when a persistent effect is present (i.e. shield from force element).
-        public void FreezeMana(int cost)
+        public bool CanUseEffort(int cost)
         {
-
+            return cost <= currentEffort;
         }
 
         public void RecoverEffort(int amount)
         {
-            currentEffort += amount;
-            if (currentEffort > maxEffort)
-                currentEffort = maxEffort;
-            effortBar.SetCurrentEffort(currentEffort);
+            currentEffort = Mathf.Min(currentEffort + amount, maxEffort);
+            effortBar.SetCurrent(currentEffort);
         }
     }
 }

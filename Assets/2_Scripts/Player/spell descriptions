@@ -1,0 +1,25 @@
+#Spell descriptions storage. This is a complete placeholder and will probably be changed to something better.
+
+chaosmagic.description=""
+wildmagic.description=""
+instability.description=""
+dud.description=""
+
+shield.description="placeholder text. adds 1 shield hp to the player (max 1)."
+spark.description="placeholder text. simple hitscan lowrange damage"
+mindprobe.description="placeholder text. get hidden dialogue"
+
+strongshield.description="placeholder text. adds 2 shield hp to the player (max 2)."
+spacedash.description="placeholder text. Charge spell with pass through damage and invulnerability"
+chainbolt.description="placeholder text. hold spell to keep firing lightning bolts"
+
+bulwark.description="placeholder text. adds 3 shield hp to the player (max 3)."
+blast.description="placeholder text. strong aoe with knockback"
+revengeblast.description="placeholder text. aoe on being hit"
+lifesteal.description="placeholder text. weak bolt that heals if it kills enemy"
+telekinesis.description="placeholder text. on attacks background objects levitate in the same direction, attacking everything"
+shockwavecharge.description="placeholder text. spatial dash with shockwave aoe"
+
+electromagneticcannon.description="placeholder text. strong hitscan bolt that passes through enemies damaging them in a line"
+blackhole.description="placeholder text. suck everything in, then spit them out, mangled or not"
+heal.description="placeholder text. restore 1 hp"

@@ -24,10 +24,11 @@ namespace _2_Scripts.UI.Elements.MainMenu
             {
                 GameObject loadButton = Instantiate(loadGameListElement);
                 PreviewDataSchema schema = SaveManager.Instance.LoadData<PreviewDataSchema>($"{directoryName}_{SaveManager.SavePreviewSuffix}", directoryName);
-                loadButton.GetComponent<LoadButton>().directoryName = directoryName;
-                loadButton.GetComponent<LoadButton>().savePreview = schema;
-                loadButton.GetComponent<LoadButton>().Initialize();
-                loadButton.GetComponent<LoadButton>().mainMenuManager = mainMenuManager;
+                var load = loadButton.GetComponent<LoadButton>();
+                load.directoryName = directoryName;
+                load.savePreview = schema;
+                load.Initialize();
+                load.mainMenuManager = mainMenuManager;
                 loadButton.GetComponent<IndividualFader>().sequenceIndex = ++i;
                 loadButton.name = $"{directoryName}";
                 loadButton.transform.SetParent(ScrollList.transform);

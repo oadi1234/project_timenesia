@@ -17,7 +17,7 @@ public class NullButtonChecker : MonoBehaviour
     public IEnumerator StallUntilNullIsFound()
     {
         UIPanel saveListPanel = GetComponent<UIPanel>();
-        while (!saveListPanel.buttons.Any(button => button==null)) 
+        while (saveListPanel.ButtonFadeControllerTuples.All(button => button.button)) 
         {
             yield return null;
         }
