@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 8723489592027550211}
   - component: {fileID: 2054605924723259758}
   - component: {fileID: 1269741733067592154}
-  - component: {fileID: 8977522764875847190}
   - component: {fileID: 3073123027646926035}
   m_Layer: 20
   m_Name: SpellBlastImpact
@@ -29,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 4145408494950695479}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.18, y: 0.21, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -84,24 +83,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   destroyAfter: 0.5833333
---- !u!114 &8977522764875847190
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4145408494950695479}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba3d90a30e45a0e46987c322902846e2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  randomRotation: 1
-  maxAngleDeviation: 15
-  randomScale: 1
-  maxScaleMultiplier: 1.1
-  randomXFlip: 1
-  randomYFlip: 0
 --- !u!114 &3073123027646926035
 MonoBehaviour:
   m_ObjectHideFlags: 0
